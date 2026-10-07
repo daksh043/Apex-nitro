@@ -1,0 +1,39 @@
+GLB version 2 total 4994192 bin bytes 4987464
+--- nodes ( 8 ) ---
+0 "Benjamin_S04_Branches_leaf_03_Mat_0" mesh:0 T[] S[] 
+1 "Benjamin_S04_Benjamin_Bark_03_Mat_0" mesh:1 T[] S[] 
+2 "Benjamin_S04_Cap_01_Base_Color_Mat_0" mesh:2 T[] S[] 
+3 "Benjamin_S04_Branches_leaf_1_Mat_0" mesh:3 T[] S[] 
+4 "Benjamin_S04_Fog_03_Mat_0" mesh:4 T[] S[] 
+5 "Benjamin_S04" mesh:- T[] S[] 
+6 "RootNode" mesh:- T[] S[] 
+7 "Ficus Benjamina Tree-S04" mesh:- T[] S[0.01,0.01,0.01] 
+--- meshes ( 5 ) ---
+0 "Benjamin_S04_Branches_leaf_03_Mat_0" prims:1
+1 "Benjamin_S04_Benjamin_Bark_03_Mat_0" prims:1
+2 "Benjamin_S04_Cap_01_Base_Color_Mat_0" prims:1
+3 "Benjamin_S04_Branches_leaf_1_Mat_0" prims:1
+4 "Benjamin_S04_Fog_03_Mat_0" prims:1
+--- materials ( 5 ) ---
+0 "(unnamed)"
+1 "(unnamed)"
+2 "(unnamed)"
+3 "(unnamed)"
+4 "(unnamed)"
+--- animations ( 0 ) ---
+--- textures/images ( 10 ) ---
+0 "(embedded)" image/webp
+1 "(embedded)" image/webp
+2 "(embedded)" image/webp
+3 "(embedded)" image/webp
+4 "(embedded)" image/webp
+5 "(embedded)" image/webp
+6 "(embedded)" image/webp
+7 "(embedded)" image/webp
+8 "(embedded)" image/webp
+9 "(embedded)" image/webp
+--- scene graph (roots) ---
+scene "" roots: [7]
+--- raw position bounds (pre-node-transform, min) ---
+-42.59, -1.45, -37.79   max: 37.95, 58.50, 42.92
+    size: 80.54 x 59.95 x 80.71

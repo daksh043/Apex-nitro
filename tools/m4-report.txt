@@ -1,0 +1,175 @@
+GLB version 2 total 8020792 bin bytes 7970728
+--- nodes ( 58 ) ---
+0 "_gltfNode_0" mesh:0 T[] S[] 
+1 "_gltfNode_1" mesh:1 T[] S[] 
+2 "_gltfNode_2" mesh:2 T[] S[] 
+3 "_gltfNode_3" mesh:3 T[] S[] 
+4 "_gltfNode_4" mesh:4 T[] S[] 
+5 "_gltfNode_5" mesh:5 T[] S[] 
+6 "_gltfNode_6" mesh:6 T[] S[] 
+7 "_gltfNode_7" mesh:7 T[] S[] 
+8 "_gltfNode_8" mesh:8 T[] S[] 
+9 "_gltfNode_9" mesh:9 T[] S[] 
+10 "_gltfNode_10" mesh:10 T[] S[] 
+11 "_gltfNode_11" mesh:11 T[] S[] 
+12 "_gltfNode_12" mesh:12 T[] S[] 
+13 "_gltfNode_13" mesh:13 T[] S[] 
+14 "_gltfNode_14" mesh:14 T[] S[] 
+15 "_gltfNode_15" mesh:15 T[] S[] 
+16 "_gltfNode_16" mesh:16 T[] S[] 
+17 "_gltfNode_17" mesh:17 T[] S[] 
+18 "_gltfNode_18" mesh:18 T[] S[] 
+19 "_gltfNode_19" mesh:19 T[] S[] 
+20 "_gltfNode_20" mesh:20 T[] S[] 
+21 "_gltfNode_21" mesh:21 T[] S[] 
+22 "_gltfNode_22" mesh:22 T[] S[] 
+23 "_gltfNode_23" mesh:23 T[] S[] 
+24 "_gltfNode_24" mesh:24 T[] S[] 
+25 "_gltfNode_25" mesh:25 T[] S[] 
+26 "_gltfNode_26" mesh:26 T[] S[] 
+27 "_gltfNode_27" mesh:27 T[] S[] 
+28 "_gltfNode_28" mesh:28 T[] S[] 
+29 "_gltfNode_29" mesh:29 T[] S[] 
+30 "_gltfNode_30" mesh:30 T[] S[] 
+31 "_gltfNode_31" mesh:31 T[] S[] 
+32 "_gltfNode_32" mesh:32 T[] S[] 
+33 "_gltfNode_33" mesh:33 T[] S[] 
+34 "_gltfNode_34" mesh:34 T[] S[] 
+35 "_gltfNode_35" mesh:35 T[] S[] 
+36 "_gltfNode_36" mesh:36 T[] S[] 
+37 "_gltfNode_37" mesh:37 T[] S[] 
+38 "_gltfNode_38" mesh:38 T[] S[] 
+39 "_gltfNode_39" mesh:39 T[] S[] 
+40 "_gltfNode_40" mesh:40 T[] S[] 
+41 "_gltfNode_41" mesh:41 T[] S[] 
+42 "_gltfNode_42" mesh:42 T[] S[] 
+43 "_gltfNode_43" mesh:43 T[] S[] 
+44 "_gltfNode_44" mesh:44 T[] S[] 
+45 "_gltfNode_45" mesh:45 T[] S[] 
+46 "_gltfNode_46" mesh:46 T[] S[] 
+47 "_gltfNode_47" mesh:47 T[] S[] 
+48 "_gltfNode_48" mesh:48 T[] S[] 
+49 "_gltfNode_49" mesh:49 T[] S[] 
+50 "_gltfNode_50" mesh:50 T[] S[] 
+51 "_gltfNode_51" mesh:51 T[] S[] 
+52 "_gltfNode_52" mesh:52 T[] S[] 
+53 "_gltfNode_53" mesh:53 T[] S[] 
+54 "_gltfNode_54" mesh:54 T[] S[] 
+55 "_gltfNode_55" mesh:55 T[] S[] 
+56 "_gltfNode_56" mesh:56 T[] S[] 
+57 "GLTF Converted Scene" mesh:- T[] S[] ROT
+--- meshes ( 57 ) ---
+0 "(unnamed)" prims:1
+1 "(unnamed)" prims:1
+2 "(unnamed)" prims:1
+3 "(unnamed)" prims:1
+4 "(unnamed)" prims:1
+5 "(unnamed)" prims:1
+6 "(unnamed)" prims:1
+7 "(unnamed)" prims:1
+8 "(unnamed)" prims:1
+9 "(unnamed)" prims:1
+10 "(unnamed)" prims:1
+11 "(unnamed)" prims:1
+12 "(unnamed)" prims:1
+13 "(unnamed)" prims:1
+14 "(unnamed)" prims:1
+15 "(unnamed)" prims:1
+16 "(unnamed)" prims:1
+17 "(unnamed)" prims:1
+18 "(unnamed)" prims:1
+19 "(unnamed)" prims:1
+20 "(unnamed)" prims:1
+21 "(unnamed)" prims:1
+22 "(unnamed)" prims:1
+23 "(unnamed)" prims:1
+24 "(unnamed)" prims:1
+25 "(unnamed)" prims:1
+26 "(unnamed)" prims:1
+27 "(unnamed)" prims:1
+28 "(unnamed)" prims:1
+29 "(unnamed)" prims:1
+30 "(unnamed)" prims:1
+31 "(unnamed)" prims:1
+32 "(unnamed)" prims:1
+33 "(unnamed)" prims:1
+34 "(unnamed)" prims:1
+35 "(unnamed)" prims:1
+36 "(unnamed)" prims:1
+37 "(unnamed)" prims:1
+38 "(unnamed)" prims:1
+39 "(unnamed)" prims:1
+40 "(unnamed)" prims:1
+41 "(unnamed)" prims:1
+42 "(unnamed)" prims:1
+43 "(unnamed)" prims:1
+44 "(unnamed)" prims:1
+45 "(unnamed)" prims:1
+46 "(unnamed)" prims:1
+47 "(unnamed)" prims:1
+48 "(unnamed)" prims:1
+49 "(unnamed)" prims:1
+50 "(unnamed)" prims:1
+51 "(unnamed)" prims:1
+52 "(unnamed)" prims:1
+53 "(unnamed)" prims:1
+54 "(unnamed)" prims:1
+55 "(unnamed)" prims:1
+56 "(unnamed)" prims:1
+--- materials ( 49 ) ---
+0 "(unnamed)"
+1 "(unnamed)"
+2 "(unnamed)"
+3 "(unnamed)"
+4 "(unnamed)"
+5 "(unnamed)"
+6 "(unnamed)"
+7 "(unnamed)"
+8 "(unnamed)"
+9 "(unnamed)"
+10 "(unnamed)"
+11 "(unnamed)"
+12 "(unnamed)"
+13 "(unnamed)"
+14 "(unnamed)"
+15 "(unnamed)"
+16 "(unnamed)"
+17 "(unnamed)"
+18 "(unnamed)"
+19 "(unnamed)"
+20 "(unnamed)"
+21 "(unnamed)"
+22 "(unnamed)"
+23 "(unnamed)"
+24 "(unnamed)"
+25 "(unnamed)"
+26 "(unnamed)"
+27 "(unnamed)"
+28 "(unnamed)"
+29 "(unnamed)"
+30 "(unnamed)"
+31 "(unnamed)"
+32 "(unnamed)"
+33 "(unnamed)"
+34 "(unnamed)"
+35 "(unnamed)"
+36 "(unnamed)"
+37 "(unnamed)"
+38 "(unnamed)"
+39 "(unnamed)"
+40 "(unnamed)"
+41 "(unnamed)"
+42 "(unnamed)"
+43 "(unnamed)"
+44 "(unnamed)"
+45 "(unnamed)"
+46 "(unnamed)"
+47 "(unnamed)"
+48 "(unnamed)"
+--- animations ( 0 ) ---
+--- textures/images ( 0 ) ---
+--- scene graph (roots) ---
+scene "" roots: [57]
+--- raw position bounds (pre-node-transform, min) ---
+-1.05, -2.60, -0.05   max: 1.05, 2.42, 1.36
+    size: 2.09 x 5.02 x 1.41

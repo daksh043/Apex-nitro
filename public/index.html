@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>NITRO APEX — Street Racing</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700;900&family=Rajdhani:wght@500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/css/style.css">
+<script>window.__errs = []; window.addEventListener('error', e => window.__errs.push((e.error && e.error.stack) || e.message));</script>
+<script type="importmap">
+{
+  "imports": {
+    "three": "/vendor/three/build/three.module.js",
+    "three/addons/": "/vendor/three/examples/jsm/"
+  }
+}
+</script>
+</head>
+<body>
+<div id="gl"></div>
+
+<!-- ============ HUD ============ -->
+<div id="hudRoot" style="display:none">
+  <div id="topLeft">
+    <div class="pos-row"><span id="posBig">1</span><span id="posSuf">st</span><span class="pos-total" id="posTotal"></span></div>
+    <div class="info-row" id="lapNum">LAP 1/3</div>
+    <div class="info-row time" id="raceTime">0:00.00</div>
+    <div class="lap-times">
+      <div><span>LAST</span><span id="lastLap">--:--</span></div>
+      <div><span>BEST</span><span id="bestLap">--:--</span></div>
+    </div>
+  </div>
+  <canvas id="minimap" width="190" height="190"></canvas>
+  <canvas id="speedo" width="240" height="240"></canvas>
+  <div id="nitroWrap"><div id="nitroFill" style="height:50%"></div><span>N₂O</span></div>
+  <div id="countdown" class="countdown hidden"></div>
+  <div id="centerMsg" class="center-msg hidden"></div>
+  <div id="wrongWay">⚠ WRONG WAY</div>
+  <div id="toast"></div>
+</div>
+
+<!-- ============ MAIN MENU ============ -->
+<div id="menu">
+  <div class="menu-left">
+    <div class="logo">
+      <h1>NITRO<span>APEX</span></h1>
+      <p class="tagline">STREET RACING · UNDER THE NEON SUN</p>
+    </div>
+    <div id="profilePanel" class="panel">
+      <label>DRIVER NAME<input id="playerName" maxlength="14" spellcheck="false"></label>
+      <label>YOUR CAR
+        <div id="carTabs"></div>
+        <div class="car-sub" id="carSub"></div>
+        <div class="stats">
+          <div class="stat"><span>TOP SPEED</span><div class="track"><div class="fill" id="statVmax"></div></div></div>
+          <div class="stat"><span>ACCELERATION</span><div class="track"><div class="fill" id="statAccel"></div></div></div>
+          <div class="stat"><span>GRIP</span><div class="track"><div class="fill" id="statGrip"></div></div></div>
+        </div>
+      </label>
+      <label>CAR PAINT<div id="colorRow"></div></label>
+    </div>
+    <div id="soloPanel" class="panel">
+      <h2>SOLO RACE</h2>
+      <label>OPPONENTS
+        <select id="opponents">
+          <option value="3">3 RACERS</option>
+          <option value="5" selected>5 RACERS</option>
+          <option value="7">7 RACERS</option>
+        </select>
+      </label>
+      <label>DIFFICULTY
+        <select id="difficulty">
+          <option value="easy">EASY</option>
+          <option value="normal" selected>NORMAL</option>
+          <option value="hard">HARD</option>
+        </select>
+      </label>
+      <button id="btnSolo" class="btn primary big">▶ START RACE</button>
+      <button id="btnMulti" class="btn big">＋ MULTIPLAYER</button>
+    </div>
+    <div id="mpPanel" class="panel" style="display:none">
+      <h2>MULTIPLAYER</h2>
+      <div class="field">
+        <span class="field-label">CREATE ROOM</span>
+        <button id="btnCreate" class="btn primary">CREATE</button>
+      </div>
+      <div class="field">
+        <span class="field-label">JOIN ROOM</span>
+        <input id="joinCode" placeholder="ROOM CODE (4 letters)" maxlength="4" style="text-transform:uppercase">
+        <button id="btnJoin" class="btn">JOIN</button>
+      </div>
+      <button id="btnMpBack" class="btn small">← BACK</button>
+      <p class="hint">Share the room code — or the network URL printed in the server console — and friends on the same Wi-Fi can join from any browser.</p>
+    </div>
+    <div class="controls-hint">
+      <span><b>W A S D</b> drive</span><span><b>SHIFT</b> nitro</span><span><b>SPACE</b> drift</span>
+      <span><b>C</b> camera</span><span><b>R</b> reset</span><span><b>ESC</b> pause</span><span><b>M</b> mute</span>
+    </div>
+  </div>
+  <button id="musicToggle" class="music-btn">♪ MUSIC ON</button>
+</div>
+
+<!-- ============ LOBBY ============ -->
+<div id="lbPanel" style="display:none">
+  <div class="panel lobby-panel">
+    <h2>RACE LOBBY</h2>
+    <div class="room-code">ROOM <span id="mpCode">----</span></div>
+    <div id="mpPlayers"></div>
+    <button id="btnStartRace" class="btn primary big" disabled>WAITING FOR HOST…</button>
+    <button id="btnLobbyLeave" class="btn small">← LEAVE ROOM</button>
+  </div>
+</div>
+
+<!-- ============ RESULTS ============ -->
+<div id="results" style="display:none">
+  <div class="panel results-panel">
+    <h2 id="resultsTitle">RACE COMPLETE</h2>
+    <table>
+      <thead><tr><th>#</th><th>DRIVER</th><th>TIME</th><th>BEST LAP</th></tr></thead>
+      <tbody id="resultsBody"></tbody>
+    </table>
+    <div id="resultsBtns"></div>
+  </div>
+</div>
+
+<!-- ============ PAUSE ============ -->
+<div id="pause" style="display:none">
+  <div class="panel">
+    <h2>PAUSED</h2>
+    <button id="btnResume" class="btn primary big">RESUME</button>
+    <button id="btnQuit" class="btn big">QUIT TO MENU</button>
+  </div>
+</div>
+
+<!-- ============ TOUCH ============ -->
+<div id="touch">
+  <div class="t-left">
+    <button id="tLeft">◀</button><button id="tRight">▶</button>
+  </div>
+  <div class="t-right">
+    <button id="tNitro">N₂O</button><button id="tBrake">BRAKE</button><button id="tGas">GAS</button>
+  </div>
+</div>
+
+<!-- ============ LOADING ============ -->
+<div id="loading">
+  <div>
+    <h1>NITRO<span>APEX</span></h1>
+    <p id="loadMsg">Loading…</p>
+  </div>
+</div>
+
+<script type="module" src="/js/main.js"></script>
+</body>
+</html>

@@ -1,0 +1,19 @@
+{
+  "name": "nitro-apex",
+  "version": "1.0.0",
+  "description": "Nitro Apex - 3D street racing game with LAN multiplayer (Asphalt 9 / NFS style)",
+  "main": "server.js",
+  "type": "commonjs",
+  "scripts": {
+    "start": "node server.js",
+    "cf:dev": "wrangler dev",
+    "deploy": "wrangler deploy"
+  },
+  "dependencies": {
+    "three": "0.160.0",
+    "ws": "8.17.0"
+  },
+  "devDependencies": {
+    "wrangler": "^3.90.0"
+  }
+}

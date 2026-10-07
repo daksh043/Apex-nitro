@@ -1,0 +1,19 @@
+GLB version 2 total 271828 bin bytes 269012
+--- nodes ( 3 ) ---
+0 "(unnamed)" mesh:0 T[] S[] 
+1 "(unnamed)" mesh:1 T[] S[] 
+2 "(unnamed)" mesh:- T[] S[] 
+--- meshes ( 2 ) ---
+0 "(unnamed)" prims:1
+1 "(unnamed)" prims:1
+--- materials ( 2 ) ---
+0 "KFCsign"
+1 "KFCmain"
+--- animations ( 0 ) ---
+--- textures/images ( 1 ) ---
+0 "(embedded)" image/png
+--- scene graph (roots) ---
+scene "AuxScene" roots: [2]
+--- raw position bounds (pre-node-transform, min) ---
+-1.22, -0.47, -1.25   max: 1.22, 0.47, 1.25
+    size: 2.44 x 0.94 x 2.50

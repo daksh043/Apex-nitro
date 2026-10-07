@@ -1,0 +1,1111 @@
+GLB version 2 total 48346408 bin bytes 47317544
+--- nodes ( 517 ) ---
+0 "Wheel_FL" mesh:0 T[] S[] ROT
+1 "CTRL_Wheel_FL" mesh:- T[0.85,0.34,1.39] S[] 
+2 "Wheel_FR" mesh:1 T[] S[-1,-1,-1] ROT
+3 "CTRL_Wheel_FR" mesh:- T[-0.85,0.34,1.39] S[] 
+4 "Wheel_RL" mesh:2 T[] S[] ROT
+5 "CTRL_Wheel_RL" mesh:- T[0.85,0.34,-1.39] S[] 
+6 "Wheel_RR" mesh:3 T[] S[-1,-1,-1] ROT
+7 "CTRL_Wheel_RR" mesh:- T[-0.85,0.34,-1.39] S[] 
+8 "Body_CarbonFiber" mesh:4 T[] S[] 
+9 "Body_DetailMetallic_01" mesh:5 T[] S[] 
+10 "Body_DetailMetallic_02" mesh:6 T[] S[] 
+11 "Body_Grille" mesh:7 T[] S[] 
+12 "Body_label_Screw" mesh:8 T[] S[] 
+13 "Body_PaintedMetal" mesh:9 T[] S[] 
+14 "Body_PlasticBlack_01" mesh:10 T[] S[] 
+15 "Body_PlasticBlack_02" mesh:11 T[] S[] 
+16 "Body_PlasticBlack_03" mesh:12 T[] S[] 
+17 "Body_Rubber" mesh:13 T[] S[] 
+18 "Body_Undercarriage" mesh:14 T[] S[] 
+19 "BodyGascap_CarPaint" mesh:15 T[] S[] 
+20 "BumperF_BlackFrame" mesh:16 T[] S[] 
+21 "BumperF_BlackHole" mesh:17 T[] S[] 
+22 "BumperF_CarbonFiber" mesh:18 T[] S[] 
+23 "BumperF_CarPaint" mesh:19 T[] S[] 
+24 "BumperF_label_Steel" mesh:20 T[] S[] 
+25 "BumperF_PlasticBlack_01" mesh:21 T[] S[] 
+26 "BumperF_PlasticBlack_02" mesh:22 T[] S[] 
+27 "BumperF_PlasticBlack_03" mesh:23 T[] S[] 
+28 "BumperF_PlasticBlack_04" mesh:24 T[] S[] 
+29 "BumperF_PlasticBlack_05" mesh:25 T[] S[] 
+30 "BumperF_PlasticBlack_06" mesh:26 T[] S[] 
+31 "BumperR_BlackFrame" mesh:27 T[] S[] 
+32 "BumperR_CarbonFiber_01" mesh:28 T[] S[] 
+33 "BumperR_CarbonFiber_02" mesh:29 T[] S[] 
+34 "BumperR_CarPaint" mesh:30 T[] S[] 
+35 "BumperR_label_Screw" mesh:31 T[] S[] 
+36 "BumperR_PaintedMetal_01" mesh:32 T[] S[] 
+37 "BumperR_PaintedMetal_02" mesh:33 T[] S[] 
+38 "BumperR_PlasticBlack_01" mesh:34 T[] S[] 
+39 "BumperR_PlasticBlack_02" mesh:35 T[] S[] 
+40 "BumperR_Rubber" mesh:36 T[] S[] 
+41 "BumperR_Undercarriage" mesh:37 T[] S[] 
+42 "BumperRBadge_Chrome" mesh:38 T[] S[] 
+43 "BumperRHoneycomb_Detail" mesh:39 T[] S[] 
+44 "DoorJambLF_Aluminum" mesh:40 T[] S[] 
+45 "DoorJambLF_BlackFrame" mesh:41 T[] S[] 
+46 "DoorJambLF_CarPaint" mesh:42 T[] S[] 
+47 "DoorJambLF_label_Detail" mesh:43 T[] S[] 
+48 "DoorJambLF_label_Label" mesh:44 T[] S[] 
+49 "DoorJambLF_label_Screw" mesh:45 T[] S[] 
+50 "DoorJambLF_PaintedMetal" mesh:46 T[] S[] 
+51 "DoorJambLF_PlasticBlack" mesh:47 T[] S[] 
+52 "DoorJambLF_Rubber" mesh:48 T[] S[] 
+53 "DoorJambLFPistonLower_PaintedMetal" mesh:49 T[] S[] 
+54 "DoorJambLFPistonUpper_PaintedMetal" mesh:50 T[] S[] 
+55 "DoorJambRF_Aluminum" mesh:51 T[] S[] 
+56 "DoorJambRF_BlackFrame" mesh:52 T[] S[] 
+57 "DoorJambRF_CarPaint" mesh:53 T[] S[] 
+58 "DoorJambRF_label_Detail" mesh:54 T[] S[] 
+59 "DoorJambRF_label_Screw" mesh:55 T[] S[] 
+60 "DoorJambRF_PaintedMetal" mesh:56 T[] S[] 
+61 "DoorJambRF_PlasticBlack" mesh:57 T[] S[] 
+62 "DoorJambRF_Rubber" mesh:58 T[] S[] 
+63 "DoorJambRFPistonLower_PaintedMetal" mesh:59 T[] S[] 
+64 "DoorJambRFPistonUpper_PaintedMetal" mesh:60 T[] S[] 
+65 "DoorLF_CarbonFiber" mesh:61 T[] S[] 
+66 "DoorLF_CarPaint" mesh:62 T[] S[] 
+67 "DoorLF_PlasticBlack" mesh:63 T[] S[] 
+68 "DoorRF_CarbonFiber" mesh:64 T[] S[] 
+69 "DoorRF_CarPaint" mesh:65 T[] S[] 
+70 "DoorRF_PlasticBlack" mesh:66 T[] S[] 
+71 "DoorSill_CarPaint" mesh:67 T[] S[] 
+72 "DoorSill_label_Grille" mesh:68 T[] S[] 
+73 "DoorSill_PaintedMetal" mesh:69 T[] S[] 
+74 "DoorSill_PlasticBlack_01" mesh:70 T[] S[] 
+75 "DoorSill_PlasticBlack_02" mesh:71 T[] S[] 
+76 "DoorSill_PlasticBlack_03" mesh:72 T[] S[] 
+77 "DoorSill_Rubber" mesh:73 T[] S[] 
+78 "Fenders_CarPaint" mesh:74 T[] S[] 
+79 "Fenders_PlasticBlack" mesh:75 T[] S[] 
+80 "MirrorBaseL_BlackHole" mesh:76 T[] S[] 
+81 "MirrorBaseR_BlackHole" mesh:77 T[] S[] 
+82 "PlateUS_PlateBase" mesh:78 T[] S[] 
+83 "PlateUS_PlateShadow" mesh:79 T[] S[] 
+84 "Vents_Chrome" mesh:80 T[] S[] 
+85 "Vents_Detail" mesh:81 T[] S[] 
+86 "Vents_label_Screw" mesh:82 T[] S[] 
+87 "Vents_PlasticBlack_01" mesh:83 T[] S[] 
+88 "Vents_PlasticBlack_02" mesh:84 T[] S[] 
+89 "Wing_CarPaint" mesh:85 T[] S[] 
+90 "WingHinge_BlackHole" mesh:86 T[] S[] 
+91 "WingHinge_PaintedMetal" mesh:87 T[] S[] 
+92 "WingHinge_Screw" mesh:88 T[] S[] 
+93 "WingHingeAim_BlackHole" mesh:89 T[] S[] 
+94 "WingHingeAim_PaintedMetal" mesh:90 T[] S[] 
+95 "WingHingeAim_Screw" mesh:91 T[] S[] 
+96 "WingHingeAim_Steel" mesh:92 T[] S[] 
+97 "WingMirrorL_BlackHole" mesh:93 T[] S[] 
+98 "WingMirrorL_CarbonFiber" mesh:94 T[] S[] 
+99 "WingMirrorL_Mirror" mesh:95 T[] S[] 
+100 "WingMirrorL_PlasticBlack_01" mesh:96 T[] S[] 
+101 "WingMirrorL_PlasticBlack_02" mesh:97 T[] S[] 
+102 "WingMirrorR_BlackHole" mesh:98 T[] S[] 
+103 "WingMirrorR_CarbonFiber" mesh:99 T[] S[] 
+104 "WingMirrorR_Mirror" mesh:100 T[] S[] 
+105 "WingMirrorR_PlasticBlack_01" mesh:101 T[] S[] 
+106 "WingMirrorR_PlasticBlack_02" mesh:102 T[] S[] 
+107 "WingPistonLowerL_Steel" mesh:103 T[] S[] 
+108 "WingPistonLowerR_Steel" mesh:104 T[] S[] 
+109 "WingPistonUpperL_PaintedMetal" mesh:105 T[] S[] 
+110 "WingPistonUpperR_PaintedMetal" mesh:106 T[] S[] 
+111 "WingStrutL_BlackHole" mesh:107 T[] S[] 
+112 "WingStrutL_PaintedMetal" mesh:108 T[] S[] 
+113 "WingStrutL_Steel" mesh:109 T[] S[] 
+114 "WiperArmL_PaintedMetal" mesh:110 T[] S[] 
+115 "WiperArmL_Screw" mesh:111 T[] S[] 
+116 "WiperArmR_PaintedMetal_01" mesh:112 T[] S[] 
+117 "WiperArmR_PaintedMetal_02" mesh:113 T[] S[] 
+118 "WiperArmR_Screw" mesh:114 T[] S[] 
+119 "WiperBase_PaintedMetal" mesh:115 T[] S[] 
+120 "WiperBladeL_PaintedMetal" mesh:116 T[] S[] 
+121 "WiperBladeL_Rubber" mesh:117 T[] S[] 
+122 "WiperBladeR_PaintedMetal" mesh:118 T[] S[] 
+123 "WiperBladeR_Rubber" mesh:119 T[] S[] 
+124 "WiperL_PaintedMetal" mesh:120 T[] S[] 
+125 "WiperR_PaintedMetal_01" mesh:121 T[] S[] 
+126 "WiperR_PaintedMetal_02" mesh:122 T[] S[] 
+127 "GRP_Body" mesh:- T[0,0.09,0] S[] 
+128 "Engine_Aluminum_01" mesh:123 T[] S[] 
+129 "Engine_Aluminum_02" mesh:124 T[] S[] 
+130 "Engine_Aluminum_03" mesh:125 T[] S[] 
+131 "Engine_Anodized_01" mesh:126 T[] S[] 
+132 "Engine_Anodized_02" mesh:127 T[] S[] 
+133 "Engine_Anodized_03" mesh:128 T[] S[] 
+134 "Engine_BlackHole" mesh:129 T[] S[] 
+135 "Engine_Chrome" mesh:130 T[] S[] 
+136 "Engine_Detail" mesh:131 T[] S[] 
+137 "Engine_DetailMetallic_01" mesh:132 T[] S[] 
+138 "Engine_DetailMetallic_02" mesh:133 T[] S[] 
+139 "Engine_DetailMetallic_03" mesh:134 T[] S[] 
+140 "Engine_GlassClear" mesh:135 T[] S[] 
+141 "Engine_PaintedMetal_01" mesh:136 T[] S[] 
+142 "Engine_PaintedMetal_02" mesh:137 T[] S[] 
+143 "Engine_PaintedMetal_03" mesh:138 T[] S[] 
+144 "Engine_PaintedMetal_04" mesh:139 T[] S[] 
+145 "Engine_PlasticBlack_01" mesh:140 T[] S[] 
+146 "Engine_PlasticBlack_02" mesh:141 T[] S[] 
+147 "Engine_PlasticBlack_03" mesh:142 T[] S[] 
+148 "Engine_PlasticBlack_04" mesh:143 T[] S[] 
+149 "Engine_Screw" mesh:144 T[] S[] 
+150 "Engine_Titanium" mesh:145 T[] S[] 
+151 "EngineBay_Aluminum_01" mesh:146 T[] S[] 
+152 "EngineBay_Aluminum_02" mesh:147 T[] S[] 
+153 "EngineBay_Anodized_01" mesh:148 T[] S[] 
+154 "EngineBay_Anodized_02" mesh:149 T[] S[] 
+155 "EngineBay_Anodized_03" mesh:150 T[] S[] 
+156 "EngineBay_Anodized_04" mesh:151 T[] S[] 
+157 "EngineBay_BlackHole" mesh:152 T[] S[] 
+158 "EngineBay_CarbonFiber" mesh:153 T[] S[] 
+159 "EngineBay_CarPaint" mesh:154 T[] S[] 
+160 "EngineBay_Chrome" mesh:155 T[] S[] 
+161 "EngineBay_Detail_01" mesh:156 T[] S[] 
+162 "EngineBay_Detail_02" mesh:157 T[] S[] 
+163 "EngineBay_Detail_03" mesh:158 T[] S[] 
+164 "EngineBay_Detail_04" mesh:159 T[] S[] 
+165 "EngineBay_Detail_05" mesh:160 T[] S[] 
+166 "EngineBay_DetailMetallic_01" mesh:161 T[] S[] 
+167 "EngineBay_DetailMetallic_02" mesh:162 T[] S[] 
+168 "EngineBay_DetailMetallic_03" mesh:163 T[] S[] 
+169 "EngineBay_DetailMetallic_04" mesh:164 T[] S[] 
+170 "EngineBay_DetailMetallic_05" mesh:165 T[] S[] 
+171 "EngineBay_DetailMetallic_06" mesh:166 T[] S[] 
+172 "EngineBay_DetailMetallic_07" mesh:167 T[] S[] 
+173 "EngineBay_DetailMetallic_08" mesh:168 T[] S[] 
+174 "EngineBay_label_Label_01" mesh:169 T[] S[] 
+175 "EngineBay_label_Label_02" mesh:170 T[] S[] 
+176 "EngineBay_label_PlasticBlack" mesh:171 T[] S[] 
+177 "EngineBay_label_Screw" mesh:172 T[] S[] 
+178 "EngineBay_PaintedMetal_01" mesh:173 T[] S[] 
+179 "EngineBay_PaintedMetal_02" mesh:174 T[] S[] 
+180 "EngineBay_PlasticBlack_01" mesh:175 T[] S[] 
+181 "EngineBay_PlasticBlack_02" mesh:176 T[] S[] 
+182 "EngineBay_PlasticBlack_03" mesh:177 T[] S[] 
+183 "EngineBay_PlasticBlack_04" mesh:178 T[] S[] 
+184 "EngineBay_PlasticBlack_05" mesh:179 T[] S[] 
+185 "EngineBay_PlasticBlack_06" mesh:180 T[] S[] 
+186 "EngineBay_PlasticBlack_07" mesh:181 T[] S[] 
+187 "EngineBay_PlasticBlack_08" mesh:182 T[] S[] 
+188 "EngineBay_PlasticBlack_09" mesh:183 T[] S[] 
+189 "EngineBay_PlasticBlack_10" mesh:184 T[] S[] 
+190 "EngineBay_PlasticBlack_11" mesh:185 T[] S[] 
+191 "EngineBay_PlasticBlack_12" mesh:186 T[] S[] 
+192 "EngineBay_PlasticBlack_13" mesh:187 T[] S[] 
+193 "EngineBay_PlasticBlack_14" mesh:188 T[] S[] 
+194 "EngineBay_Screw_01" mesh:189 T[] S[] 
+195 "EngineBay_Screw_02" mesh:190 T[] S[] 
+196 "EngineBay_Titanium" mesh:191 T[] S[] 
+197 "ExhaustL_BlackHole" mesh:192 T[] S[] 
+198 "ExhaustL_DetailMetallic" mesh:193 T[] S[] 
+199 "ExhaustL_HeatTreated_01" mesh:194 T[] S[] 
+200 "ExhaustL_HeatTreated_02" mesh:195 T[] S[] 
+201 "GRP_Engine" mesh:- T[0,0.09,0] S[] 
+202 "GlassCTL_GlassClear" mesh:196 T[] S[] 
+203 "GlassF_BlackFrame" mesh:197 T[] S[] 
+204 "GlassF_DetailMetallic" mesh:198 T[] S[] 
+205 "GlassF_GlassClear" mesh:199 T[] S[] 
+206 "GlassF_PlasticBlack" mesh:200 T[] S[] 
+207 "GlassF_Screw_01" mesh:201 T[] S[] 
+208 "GlassF_Screw_02" mesh:202 T[] S[] 
+209 "GlassLF_BlackFrame" mesh:203 T[] S[] 
+210 "GlassLF_GlassSide" mesh:204 T[] S[] 
+211 "GlassLM_GlassSide" mesh:205 T[] S[] 
+212 "GlassLR_BlackFrame" mesh:206 T[] S[] 
+213 "GlassLR_GlassSide" mesh:207 T[] S[] 
+214 "GlassR_BlackFrame" mesh:208 T[] S[] 
+215 "GlassR_GlassSide" mesh:209 T[] S[] 
+216 "GlassRF_BlackFrame" mesh:210 T[] S[] 
+217 "GlassRF_GlassSide" mesh:211 T[] S[] 
+218 "GlassRM_GlassSide" mesh:212 T[] S[] 
+219 "GlassRR_BlackFrame" mesh:213 T[] S[] 
+220 "GlassRR_GlassSide" mesh:214 T[] S[] 
+221 "GRP_Glass" mesh:- T[0,0.09,0] S[] 
+222 "Hood_CarPaint" mesh:215 T[] S[] 
+223 "Hood_PlasticBlack" mesh:216 T[] S[] 
+224 "HoodBadge_Badge" mesh:217 T[] S[] 
+225 "HoodLiner_CarbonFiber" mesh:218 T[] S[] 
+226 "HoodLiner_Chrome" mesh:219 T[] S[] 
+227 "HoodLiner_DetailMetallic" mesh:220 T[] S[] 
+228 "HoodLiner_GunMetal" mesh:221 T[] S[] 
+229 "HoodLiner_label_DetailMetallic" mesh:222 T[] S[] 
+230 "HoodLiner_PlasticBlack" mesh:223 T[] S[] 
+231 "HoodLiner_Rubber" mesh:224 T[] S[] 
+232 "HoodLiner_Steel" mesh:225 T[] S[] 
+233 "HoodLinerPistonLowerL_GunMetal" mesh:226 T[] S[] 
+234 "HoodLinerPistonLowerL_PlasticBlack" mesh:227 T[] S[] 
+235 "HoodLinerPistonUpperL_GunMetal" mesh:228 T[] S[] 
+236 "HoodLinerPistonUpperL_PlasticBlack" mesh:229 T[] S[] 
+237 "HoodLinerStrutLowerAimL_GunMetal" mesh:230 T[] S[] 
+238 "HoodLinerStrutLowerL_GunMetal" mesh:231 T[] S[] 
+239 "HoodLinerStrutUpperL_GunMetal" mesh:232 T[] S[] 
+240 "GRP_Hood" mesh:- T[0,0.09,0] S[] 
+241 "CenterConsoleBezels_GlassDark" mesh:233 T[] S[] 
+242 "CenterConsoleBezels_label_Label" mesh:234 T[] S[] 
+243 "CenterConsoleBezels_PlasticBlack_01" mesh:235 T[] S[] 
+244 "CenterConsoleBezels_PlasticBlack_02" mesh:236 T[] S[] 
+245 "CenterConsoleBezels_PlasticBlack_03" mesh:237 T[] S[] 
+246 "CenterConsoleBezels_PlasticBlack_04" mesh:238 T[] S[] 
+247 "CenterConsoleStructure_Alcantara_01" mesh:239 T[] S[] 
+248 "CenterConsoleStructure_Alcantara_02" mesh:240 T[] S[] 
+249 "CenterConsoleStructure_CarbonFiber" mesh:241 T[] S[] 
+250 "CenterConsoleStructure_label_Stitch" mesh:242 T[] S[] 
+251 "CenterConsoleStructure_Leather" mesh:243 T[] S[] 
+252 "CenterConsoleStructure_PlasticBlack" mesh:244 T[] S[] 
+253 "CenterConsoleStructureCustom_label_Label_01" mesh:245 T[] S[] 
+254 "CenterConsoleStructureCustom_label_Label_02" mesh:246 T[] S[] 
+255 "CenterConsoleStructureCustom_label_Stitch" mesh:247 T[] S[] 
+256 "CenterConsoleStructureCustom_PlasticBlack" mesh:248 T[] S[] 
+257 "CenterStackStructure_CarbonFiber" mesh:249 T[] S[] 
+258 "CenterStackStructure_Chrome" mesh:250 T[] S[] 
+259 "CenterStackStructure_Detail" mesh:251 T[] S[] 
+260 "CenterStackStructure_label_Misc" mesh:252 T[] S[] 
+261 "CenterStackStructure_label_Screw" mesh:253 T[] S[] 
+262 "CenterStackStructure_PlasticBlack" mesh:254 T[] S[] 
+263 "DashPad_Alcantara" mesh:255 T[] S[] 
+264 "DashPad_CarbonFiber" mesh:256 T[] S[] 
+265 "DashPad_GlassDark" mesh:257 T[] S[] 
+266 "DashPad_label_Label" mesh:258 T[] S[] 
+267 "DashPad_label_Stitch" mesh:259 T[] S[] 
+268 "DashPad_Leather" mesh:260 T[] S[] 
+269 "DashPad_Screen" mesh:261 T[] S[] 
+270 "DashStructure_Alcantara" mesh:262 T[] S[] 
+271 "DashStructure_label_DetailMetallic" mesh:263 T[] S[] 
+272 "DashStructure_label_Stitch" mesh:264 T[] S[] 
+273 "DashStructureBezels_label_BlackHole" mesh:265 T[] S[] 
+274 "DashStructureBezels_label_Detail" mesh:266 T[] S[] 
+275 "DashStructureBezels_label_PlasticBlack" mesh:267 T[] S[] 
+276 "DashStructureBezels_PlasticBlack" mesh:268 T[] S[] 
+277 "DoorCardLF_Alcantara" mesh:269 T[] S[] 
+278 "DoorCardLF_BlackHole" mesh:270 T[] S[] 
+279 "DoorCardLF_Detail" mesh:271 T[] S[] 
+280 "DoorCardLF_GlassDark" mesh:272 T[] S[] 
+281 "DoorCardLF_GunMetal" mesh:273 T[] S[] 
+282 "DoorCardLF_label_Detail_01" mesh:274 T[] S[] 
+283 "DoorCardLF_label_Detail_02" mesh:275 T[] S[] 
+284 "DoorCardLF_label_Label_01" mesh:276 T[] S[] 
+285 "DoorCardLF_label_Label_02" mesh:277 T[] S[] 
+286 "DoorCardLF_label_Stitch_01" mesh:278 T[] S[] 
+287 "DoorCardLF_label_Stitch_02" mesh:279 T[] S[] 
+288 "DoorCardLF_Leather_01" mesh:280 T[] S[] 
+289 "DoorCardLF_Leather_02" mesh:281 T[] S[] 
+290 "DoorCardLF_PlasticBlack" mesh:282 T[] S[] 
+291 "DoorCardLF_Screw" mesh:283 T[] S[] 
+292 "DoorCardLFCustom_Alcantara" mesh:284 T[] S[] 
+293 "DoorCardLFCustom_GlassClear" mesh:285 T[] S[] 
+294 "DoorCardLFCustom_label_Label_01" mesh:286 T[] S[] 
+295 "DoorCardLFCustom_label_Label_02" mesh:287 T[] S[] 
+296 "DoorCardLFCustom_PlasticBlack_01" mesh:288 T[] S[] 
+297 "DoorCardLFCustom_PlasticBlack_02" mesh:289 T[] S[] 
+298 "DoorCardLFCustom_PlasticBlack_03" mesh:290 T[] S[] 
+299 "DoorCardRF_Alcantara" mesh:291 T[] S[] 
+300 "DoorCardRF_BlackHole" mesh:292 T[] S[] 
+301 "DoorCardRF_GlassDark" mesh:293 T[] S[] 
+302 "DoorCardRF_GunMetal" mesh:294 T[] S[] 
+303 "DoorCardRF_label_Label_01" mesh:295 T[] S[] 
+304 "DoorCardRF_label_Label_02" mesh:296 T[] S[] 
+305 "DoorCardRF_label_Stitch_01" mesh:297 T[] S[] 
+306 "DoorCardRF_label_Stitch_02" mesh:298 T[] S[] 
+307 "DoorCardRF_Leather_01" mesh:299 T[] S[] 
+308 "DoorCardRF_Leather_02" mesh:300 T[] S[] 
+309 "DoorCardRF_PlasticBlack" mesh:301 T[] S[] 
+310 "DoorCardRF_Screw" mesh:302 T[] S[] 
+311 "DoorCardRFCustom_Alcantara" mesh:303 T[] S[] 
+312 "DoorCardRFCustom_BlackHole" mesh:304 T[] S[] 
+313 "DoorCardRFCustom_GlassClear" mesh:305 T[] S[] 
+314 "DoorCardRFCustom_PlasticBlack" mesh:306 T[] S[] 
+315 "Floor_Alcantara" mesh:307 T[] S[] 
+316 "Floor_Carpet" mesh:308 T[] S[] 
+317 "Floor_PlasticBlack_01" mesh:309 T[] S[] 
+318 "Floor_PlasticBlack_02" mesh:310 T[] S[] 
+319 "FloorCustom_Alcantara" mesh:311 T[] S[] 
+320 "FloorCustom_Detail" mesh:312 T[] S[] 
+321 "FloorCustom_label_BlackHole" mesh:313 T[] S[] 
+322 "FloorCustom_label_Stitch" mesh:314 T[] S[] 
+323 "FloorCustom_Leather" mesh:315 T[] S[] 
+324 "GaugeCluster_Screen" mesh:316 T[] S[] 
+325 "GaugePod_CarbonFiber" mesh:317 T[] S[] 
+326 "GaugePod_label_Screw" mesh:318 T[] S[] 
+327 "GaugePod_PlasticBlack" mesh:319 T[] S[] 
+328 "Nav_GlassDark" mesh:320 T[] S[] 
+329 "Nav_label_Screen" mesh:321 T[] S[] 
+330 "OverheadConsole_Detail" mesh:322 T[] S[] 
+331 "OverheadConsole_GlassClear_01" mesh:323 T[] S[] 
+332 "OverheadConsole_GlassClear_02" mesh:324 T[] S[] 
+333 "OverheadConsole_label_Detail_01" mesh:325 T[] S[] 
+334 "OverheadConsole_label_Detail_02" mesh:326 T[] S[] 
+335 "OverheadConsole_label_Detail_03" mesh:327 T[] S[] 
+336 "OverheadConsole_label_Label_01" mesh:328 T[] S[] 
+337 "OverheadConsole_label_Label_02" mesh:329 T[] S[] 
+338 "OverheadConsole_label_PlasticBlack" mesh:330 T[] S[] 
+339 "OverheadConsole_PlasticBlack" mesh:331 T[] S[] 
+340 "PaddleShifterL_CarbonFiber" mesh:332 T[] S[] 
+341 "PaddleShifterL_label_Label" mesh:333 T[] S[] 
+342 "PaddleShifterL_PlasticBlack" mesh:334 T[] S[] 
+343 "PaddleShifterR_CarbonFiber" mesh:335 T[] S[] 
+344 "PaddleShifterR_label_Label" mesh:336 T[] S[] 
+345 "PaddleShifterR_PlasticBlack" mesh:337 T[] S[] 
+346 "PedalBrake_Aluminum" mesh:338 T[] S[] 
+347 "PedalBrake_label_DetailMetallic" mesh:339 T[] S[] 
+348 "PedalBrake_PlasticBlack" mesh:340 T[] S[] 
+349 "PedalGas_Aluminum" mesh:341 T[] S[] 
+350 "PedalGas_label_DetailMetallic" mesh:342 T[] S[] 
+351 "Pedals_Aluminum" mesh:343 T[] S[] 
+352 "Pedals_label_DetailMetallic_01" mesh:344 T[] S[] 
+353 "Pedals_label_DetailMetallic_02" mesh:345 T[] S[] 
+354 "Pedals_label_Screw" mesh:346 T[] S[] 
+355 "PillarTrim_Alcantara" mesh:347 T[] S[] 
+356 "PillarTrimCustom_CarbonFiber" mesh:348 T[] S[] 
+357 "PillarTrimCustom_label_Detail" mesh:349 T[] S[] 
+358 "PillarTrimCustom_label_Label" mesh:350 T[] S[] 
+359 "PillarTrimCustom_label_Screw" mesh:351 T[] S[] 
+360 "PillarTrimCustom_label_Stitch" mesh:352 T[] S[] 
+361 "PillarTrimCustom_PlasticBlack" mesh:353 T[] S[] 
+362 "PillarTrimCustom_Seatbelt" mesh:354 T[] S[] 
+363 "RearviewMirror_GlassClear" mesh:355 T[] S[] 
+364 "RearviewMirror_Mirror" mesh:356 T[] S[] 
+365 "RearviewMirror_PlasticBlack" mesh:357 T[] S[] 
+366 "RearviewMirrorBase_label_Detail" mesh:358 T[] S[] 
+367 "RearviewMirrorBase_PlasticBlack" mesh:359 T[] S[] 
+368 "SeatBeltL_Chrome" mesh:360 T[] S[] 
+369 "SeatBeltL_PlasticBlack" mesh:361 T[] S[] 
+370 "SeatBeltL_Seatbelt_01" mesh:362 T[] S[] 
+371 "SeatBeltL_Seatbelt_02" mesh:363 T[] S[] 
+372 "SeatBeltL_Seatbelt_Plastic" mesh:364 T[] S[] 
+373 "SeatL_Alcantara" mesh:365 T[] S[] 
+374 "SeatL_label_Detail" mesh:366 T[] S[] 
+375 "SeatL_label_Label" mesh:367 T[] S[] 
+376 "SeatL_label_Stitch" mesh:368 T[] S[] 
+377 "SeatL_Leather_01" mesh:369 T[] S[] 
+378 "SeatL_Leather_02" mesh:370 T[] S[] 
+379 "SeatL_PlasticBlack" mesh:371 T[] S[] 
+380 "SeatLCustom_Alcantara" mesh:372 T[] S[] 
+381 "SeatLCustom_label_Detail_01" mesh:373 T[] S[] 
+382 "SeatLCustom_label_Detail_02" mesh:374 T[] S[] 
+383 "SeatLCustom_label_Label" mesh:375 T[] S[] 
+384 "SeatLCustom_label_Stitch" mesh:376 T[] S[] 
+385 "SeatLCustom_PaintedMetal" mesh:377 T[] S[] 
+386 "SeatR_label_Stitch" mesh:378 T[] S[] 
+387 "SeatRCustom_label_Detail" mesh:379 T[] S[] 
+388 "SteeringColumn_Alcantara" mesh:380 T[] S[] 
+389 "SteeringColumn_BlackHole" mesh:381 T[] S[] 
+390 "SteeringColumn_label_Label" mesh:382 T[] S[] 
+391 "SteeringColumn_PlasticBlack_01" mesh:383 T[] S[] 
+392 "SteeringColumn_PlasticBlack_02" mesh:384 T[] S[] 
+393 "SteeringColumn_PlasticBlack_03" mesh:385 T[] S[] 
+394 "SteeringColumnCustom_label_BlackHole" mesh:386 T[] S[] 
+395 "SteeringColumnCustom_label_Label" mesh:387 T[] S[] 
+396 "SteeringColumnCustom_PlasticBlack_01" mesh:388 T[] S[] 
+397 "SteeringColumnCustom_PlasticBlack_02" mesh:389 T[] S[] 
+398 "SteeringWheel_Badge" mesh:390 T[] S[] 
+399 "SteeringWheel_CarbonFiber" mesh:391 T[] S[] 
+400 "SteeringWheel_Custom" mesh:392 T[] S[] 
+401 "SteeringWheel_label_Label_01" mesh:393 T[] S[] 
+402 "SteeringWheel_label_Label_02" mesh:394 T[] S[] 
+403 "SteeringWheel_label_Label_03" mesh:395 T[] S[] 
+404 "SteeringWheel_label_Label_04" mesh:396 T[] S[] 
+405 "SteeringWheel_label_Stitch_01" mesh:397 T[] S[] 
+406 "SteeringWheel_label_Stitch_02" mesh:398 T[] S[] 
+407 "SteeringWheel_Leather" mesh:399 T[] S[] 
+408 "SteeringWheel_PlasticBlack_01" mesh:400 T[] S[] 
+409 "SteeringWheel_PlasticBlack_02" mesh:401 T[] S[] 
+410 "SteeringWheel_PlasticBlack_03" mesh:402 T[] S[] 
+411 "SteeringWheel_PlasticBlack_04" mesh:403 T[] S[] 
+412 "Visors_Alcantara" mesh:404 T[] S[] 
+413 "Visors_label_Stitch" mesh:405 T[] S[] 
+414 "Visors_PlasticBlack" mesh:406 T[] S[] 
+415 "GRP_Interior" mesh:- T[0,0.09,0] S[] 
+416 "BumperFSideMarkerL_Chrome_01" mesh:407 T[] S[] 
+417 "BumperFSideMarkerL_Chrome_02" mesh:408 T[] S[] 
+418 "BumperFSideMarkerL_PlasticBlack" mesh:409 T[] S[] 
+419 "GlassBumperFSideMarkerL_GlassClear_01" mesh:410 T[] S[] 
+420 "GlassBumperFSideMarkerL_GlassClear_02" mesh:411 T[] S[] 
+421 "GlassLHL_GlassClear_01" mesh:412 T[] S[] 
+422 "GlassLHL_GlassClear_02" mesh:413 T[] S[] 
+423 "GlassRHL_GlassClear_01" mesh:414 T[] S[] 
+424 "GlassRHL_GlassClear_02" mesh:415 T[] S[] 
+425 "HeadlightL_BlackHole" mesh:416 T[] S[] 
+426 "HeadlightL_Chrome_01" mesh:417 T[] S[] 
+427 "HeadlightL_Chrome_02" mesh:418 T[] S[] 
+428 "HeadlightL_Chrome_03" mesh:419 T[] S[] 
+429 "HeadlightL_Emitter" mesh:420 T[] S[] 
+430 "HeadlightL_GlassClear_01" mesh:421 T[] S[] 
+431 "HeadlightL_GlassClear_02" mesh:422 T[] S[] 
+432 "HeadlightL_PlasticBlack_01" mesh:423 T[] S[] 
+433 "HeadlightL_PlasticBlack_02" mesh:424 T[] S[] 
+434 "HeadlightL_Screw" mesh:425 T[] S[] 
+435 "HeadlightR_BlackHole" mesh:426 T[] S[] 
+436 "HeadlightR_Chrome_01" mesh:427 T[] S[] 
+437 "HeadlightR_Chrome_02" mesh:428 T[] S[] 
+438 "HeadlightR_Chrome_03" mesh:429 T[] S[] 
+439 "HeadlightR_Emitter" mesh:430 T[] S[] 
+440 "HeadlightR_GlassClear_01" mesh:431 T[] S[] 
+441 "HeadlightR_GlassClear_02" mesh:432 T[] S[] 
+442 "HeadlightR_PlasticBlack_01" mesh:433 T[] S[] 
+443 "HeadlightR_PlasticBlack_02" mesh:434 T[] S[] 
+444 "HeadlightR_Screw" mesh:435 T[] S[] 
+445 "LensLHL_GlassClear_01" mesh:436 T[] S[] 
+446 "LensLHL_GlassClear_02" mesh:437 T[] S[] 
+447 "LensLHL_GlassClear_03" mesh:438 T[] S[] 
+448 "LensLHL_GlassClear_04" mesh:439 T[] S[] 
+449 "LensLHL_HeadLights" mesh:440 T[] S[] 
+450 "LensRHL_GlassClear_01" mesh:441 T[] S[] 
+451 "LensRHL_GlassClear_02" mesh:442 T[] S[] 
+452 "LensRHL_GlassClear_03" mesh:443 T[] S[] 
+453 "LensRHL_GlassClear_04" mesh:444 T[] S[] 
+454 "LensRHL_HeadLights" mesh:445 T[] S[] 
+455 "GRP_Lights_F" mesh:- T[0,0.09,0] S[] 
+456 "BumperRSideMarkerL_Chrome" mesh:446 T[] S[] 
+457 "BumperRSideMarkerL_GlassClear" mesh:447 T[] S[] 
+458 "BumperRSideMarkerL_PlasticBlack" mesh:448 T[] S[] 
+459 "GlassBumperRSideMarkerL_GlassRed_01" mesh:449 T[] S[] 
+460 "GlassBumperRSideMarkerL_GlassRed_02" mesh:450 T[] S[] 
+461 "GlassBumperRSideMarkerL_GlassRed_03" mesh:451 T[] S[] 
+462 "GlassBumperRSideMarkerL_GlassRed_04" mesh:452 T[] S[] 
+463 "GlassBumperRSideMarkerL_GlassRed_05" mesh:453 T[] S[] 
+464 "GlassCHMSL_GlassRed" mesh:454 T[] S[] 
+465 "GlassLTL_GlassRed" mesh:455 T[] S[] 
+466 "GlassRTL_GlassRed" mesh:456 T[] S[] 
+467 "LensLTL_EmissionRed" mesh:457 T[] S[] 
+468 "LensRTL_EmissionRed" mesh:458 T[] S[] 
+469 "PlatelightUS_GlassClear_01" mesh:459 T[] S[] 
+470 "PlatelightUS_GlassClear_02" mesh:460 T[] S[] 
+471 "TaillightC_Chrome" mesh:461 T[] S[] 
+472 "TaillightC_DetailMetallic" mesh:462 T[] S[] 
+473 "TaillightC_GlassClear" mesh:463 T[] S[] 
+474 "TaillightCBulbs_GlassClear" mesh:464 T[] S[] 
+475 "TaillightCHMSL_GlassClear" mesh:465 T[] S[] 
+476 "TaillightL_BlackHole" mesh:466 T[] S[] 
+477 "TaillightL_Chrome" mesh:467 T[] S[] 
+478 "TaillightL_GlassClear" mesh:468 T[] S[] 
+479 "TaillightL_PlasticBlack_01" mesh:469 T[] S[] 
+480 "TaillightL_PlasticBlack_02" mesh:470 T[] S[] 
+481 "TaillightR_BlackHole" mesh:471 T[] S[] 
+482 "TaillightR_Chrome" mesh:472 T[] S[] 
+483 "TaillightR_GlassClear" mesh:473 T[] S[] 
+484 "TaillightR_PlasticBlack_01" mesh:474 T[] S[] 
+485 "TaillightR_PlasticBlack_02" mesh:475 T[] S[] 
+486 "GRP_Lights_R" mesh:- T[0,0.09,0] S[] 
+487 "Trunk_BlackHole" mesh:476 T[] S[] 
+488 "Trunk_CarbonFiber_01" mesh:477 T[] S[] 
+489 "Trunk_CarbonFiber_02" mesh:478 T[] S[] 
+490 "Trunk_PaintedMetal" mesh:479 T[] S[] 
+491 "Trunk_Screw" mesh:480 T[] S[] 
+492 "TrunkBay_Alcantara" mesh:481 T[] S[] 
+493 "TrunkBay_BlackFrame" mesh:482 T[] S[] 
+494 "TrunkBay_GlassClear_01" mesh:483 T[] S[] 
+495 "TrunkBay_GlassClear_02" mesh:484 T[] S[] 
+496 "TrunkBay_label_Grille" mesh:485 T[] S[] 
+497 "TrunkBay_label_Label_01" mesh:486 T[] S[] 
+498 "TrunkBay_label_Label_02" mesh:487 T[] S[] 
+499 "TrunkBay_label_PlasticBlack" mesh:488 T[] S[] 
+500 "TrunkBay_label_Screw" mesh:489 T[] S[] 
+501 "TrunkBay_PaintedMetal" mesh:490 T[] S[] 
+502 "TrunkBay_PlasticBlack_01" mesh:491 T[] S[] 
+503 "TrunkBay_PlasticBlack_02" mesh:492 T[] S[] 
+504 "TrunkBay_PlasticBlack_03" mesh:493 T[] S[] 
+505 "TrunkBay_PlasticBlack_04" mesh:494 T[] S[] 
+506 "TrunkBay_Rubber" mesh:495 T[] S[] 
+507 "TrunkHoneycomb_Detail" mesh:496 T[] S[] 
+508 "TrunkLiner_CarbonFiber" mesh:497 T[] S[] 
+509 "TrunkLiner_label_Aluminum" mesh:498 T[] S[] 
+510 "TrunkLiner_label_Screw_01" mesh:499 T[] S[] 
+511 "TrunkLiner_label_Screw_02" mesh:500 T[] S[] 
+512 "TrunkLiner_PaintedMetal" mesh:501 T[] S[] 
+513 "TrunkLiner_Rubber" mesh:502 T[] S[] 
+514 "TrunkLiner_Steel" mesh:503 T[] S[] 
+515 "GRP_Trunk" mesh:- T[0,0.09,0] S[] 
+516 "Revuelto_Root" mesh:- T[] S[] 
+--- meshes ( 504 ) ---
+0 "Cylinder_050.004" prims:15
+1 "Cylinder_050.001" prims:15
+2 "Cylinder_050.002" prims:15
+3 "Cylinder_050.003" prims:15
+4 "body_a_LODS0 ID20_carbonfiber.001" prims:1
+5 "body_a_LODS0 ID31_detail_metallic_ch1.001" prims:1
+6 "body_a_LODS0 ID43_detail_metallic_ch1.001" prims:1
+7 "body_a_LODS0 ID26_grille.001" prims:1
+8 "body_label_a_LODS0 ID42_screw.001" prims:1
+9 "body_a_LODS0 ID06_paintedmetal.001" prims:1
+10 "body_a_LODS0 ID02_plastic.001" prims:1
+11 "body_a_LODS0 ID28_plastic.001" prims:1
+12 "body_a_LODS0 ID29_plastic.001" prims:1
+13 "body_a_LODS0 ID08_rubber.001" prims:1
+14 "body_a_LODS0 ID09_undercarriage_ch1.001" prims:1
+15 "bodyGascap_a_LODS0|body_a_LODS0 carPaint.001" prims:1
+16 "bumperF_a_LODS0 ID13_blackframe.001" prims:1
+17 "bumperF_a_LODS0 ID33_grillebackground_ch1.001" prims:1
+18 "bumperF_a_LODS0 ID20_carbonfiber.001" prims:1
+19 "bumperF_a_LODS0 carPaint.003" prims:1
+20 "bumperF_label_a_LODS0 ID34_steel_ch1.001" prims:1
+21 "bumperF_a_LODS0 ID06_plastic.001" prims:1
+22 "bumperF_a_LODS0 ID21_carbonfiber.001" prims:1
+23 "bumperF_a_LODS0 ID28_plastic.003" prims:1
+24 "bumperF_a_LODS0 ID29_plastic.001" prims:1
+25 "bumperF_a_LODS0 ID30_plastic.001" prims:1
+26 "bumperF_a_LODS0 ID32_plastic.001" prims:1
+27 "bumperR_a_LODS0 ID13_blackframe.001" prims:1
+28 "bumperR_a_LODS0 ID20_carbonfiber.001" prims:1
+29 "bumperR_a_LODS0 ID21_carbonfiber.001" prims:1
+30 "bumperR_a_LODS0 carPaint.003" prims:1
+31 "bumperR_label_a_LODS0 ID33_screw.001" prims:1
+32 "bumperR_a_LODS0 ID06_paintedmetal.001" prims:1
+33 "bumperR_a_LODS0 ID29_paintedmetal.001" prims:1
+34 "bumperR_a_LODS0 ID31_plastic.001" prims:1
+35 "bumperR_a_LODS0 ID32_plastic.001" prims:1
+36 "bumperR_a_LODS0 ID08_rubber.001" prims:1
+37 "bumperR_a_LODS0 ID09_undercarriage_ch1.001" prims:1
+38 "bumperRBadge_a_LODS0 ID11_chrome.001" prims:1
+39 "bumperRHoneycomb_a_LODS0 ID27_detail_ch1|bumperrhoneycomb_a.001" prims:1
+40 "doorJambLF_a_LODS ID10_aluminum.001" prims:1
+41 "doorJambLF_a_LODS ID13_blackframe.001" prims:1
+42 "doorJambLF_a_LODS carPaint.001" prims:1
+43 "doorJambLF_label_a_LODS ID49_detail_ch1.001" prims:1
+44 "doorJambLF_label_a_LODS ID40_label_ch1.001" prims:1
+45 "doorJambLF_label_a_LODS ID48_screw_metallic_ch1.001" prims:1
+46 "doorJambLF_a_LODS ID06_paintedmetal.001" prims:1
+47 "doorJambLF_a_LODS ID28_plastic.001" prims:1
+48 "doorJambLF_a_LODS ID08_rubber.001" prims:1
+49 "doorJambLFPistonLower_a_LODS ID06_paintedmetal.001" prims:1
+50 "doorJambLFPistonUpper_a_LODS ID06_paintedmetal.001" prims:1
+51 "doorJambRF_a_LODS ID10_aluminum.001" prims:1
+52 "doorJambRF_a_LODS ID13_blackframe.001" prims:1
+53 "doorJambRF_a_LODS carPaint.001" prims:1
+54 "doorJambRF_label_a_LODS ID49_detail_ch1.001" prims:1
+55 "doorJambRF_label_a_LODS ID48_screw_metallic_ch1.001" prims:1
+56 "doorJambRF_a_LODS ID06_paintedmetal.001" prims:1
+57 "doorJambRF_a_LODS ID28_plastic|doorjambrf_a.001" prims:1
+58 "doorJambRF_a_LODS ID08_rubber.001" prims:1
+59 "doorJambRFPistonLower_a_LODS ID06_paintedmetal.001" prims:1
+60 "doorJambRFPistonUpper_a_LODS ID06_paintedmetal.001" prims:1
+61 "doorLF_a_LODS0 CarbonFiber.001" prims:1
+62 "doorLF_a_LODS0 carPaint.001" prims:1
+63 "doorLF_a_LODS0|mirrorBaseL_a_LODS0 ID30_plastic|mirrorbasel" prims:1
+64 "doorRF_a_LODS0 CarbonFiber.001" prims:1
+65 "doorRF_a_LODS0 carPaint.001" prims:1
+66 "doorRF_a_LODS0|mirrorBaseR_a_LODS0 ID30_plastic|mirrorbasel" prims:1
+67 "doorSill_a_LODS carPaint.001" prims:1
+68 "doorSill_label_a_LODS ID26_grille.001" prims:1
+69 "doorSill_a_LODS ID06_paintedmetal.001" prims:1
+70 "doorSill_a_LODS ID28_plastic.001" prims:1
+71 "doorSill_a_LODS ID30_plastic.001" prims:1
+72 "doorSill_a_LODS ID31_plastic.001" prims:1
+73 "doorSill_a_LODS ID08_rubber.001" prims:1
+74 "fenders_a_LODS0 carPaint.001" prims:1
+75 "fenders_a_LODS0 ID02_plastic.001" prims:1
+76 "mirrorBaseL_a_LODS0 ID14_blackhole|mirrorbasel_a.001" prims:1
+77 "mirrorBaseR_a_LODS0 ID14_blackhole|mirrorbasel_a.001" prims:1
+78 "PlateUS_a_LODS0 US_Plate_base.001" prims:1
+79 "PlateUS_a_LODS0 US_Plate_Shadow [no color].001" prims:1
+80 "vents_a_LODS0 ID10_chrome|vents_a [no color].001" prims:1
+81 "vents_a_LODS0 ID04_detail_ch1|vents_a [no color].001" prims:1
+82 "vents_label_a_LODS0 ID24_screw_metallic_ch1|vents_a [no col" prims:1
+83 "vents_a_LODS0 ID01_plastic|vents_a [no color].001" prims:1
+84 "vents_a_LODS0 ID07_plastic_ch1|vents_a [no color].001" prims:1
+85 "wing_a_LODS0 carPaint.004" prims:1
+86 "wingHinge_a_LODS0 ID04_blackhole.001" prims:1
+87 "wingHinge_a_LODS0 ID03_metailpanit.001" prims:1
+88 "wingHinge_a_LODS0 ID05_screw.001" prims:1
+89 "wingHingeAim_a_LODS0 ID04_blackhole.001" prims:1
+90 "wingHingeAim_a_LODS0 ID03_metailpanit.001" prims:1
+91 "wingHingeAim_a_LODS0 ID05_screw.001" prims:1
+92 "wingHingeAim_a_LODS0 ID02_steel.001" prims:1
+93 "wingMirrorL_a_LODS0 ID14_blackhole.001" prims:1
+94 "wingMirrorL_a_LODS0 ID20_carbonfiber.001" prims:1
+95 "wingMirrorL_a_LODS0 ID40_mirror_left [no color].001" prims:1
+96 "wingMirrorL_a_LODS0 ID28_plastic.001" prims:1
+97 "wingMirrorL_a_LODS0 ID30_plastic.001" prims:1
+98 "wingMirrorR_a_LODS0 ID14_blackhole.001" prims:1
+99 "wingMirrorR_a_LODS0 ID20_carbonfiber.001" prims:1
+100 "wingMirrorR_a_LODS0 ID41_mirror_right [no color].001" prims:1
+101 "wingMirrorR_a_LODS0 ID28_plastic.001" prims:1
+102 "wingMirrorR_a_LODS0 ID30_plastic.001" prims:1
+103 "wingPistonLowerL_a_LODS0 ID02_steel.001" prims:1
+104 "wingPistonLowerR_a_LODS0 ID02_steel.001" prims:1
+105 "wingPistonUpperL_a_LODS0 ID03_metailpanit.001" prims:1
+106 "wingPistonUpperR_a_LODS0 ID03_metailpanit.001" prims:1
+107 "wingStrutL_a_LODS0|wingStrutR_a_LODS0 ID04_blackhole.001" prims:1
+108 "wingStrutL_a_LODS0|wingStrutR_a_LODS0 ID03_metailpanit.001" prims:1
+109 "wingStrutL_a_LODS0|wingStrutR_a_LODS0 ID02_steel.001" prims:1
+110 "wiperArmL_a_LODS0 ID06_MetalPaint.001" prims:1
+111 "wiperArmL_a_LODS0 ID09_Screw.001" prims:1
+112 "wiperArmR_001_a_LODS0 ID06_MetalPaint.001" prims:1
+113 "wiperArmR_002_a_LODS0 ID06_MetalPaint.001" prims:1
+114 "wiperArmR_002_a_LODS0 ID09_Screw.001" prims:1
+115 "wiperBase_a_LODS0 ID06_MetalPaint.001" prims:1
+116 "wiperBladeL_a_LODS0 ID06_MetalPaint.001" prims:1
+117 "wiperBladeL_a_LODS0 ID08_Rubber.001" prims:1
+118 "wiperBladeR_a_LODS0 ID06_MetalPaint.001" prims:1
+119 "wiperBladeR_a_LODS0 ID08_Rubber.001" prims:1
+120 "wiperL_a_LODS0 ID06_MetalPaint.001" prims:1
+121 "wiperR_001_a_LODS0 ID06_MetalPaint.001" prims:1
+122 "wiperR_002_a_LODS0 ID06_MetalPaint.001" prims:1
+123 "engine_a_LODS ID11_aluminum.001" prims:1
+124 "engine_a_LODS ID33_aluminum.001" prims:1
+125 "engine_a_LODS ID71_aluminum.001" prims:1
+126 "engine_a_LODS ID08_anodizedmetal.001" prims:1
+127 "engine_a_LODS ID37_anodizedmetal_ch1.001" prims:1
+128 "engine_a_LODS ID65_anodizedmetal.001" prims:1
+129 "engine_a_LODS ID13_blackhole.001" prims:1
+130 "engine_a_LODS ID20_chrome.001" prims:1
+131 "engine_a_LODS ID35_detail_ch1 [no color].001" prims:1
+132 "engine_a_LODS ID19_ID19_metal_CH1_Custom.001" prims:1
+133 "engine_a_LODS ID40_detail_metallic_ch1.001" prims:1
+134 "engine_a_LODS ID60_detail_metallic_ch1 [no color].001" prims:1
+135 "engine_a_LODS ID81_glass_window_rear.001" prims:1
+136 "engine_a_LODS ID07_paintedmetal.001" prims:1
+137 "engine_a_LODS ID09_paintedmetal.001" prims:1
+138 "engine_a_LODS ID10_metalpowder_ch1.001" prims:1
+139 "engine_a_LODS ID12_paintedmetal.001" prims:1
+140 "engine_a_LODS ID06_plastic.001" prims:1
+141 "engine_a_LODS ID38_plastic_ch1 [no color].001" prims:1
+142 "engine_a_LODS ID39_plastic.001" prims:1
+143 "engine_a_LODS ID42_plastic_ch1 [no color].001" prims:1
+144 "engine_a_LODS ID14_screw_metallic_ch1.001" prims:1
+145 "engine_a_LODS ID29_titanium.001" prims:1
+146 "engineBay_a_LODS ID11_aluminum.001" prims:1
+147 "engineBay_a_LODS ID24_aluminum.001" prims:1
+148 "engineBay_a_LODS ID08_anodizedmetal.001" prims:1
+149 "engineBay_a_LODS ID37_anodizedmetal_ch1.001" prims:1
+150 "engineBay_a_LODS ID45_anodizedmetal.001" prims:1
+151 "engineBay_a_LODS ID75_anodizedmetal.001" prims:1
+152 "engineBay_a_LODS ID13_blackhole.001" prims:1
+153 "engineBay_a_LODS ID62_carbonfiber.001" prims:1
+154 "engineBay_a_LODS carPaint.001" prims:1
+155 "engineBay_a_LODS ID20_chrome.001" prims:1
+156 "engineBay_a_LODS ID34_detail_ch1.001" prims:1
+157 "engineBay_a_LODS ID35_detail_ch1 [no color].001" prims:1
+158 "engineBay_a_LODS ID44_detail_ch1.001" prims:1
+159 "engineBay_a_LODS ID48_detail_ch1.001" prims:1
+160 "engineBay_a_LODS ID59_detail_ch1 [no color].001" prims:1
+161 "engineBay_a_LODS ID19_ID19_metal_CH1_Custom.001" prims:1
+162 "engineBay_a_LODS ID21_detail_metallic_ch1.001" prims:1
+163 "engineBay_a_LODS ID22_detail_metallic_ch1.001" prims:1
+164 "engineBay_a_LODS ID40_detail_metallic_ch1.001" prims:1
+165 "engineBay_a_LODS ID66_detail_metallic_ch1.001" prims:1
+166 "engineBay_a_LODS ID68_detail_metallic_ch1.001" prims:1
+167 "engineBay_a_LODS ID73_detail_metallic_ch1.001" prims:1
+168 "engineBay_a_LODS ID74_detail_metallic_ch1.001" prims:1
+169 "engineBay_label_a_LODS ID79_label_ch1.001" prims:1
+170 "engineBay_label_a_LODS ID80_label_metallic_ch1 [no color].001" prims:1
+171 "engineBay_label_a_LODS ID32_ID32_plastic_CH1_Custom_diffuse" prims:1
+172 "engineBay_label_a_LODS ID61_screw_metallic_ch1.001" prims:1
+173 "engineBay_a_LODS ID12_paintedmetal.001" prims:1
+174 "engineBay_a_LODS ID30_paintedmetal.001" prims:1
+175 "engineBay_a_LODS ID06_plastic.001" prims:1
+176 "engineBay_a_LODS ID18_plastic.001" prims:1
+177 "engineBay_a_LODS ID28_plastic.001" prims:1
+178 "engineBay_a_LODS ID31_ID31_plastic_CH1_Custom.001" prims:1
+179 "engineBay_a_LODS ID39_plastic.001" prims:1
+180 "engineBay_a_LODS ID42_plastic_ch1 [no color].001" prims:1
+181 "engineBay_a_LODS ID43_fluid_container_ch1 [no color].001" prims:1
+182 "engineBay_a_LODS ID47_plastic.001" prims:1
+183 "engineBay_a_LODS ID49_plastic.001" prims:1
+184 "engineBay_a_LODS ID52_plastic.001" prims:1
+185 "engineBay_a_LODS ID57_plastic.001" prims:1
+186 "engineBay_a_LODS ID58_plastic.001" prims:1
+187 "engineBay_a_LODS ID63_plastic.001" prims:1
+188 "engineBay_a_LODS ID69_plastic.001" prims:1
+189 "engineBay_a_LODS ID53_screw_metallic_ch1.001" prims:1
+190 "engineBay_a_LODS|engineBay_label_a_LODS ID14_screw_metallic" prims:1
+191 "engineBay_a_LODS ID41_titanium.001" prims:1
+192 "exhaustL_a_LODS0|exhaustR_a_LODS0 ID14_blackhole [no color].001" prims:1
+193 "exhaustL_a_LODS0|exhaustR_a_LODS0 ID11_detail_metal.001" prims:1
+194 "exhaustL_a_LODS0|exhaustR_a_LODS0 ID10_heat_treated_2.001" prims:1
+195 "exhaustL_a_LODS0|exhaustR_a_LODS0 ID12_heat_treated.001" prims:1
+196 "glassCTL_a_LODS0 gls_clear.001" prims:1
+197 "glassF_a_LODS0 BlackFrame.001" prims:1
+198 "glassF_a_LODS0 Detail_Metallic_CH1_ID40.001" prims:1
+199 "glassF_a_LODS0 Glass_Windshield.001" prims:1
+200 "glassF_a_LODS0 ID50_plastic.001" prims:1
+201 "glassF_a_LODS0 Screw_CH1.001" prims:1
+202 "glassF_a_LODS0 Screw_Metallic_CH1_ID49.001" prims:1
+203 "glassLF_a_LODS0 BlackFrame.001" prims:1
+204 "glassLF_a_LODS0 Glass_Window_Side.001" prims:1
+205 "glassLM_a_LODS0 Glass_Window_Side.001" prims:1
+206 "glassLR_a_LODS0 BlackFrame.001" prims:1
+207 "glassLR_a_LODS0 Glass_Window_Side.001" prims:1
+208 "glassR_a_LODS0 BlackFrame.001" prims:1
+209 "glassR_a_LODS0 Glass_Window_Side.001" prims:1
+210 "glassRF_a_LODS0 BlackFrame.001" prims:1
+211 "glassRF_a_LODS0 Glass_Window_Side.001" prims:1
+212 "glassRM_a_LODS0 Glass_Window_Side.001" prims:1
+213 "glassRR_a_LODS0 BlackFrame.001" prims:1
+214 "glassRR_a_LODS0 Glass_Window_Side.001" prims:1
+215 "hood_a_LODS0 carPaint.001" prims:1
+216 "hood_a_LODS0 ID30_plastic.001" prims:1
+217 "hoodBadge_a_LODS0 Badge.001" prims:1
+218 "hoodLiner_a_LODS CarbonFiber.001" prims:1
+219 "hoodLiner_a_LODS Chrome.001" prims:1
+220 "hoodLiner_a_LODS metal_RGH_001.001" prims:1
+221 "hoodLiner_a_LODS GunMetal_ID6.001" prims:1
+222 "hoodLiner_label_a_LODS Detail_Metallic_CH1_ID40.001" prims:1
+223 "hoodLiner_a_LODS Plastic_ID28.001" prims:1
+224 "hoodLiner_a_LODS Rubber.001" prims:1
+225 "hoodLiner_a_LODS Steel.001" prims:1
+226 "hoodLinerPistonLowerL_a_LODS GunMetal_ID6.001" prims:1
+227 "hoodLinerPistonLowerL_a_LODS Plastic_ID28.001" prims:1
+228 "hoodLinerPistonUpperL_a_LODS GunMetal_ID6.001" prims:1
+229 "hoodLinerPistonUpperL_a_LODS Plastic_ID28.001" prims:1
+230 "hoodLinerStrutLowerAimL_a_LODS GunMetal_ID6.001" prims:1
+231 "hoodLinerStrutLowerL_a_LODS GunMetal_ID6.001" prims:1
+232 "hoodLinerStrutUpperL_a_LODS GunMetal_ID6.001" prims:1
+233 "centerConsoleBezels_a_LODS0 ID13_glass_limotint [no color].001" prims:1
+234 "centerConsoleBezels_label_a_LODS0 ID34_label_ch1 [no color].001" prims:1
+235 "centerConsoleBezels_a_LODS0 ID07_plastic [no color].001" prims:1
+236 "centerConsoleBezels_a_LODS0 ID09_plastic [no color].001" prims:1
+237 "centerConsoleBezels_a_LODS0|centerConsoleBezels_label_a_LOD" prims:1
+238 "centerConsoleBezels_a_LODS0|centerConsoleStructure_a_LODS0 .002" prims:1
+239 "centerConsoleStructure_a_LODS0 ID08_alcantara|centerconsole" prims:1
+240 "centerConsoleStructure_a_LODS0 ID37_Alcantara|centerconsole" prims:1
+241 "centerConsoleStructure_a_LODS0 ID15_carbonfiber|centerconso" prims:1
+242 "centerConsoleStructure_label_a_LODS0 ID03_stitch_ch1|center" prims:1
+243 "centerConsoleStructure_a_LODS0 ID02_leather|centerconsolest" prims:1
+244 "centerConsoleStructure_a_LODS0 ID04_plastic|centerconsolest" prims:1
+245 "centerConsoleStructureCustom_label_a_LODS ID30_label_ch1 [n" prims:1
+246 "centerConsoleStructureCustom_label_a_LODS ID36_Label_CH1 [n" prims:1
+247 "centerConsoleStructureCustom_label_a_LODS ID06_stitch_ch1 [" prims:1
+248 "centerConsoleStructureCustom_a_LODS ID01_plastic [no color].001" prims:1
+249 "centerStackStructure_a_LODS0 ID15_carbonfiber [no color].001" prims:1
+250 "centerStackStructure_a_LODS0 ID10_chrome [no color].001" prims:1
+251 "centerStackStructure_a_LODS0 ID04_detail_ch1 [no color].001" prims:1
+252 "centerStackStructure_label_a_LODS0 ID23_mfr_badge_ch1.001" prims:1
+253 "centerStackStructure_label_a_LODS0 ID24_screw_metallic_ch1 " prims:1
+254 "centerStackStructure_a_LODS0 ID05_plastic [no color].001" prims:1
+255 "dashPad_a_LODS0 ID08_alcantara [no color].001" prims:1
+256 "dashPad_a_LODS0 ID15_carbonfiber [no color].001" prims:1
+257 "dashPad_a_LODS0 ID13_glass_limotint.001" prims:1
+258 "dashPad_label_a_LODS0 ID31_label_ch1 [no color].001" prims:1
+259 "dashPad_label_a_LODS0 ID03_stitch_ch1 [no color].001" prims:1
+260 "dashPad_a_LODS0 ID02_leather [no color].001" prims:1
+261 "dashPad_a_LODS0 ID27_digitalscreen [no color].001" prims:1
+262 "dashStructure_a_LODS0 ID08_alcantara [no color].001" prims:1
+263 "dashStructure_label_a_LODS0 ID30_detail_metallic_ch1 [no co" prims:1
+264 "dashStructure_label_a_LODS0 ID06_stitch_ch1 [no color].001" prims:1
+265 "dashStructureBezels_label_a_LODS0 ID32_blackhole|dashstruct" prims:1
+266 "dashStructureBezels_label_a_LODS0 ID36_Detail_CH1|dashstruc" prims:1
+267 "dashStructureBezels_label_a_LODS0|gaugePod_label_a_LODS0 ID" prims:1
+268 "dashStructureBezels_a_LODS0|dashStructureBezels_label_a_LOD" prims:1
+269 "doorCardLF_a_LODS0 ID08_alcantara [no color].001" prims:1
+270 "doorCardLF_a_LODS0 ID32_blackhole.001" prims:1
+271 "doorCardLF_a_LODS0 ID04_detail_ch1 [no color].001" prims:1
+272 "doorCardLF_a_LODS0 ID13_glass_limotint [no color].001" prims:1
+273 "doorCardLF_a_LODS0 ID07_gunmetal [no color].001" prims:1
+274 "doorCardLF_label_a_LODS0 ID29_detail_ch1 [no color].001" prims:1
+275 "doorCardLF_label_a_LODS0 ID36_Detail_CH1 [no color].001" prims:1
+276 "doorCardLF_label_a_LODS0 ID31_label_ch1 [no color].001" prims:1
+277 "doorCardLF_label_a_LODS0 ID34_label_ch1 [no color].001" prims:1
+278 "doorCardLF_label_a_LODS0 ID03_stitch_ch1 [no color].001" prims:1
+279 "doorCardLF_label_a_LODS0 ID28_stitch_ch1 [no color].001" prims:1
+280 "doorCardLF_a_LODS0 ID02_leather [no color].001" prims:1
+281 "doorCardLF_a_LODS0 ID05_leather [no color].001" prims:1
+282 "doorCardLF_a_LODS0 ID01_plastic [no color].001" prims:1
+283 "doorCardLF_a_LODS0 ID37_Screw_Metallic_CH1 [no color].001" prims:1
+284 "doorCardLFCustom_a_LODS ID08_alcantara [no color].001" prims:1
+285 "doorCardLFCustom_a_LODS ID35_Glass_Detailed_CH1 [no color].001" prims:1
+286 "doorCardLFCustom_label_a_LODS ID30_label_ch1 [no color].001" prims:1
+287 "doorCardLFCustom_label_a_LODS ID34_label_ch1 [no color].001" prims:1
+288 "doorCardLFCustom_a_LODS ID01_plastic [no color].001" prims:1
+289 "doorCardLFCustom_a_LODS ID09_plastic_ch1 [no color].001" prims:1
+290 "doorCardLFCustom_a_LODS|doorCardLFCustom_label_a_LODS ID32_" prims:1
+291 "doorCardRF_a_LODS0 ID08_alcantara [no color].001" prims:1
+292 "doorCardRF_a_LODS0 ID32_blackhole.001" prims:1
+293 "doorCardRF_a_LODS0 ID13_glass_limotint [no color].001" prims:1
+294 "doorCardRF_a_LODS0 ID07_gunmetal [no color].001" prims:1
+295 "doorCardRF_label_a_LODS0 ID31_label_ch1 [no color].001" prims:1
+296 "doorCardRF_label_a_LODS0 ID34_label_ch1 [no color].001" prims:1
+297 "doorCardRF_label_a_LODS0 ID03_stitch_ch1 [no color].001" prims:1
+298 "doorCardRF_label_a_LODS0 ID28_stitch_ch1 [no color].001" prims:1
+299 "doorCardRF_a_LODS0 ID02_leather [no color].001" prims:1
+300 "doorCardRF_a_LODS0 ID05_leather [no color].001" prims:1
+301 "doorCardRF_a_LODS0 ID01_plastic [no color].001" prims:1
+302 "doorCardRF_a_LODS0 ID37_Screw_Metallic_CH1 [no color].001" prims:1
+303 "doorCardRFCustom_a_LODS ID08_alcantara [no color].001" prims:1
+304 "doorCardRFCustom_a_LODS ID32_blackhole.001" prims:1
+305 "doorCardRFCustom_a_LODS ID35_Glass_Detailed_CH1 [no color].001" prims:1
+306 "doorCardRFCustom_a_LODS ID09_plastic_ch1 [no color].001" prims:1
+307 "floor_a_LODS0 ID02_alcantara [no color].001" prims:1
+308 "floor_a_LODS0 ID08_carpet_ch1 [no color].001" prims:1
+309 "floor_a_LODS0 ID01_plastic [no color].001" prims:1
+310 "floor_a_LODS0|pedals_a_LODS0|pedals_label_a_LODS0 ID01_plas" prims:1
+311 "floorCustom_a_LODS ID02_alcantara [no color].001" prims:1
+312 "floorCustom_a_LODS ID04_detail_ch2 [no color].001" prims:1
+313 "floorCustom_label_a_LODS ID32_blackhole.001" prims:1
+314 "floorCustom_label_a_LODS ID03_stitch_ch1 [no color].001" prims:1
+315 "floorCustom_a_LODS ID05_leather [no color].001" prims:1
+316 "gaugeCluster_a_LODS0 ID27_digitalscreen [no color].001" prims:1
+317 "gaugePod_a_LODS0 ID15_carbonfiber|gaugepod_a [no color].001" prims:1
+318 "gaugePod_label_a_LODS0 ID24_screw_metallic_ch1|gaugepod_a [" prims:1
+319 "gaugePod_a_LODS0 ID05_plastic|gaugepod_a [no color].001" prims:1
+320 "nav_a_LODS0 ID13_glass_limotint.001" prims:1
+321 "nav_label_a_LODS0 ID28_digitalscreen [no color].001" prims:1
+322 "overheadConsole_a_LODS0 ID37_detail_ch1 [no color].001" prims:1
+323 "overheadConsole_a_LODS0 ID04_glass [no color].001" prims:1
+324 "overheadConsole_a_LODS0 ID13_glass.001" prims:1
+325 "overheadConsole_label_a_LODS0 ID29_detail_ch1 [no color].001" prims:1
+326 "overheadConsole_label_a_LODS0 ID30_detail_ch1 [no color].001" prims:1
+327 "overheadConsole_label_a_LODS0 ID31_detail_ch1 [no color].001" prims:1
+328 "overheadConsole_label_a_LODS0 ID03_label_ch1 [no color].001" prims:1
+329 "overheadConsole_label_a_LODS0 ID34_label_ch1 [no color].001" prims:1
+330 "overheadConsole_label_a_LODS0|rearviewMirrorBase_label_a_LO" prims:1
+331 "overheadConsole_a_LODS0|visors_a_LODS0 ID01_plastic [no col" prims:1
+332 "paddleShifterL_a_LODS0 ID15_carbonfiber [no color].001" prims:1
+333 "paddleShifterL_label_a_LODS0 ID34_label_ch1 [no color].001" prims:1
+334 "paddleShifterL_a_LODS0 ID01_plastic [no color].001" prims:1
+335 "paddleShifterR_a_LODS0 ID15_carbonfiber [no color].001" prims:1
+336 "paddleShifterR_label_a_LODS0 ID34_label_ch1 [no color].001" prims:1
+337 "paddleShifterR_a_LODS0 ID01_plastic [no color].001" prims:1
+338 "pedalBrake_a_LODS0 ID10_aluminum|pedals_a [no color].001" prims:1
+339 "pedalBrake_label_a_LODS0 ID28_detail_metallic_ch1|pedals_a " prims:1
+340 "pedalBrake_a_LODS0 ID01_plastic|pedals_a [no color].001" prims:1
+341 "pedalGas_a_LODS0 ID10_aluminum|pedals_a [no color].001" prims:1
+342 "pedalGas_label_a_LODS0 ID28_detail_metallic_ch1|pedals_a [n" prims:1
+343 "pedals_a_LODS0 ID10_aluminum|pedals_a [no color].001" prims:1
+344 "pedals_label_a_LODS0 ID28_detail_metallic_ch1|pedals_a [no " prims:1
+345 "pedals_label_a_LODS0 ID30_detail_metallic_ch1|pedals_a [no " prims:1
+346 "pedals_label_a_LODS0 ID29_screw_metallic_ch1|pedals_a [no c" prims:1
+347 "pillarTrim_a_LODS0 ID04_alcantara [no color].001" prims:1
+348 "pillarTrimCustom_a_LODS ID15_carbonfiber [no color].001" prims:1
+349 "pillarTrimCustom_label_a_LODS ID30_detail_ch1 [no color].001" prims:1
+350 "pillarTrimCustom_label_a_LODS ID33_label_ch1 [no color].001" prims:1
+351 "pillarTrimCustom_label_a_LODS ID31_screw_metallic_ch1 [no c" prims:1
+352 "pillarTrimCustom_label_a_LODS ID03_stitch_ch1 [no color].001" prims:1
+353 "pillarTrimCustom_a_LODS ID01_plastic [no color].001" prims:1
+354 "pillarTrimCustom_a_LODS ID05_nylon [no color].001" prims:1
+355 "rearviewMirror_a_LODS0 ID04_glass [no color].001" prims:1
+356 "rearviewMirror_a_LODS0 ID20_mirror_center|rearviewmirror_a " prims:1
+357 "rearviewMirror_a_LODS0 ID01_plastic [no color].001" prims:1
+358 "rearviewMirrorBase_label_a_LODS0 ID31_detail_ch1|rearviewmi" prims:1
+359 "rearviewMirrorBase_a_LODS ID01_plastic [no color].001" prims:1
+360 "seatBeltL_a_LODS|seatBeltR_a_LODS ID10_chrome [no color].001" prims:1
+361 "seatBeltL_a_LODS|seatBeltR_a_LODS ID09_plastic [no color].001" prims:1
+362 "seatBeltL_a_LODS|seatBeltR_a_LODS ID08_nylon [no color].001" prims:1
+363 "seatBeltL_a_LODS|seatBeltR_a_LODS|seatLCustom_a_LODS|seatRC.002" prims:1
+364 "seatBeltL_a_LODS|seatBeltR_a_LODS|seatLCustom_a_LODS|seatRC.001" prims:1
+365 "seatL_a_LODS0|seatR_a_LODS0 ID02_alcantara [no color].001" prims:1
+366 "seatL_label_a_LODS0 ID29_detail_ch1 [no color].001" prims:1
+367 "seatL_label_a_LODS0|seatR_label_a_LODS0 ID30_label_ch1.001" prims:1
+368 "seatL_label_a_LODS0 ID28_stitch_ch1 [no color].001" prims:1
+369 "seatL_a_LODS0|seatR_a_LODS0 ID04_leather [no color].001" prims:1
+370 "seatL_a_LODS0|seatR_a_LODS0 ID05_leather [no color].001" prims:1
+371 "seatL_a_LODS0|seatR_a_LODS0 ID01_plastic [no color].001" prims:1
+372 "seatLCustom_a_LODS|seatRCustom_a_LODS ID02_alcantara|seatl_" prims:1
+373 "seatLCustom_label_a_LODS ID29_detail_ch1|seatl_a [no color].001" prims:1
+374 "seatLCustom_label_a_LODS|seatRCustom_label_a_LODS ID31_deta" prims:1
+375 "seatLCustom_label_a_LODS|seatRCustom_label_a_LODS ID33_labe" prims:1
+376 "seatLCustom_label_a_LODS|seatRCustom_label_a_LODS ID03_stit" prims:1
+377 "seatLCustom_a_LODS|seatRCustom_a_LODS ID12_paintedmetal|sea" prims:1
+378 "seatR_label_a_LODS0 ID28_stitch_ch1|seatr_a [no color].001" prims:1
+379 "seatRCustom_label_a_LODS ID29_detail_ch1|seatr_a [no color].001" prims:1
+380 "steeringColumn_a_LODS0 ID08_alcantara|steeringcolumn_a [no " prims:1
+381 "steeringColumn_a_LODS0|vents_a_LODS0 ID32_blackhole|steerin" prims:1
+382 "steeringColumn_label_a_LODS0|vents_label_a_LODS0 ID34_label" prims:1
+383 "steeringColumn_a_LODS0 ID01_plastic|steeringcolumn_a [no co.002" prims:1
+384 "steeringColumn_a_LODS0 ID04_plastic|steeringcolumn_a [no co" prims:1
+385 "steeringColumn_a_LODS0 ID10_plastic|steeringcolumn_a [no co" prims:1
+386 "steeringColumnCustom_label_a_LODS ID32_blackhole.001" prims:1
+387 "steeringColumnCustom_label_a_LODS ID31_label_ch1 [no color].001" prims:1
+388 "steeringColumnCustom_a_LODS ID01_plastic [no color].001" prims:1
+389 "steeringColumnCustom_a_LODS ID04_plastic [no color].001" prims:1
+390 "steeringWheel_a_LODS0 ID12_mfr_badge_ch1.001" prims:1
+391 "steeringWheel_a_LODS0 ID15_carbonfiber [no color].001" prims:1
+392 "steeringWheel_a_LODS0 ID07_leather [no color].001" prims:1
+393 "steeringWheel_label_a_LODS0 ID29_label_ch1 [no color].001" prims:1
+394 "steeringWheel_label_a_LODS0 ID30_label_ch1 [no color].001" prims:1
+395 "steeringWheel_label_a_LODS0 ID31_label_ch1 [no color].001" prims:1
+396 "steeringWheel_label_a_LODS0 ID34_label_ch1 [no color].001" prims:1
+397 "steeringWheel_label_a_LODS0 ID03_stitch_ch1 [no color].001" prims:1
+398 "steeringWheel_label_a_LODS0 ID06_stitch_ch1 [no color].001" prims:1
+399 "steeringWheel_a_LODS0 ID09_leather [no color].001" prims:1
+400 "steeringWheel_a_LODS0 ID01_plastic [no color].001" prims:1
+401 "steeringWheel_a_LODS0 ID04_plastic [no color].001" prims:1
+402 "steeringWheel_a_LODS0 ID05_leather [no color].001" prims:1
+403 "steeringWheel_a_LODS0 ID11_plastic [no color].001" prims:1
+404 "visors_a_LODS0 ID08_alcantara|visors_a [no color].001" prims:1
+405 "visors_label_a_LODS0 ID09_stitch_ch1|visors_a [no color].001" prims:1
+406 "visors_a_LODS0 ID06_plastic|visors_a [no color].001" prims:1
+407 "bumperFSideMarkerL_a_LODS0|bumperFSideMarkerR_a_LODS0 chrom" prims:1
+408 "bumperFSideMarkerL_a_LODS0|bumperFSideMarkerR_a_LODS0 chrom.001" prims:1
+409 "bumperFSideMarkerL_a_LODS0|bumperFSideMarkerR_a_LODS0 plast" prims:1
+410 "glassBumperFSideMarkerL_a_LODS0|glassBumperFSideMarkerR_a_L.001" prims:1
+411 "glassBumperFSideMarkerL_a_LODS0|glassBumperFSideMarkerR_a_L.002" prims:1
+412 "glassLHL_a_LODS0 gls_clear.003" prims:1
+413 "glassLHL_a_LODS0 gls_colored.001" prims:1
+414 "glassRHL_a_LODS0 gls_clear.003" prims:1
+415 "glassRHL_a_LODS0 gls_colored.001" prims:1
+416 "headlightL_a_LODS0 backfacingGeo.001" prims:1
+417 "headlightL_a_LODS0 chrome.001" prims:1
+418 "headlightL_a_LODS0 chrome_001.001" prims:1
+419 "headlightL_a_LODS0 chrome_002.001" prims:1
+420 "headlightL_a_LODS0 ID67_EmitterHD [no color].001" prims:1
+421 "headlightL_a_LODS0 lights_smooth_CH1 [no color].001" prims:1
+422 "headlightL_a_LODS0 lights_smooth_CH1_001 [no color].001" prims:1
+423 "headlightL_a_LODS0 plastic_mgl.001" prims:1
+424 "headlightL_a_LODS0 plastic_smooth.001" prims:1
+425 "headlightL_a_LODS0 screw_001 [no color].001" prims:1
+426 "headlightR_a_LODS0 backfacingGeo.001" prims:1
+427 "headlightR_a_LODS0 chrome.001" prims:1
+428 "headlightR_a_LODS0 chrome_001.001" prims:1
+429 "headlightR_a_LODS0 chrome_002.001" prims:1
+430 "headlightR_a_LODS0 ID67_EmitterHD [no color].001" prims:1
+431 "headlightR_a_LODS0 lights_smooth_CH1 [no color].001" prims:1
+432 "headlightR_a_LODS0 lights_smooth_CH1_001 [no color].001" prims:1
+433 "headlightR_a_LODS0 plastic_mgl.001" prims:1
+434 "headlightR_a_LODS0 plastic_smooth.001" prims:1
+435 "headlightR_a_LODS0 screw_001 [no color].001" prims:1
+436 "lensLHL_a_LODS0 gls_clear.001" prims:1
+437 "lensLHL_a_LODS0 gls_ML_CH1_Custom_001.001" prims:1
+438 "lensLHL_a_LODS0 gls_ML_CH1_Custom_DRL [no color].001" prims:1
+439 "lensLHL_a_LODS0 gls_ML_CH1_Custom_Null.001" prims:1
+440 "lensLHL_a_LODS0 gls_ML_CH1_Custom [no color].001" prims:1
+441 "lensRHL_a_LODS0 gls_clear.001" prims:1
+442 "lensRHL_a_LODS0 gls_ML_CH1_Custom_001.001" prims:1
+443 "lensRHL_a_LODS0 gls_ML_CH1_Custom_DRL [no color].001" prims:1
+444 "lensRHL_a_LODS0 gls_ML_CH1_Custom_Null.001" prims:1
+445 "lensRHL_a_LODS0 gls_ML_CH1_Custom [no color].001" prims:1
+446 "bumperRSideMarkerL_a_LODS0|bumperRSideMarkerR_a_LODS0 chrom" prims:1
+447 "bumperRSideMarkerL_a_LODS0|bumperRSideMarkerR_a_LODS0 light" prims:1
+448 "bumperRSideMarkerL_a_LODS0|bumperRSideMarkerR_a_LODS0 plast" prims:1
+449 "glassBumperRSideMarkerL_a_LODS0|glassBumperRSideMarkerR_a_L.006" prims:1
+450 "glassBumperRSideMarkerL_a_LODS0|glassBumperRSideMarkerR_a_L.007" prims:1
+451 "glassBumperRSideMarkerL_a_LODS0|glassBumperRSideMarkerR_a_L.008" prims:1
+452 "glassBumperRSideMarkerL_a_LODS0|glassBumperRSideMarkerR_a_L.009" prims:1
+453 "glassBumperRSideMarkerL_a_LODS0|glassBumperRSideMarkerR_a_L.010" prims:1
+454 "glassCHMSL_a_LODS0 gls_colored.001" prims:1
+455 "glassLTL_a_LODS0 gls_colored.001" prims:1
+456 "glassRTL_a_LODS0 gls_colored.001" prims:1
+457 "lensLTL_a_LODS0 gls_ML_CH1_Custom.001" prims:1
+458 "lensRTL_a_LODS0 gls_ML_CH1_Custom.001" prims:1
+459 "PlatelightUS_a_LODS0 gls_clear.001" prims:1
+460 "PlatelightUS_a_LODS0 lights_smooth_CH1 [no color].001" prims:1
+461 "taillightC_a_LODS0 chrome [no color].001" prims:1
+462 "taillightC_a_LODS0 metal_satin [no color].001" prims:1
+463 "taillightC_a_LODS0 lights_smooth_CH1 [no color].001" prims:1
+464 "taillightCBulbs_a_LODS0 gls_lightbulb|taillightcbulbs_a.001" prims:1
+465 "taillightCHMSL_a_LODS0 lights_smooth_CH1 [no color].003" prims:1
+466 "taillightL_a_LODS0 backfacingGeo.001" prims:1
+467 "taillightL_a_LODS0 chrome.001" prims:1
+468 "taillightL_a_LODS0 lights_smooth_CH1.001" prims:1
+469 "taillightL_a_LODS0 plastic_mgl.001" prims:1
+470 "taillightL_a_LODS0 plastic_smooth.001" prims:1
+471 "taillightR_a_LODS0 backfacingGeo.001" prims:1
+472 "taillightR_a_LODS0 chrome.001" prims:1
+473 "taillightR_a_LODS0 lights_smooth_CH1.001" prims:1
+474 "taillightR_a_LODS0 plastic_mgl.001" prims:1
+475 "taillightR_a_LODS0 plastic_smooth.001" prims:1
+476 "trunk_a_LODS0 ID14_blackhole.001" prims:1
+477 "trunk_a_LODS0 ID20_carbonfiber.001" prims:1
+478 "trunk_a_LODS0 ID21_carbonfiber.001" prims:1
+479 "trunk_a_LODS0 ID06_paintedmetal.001" prims:1
+480 "trunk_a_LODS0 ID48_screw_ch1.001" prims:1
+481 "trunkBay_a_LODS ID31_alcantara [no color].001" prims:1
+482 "trunkBay_a_LODS|trunkBay_label_a_LODS ID13_blackframe.001" prims:1
+483 "trunkBay_a_LODS ID55_glass_detailed_ch1.001" prims:1
+484 "trunkBay_a_LODS ID56_glass_detailed_ch1.001" prims:1
+485 "trunkBay_label_a_LODS ID26_grille.001" prims:1
+486 "trunkBay_label_a_LODS ID40_label_ch1.001" prims:1
+487 "trunkBay_label_a_LODS ID41_label_ch1.001" prims:1
+488 "trunkBay_label_a_LODS ID33_plastic_ch1.001" prims:1
+489 "trunkBay_label_a_LODS ID48_screw_ch1.001" prims:1
+490 "trunkBay_a_LODS ID06_paintedmetal.001" prims:1
+491 "trunkBay_a_LODS ID29_plastic.001" prims:1
+492 "trunkBay_a_LODS ID30_plastic.001" prims:1
+493 "trunkBay_a_LODS ID32_plastic.001" prims:1
+494 "trunkBay_a_LODS|trunkBay_label_a_LODS ID28_plastic.001" prims:1
+495 "trunkBay_a_LODS ID08_rubber.001" prims:1
+496 "trunkHoneycomb_a_LODS0 ID27_detail_ch1|trunkhoneycomb_a.001" prims:1
+497 "trunkLiner_a_LODS ID20_carbonfiber.001" prims:1
+498 "trunkLiner_label_a_LODS ID31_aluminum.001" prims:1
+499 "trunkLiner_label_a_LODS ID48_screw_metallic_ch1.001" prims:1
+500 "trunkLiner_label_a_LODS ID49_screw_ch1.001" prims:1
+501 "trunkLiner_a_LODS ID06_paintedmetal.001" prims:1
+502 "trunkLiner_a_LODS ID08_rubber.001" prims:1
+503 "trunkLiner_a_LODS ID10_steel.001" prims:1
+--- materials ( 50 ) ---
+0 "Wheel.001"
+1 "M_Steel"
+2 "M_RotorEdge"
+3 "M_DarkMetal"
+4 "M_PaintedMetal"
+5 "M_WheelRim"
+6 "M_Detail"
+7 "M_GunMetal"
+8 "M_Caliper"
+9 "M_Rubber"
+10 "M_Screw"
+11 "M_BrakeRotor"
+12 "M_PlasticBlack"
+13 "M_Badge.001"
+14 "M_Label.001"
+15 "M_Label"
+16 "M_CarbonFiber"
+17 "M_DetailMetallic"
+18 "M_Grille"
+19 "M_Undercarriage"
+20 "car_paint_v3_03"
+21 "M_BlackFrame"
+22 "M_BlackHole"
+23 "M_CarbonFiber.001"
+24 "M_Chrome"
+25 "M_Aluminum"
+26 "M_CarPaint"
+27 "M_Label"
+28 "M_PlateBase"
+29 "M_PlateShadow"
+30 "M_Mirror"
+31 "M_Anodized"
+32 "M_GlassClear"
+33 "M_Titanium"
+34 "M_HeatTreated"
+35 "M_GlassSide"
+36 "M_Badge"
+37 "M_GlassDark"
+38 "M_Alcantara"
+39 "M_Stitch"
+40 "M_Leather"
+41 "M_Screen"
+42 "M_Carpet"
+43 "M_Seatbelt"
+44 "M_Seatbelt_Plastic"
+45 "Material"
+46 "M_Emitter"
+47 "HeadLights"
+48 "M_GlassRed"
+49 "Emission Red"
+--- animations ( 0 ) ---
+--- textures/images ( 29 ) ---
+0 "tire_Normal.png" image/png
+1 "tire_BaseColor.png" image/png
+2 "ptn_grillsquare_010_nrml" image/png
+3 "ptn_grillsquare_010_opac" image/png
+4 "rotor_edge_001_nrml" image/png
+5 "rotor_edge_001_glos" image/png
+6 "brake_rotor_brushed_steel_rotor_irregulardrilled_nrml" image/png
+7 "brake_rotor_brushed_steel_rotor_irregulardrilled_glos" image/png
+8 "lam_badge_001_nrml" image/png
+9 "lam_badge_001_nrml" image/png
+10 "lam_badge_001_glos" image/png
+11 "lam_carbonceramic_001_opac" image/png
+12 "lamborghini_005_nrml" image/png
+13 "lamborghini_005_diff-lamborghini_005_nrml" image/png
+14 "ridges_002c_nrml" image/png
+15 "ptn_grillhexagon_001_nrml" image/png
+16 "ptn_grillhexagon_001_opac" image/png
+17 "undercarriage_001_nrml" image/png
+18 "undercarriage_001_diff" image/png
+19 "undercarriage_001_glos" image/png
+20 "plate_us1_shadow_mask" image/png
+21 "steel_heat_treated_brushed_2_reflectiontint" image/png
+22 "suede_normal_nrml" image/png
+23 "stitch_033_nrml" image/png
+24 "stitch_033_diff-stitch_033_opac" image/png
+25 "org_grain_004_nrml" image/png
+26 "fabric_028_nrml" image/png
+27 "seatbelt_001_nrml" image/png
+28 "flatcolor_red" image/png
+--- scene graph (roots) ---
+scene "Scene" roots: [516]
+--- raw position bounds (pre-node-transform, min) ---
+-1.14, -0.34, -2.37   max: 1.14, 1.04, 2.58
+    size: 2.27 x 1.38 x 4.95

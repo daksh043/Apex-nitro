@@ -1,0 +1,85 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>MK5 3D Drive</title>
+<style>
+html,body{margin:0;height:100%;overflow:hidden;background:#111;font-family:Arial,sans-serif}
+#hud{position:fixed;z-index:5;left:18px;top:18px;color:#fff;background:rgba(0,0,0,.55);padding:14px 16px;border-radius:12px;backdrop-filter:blur(8px);line-height:1.45}
+#hud b{font-size:20px} #speed{font-size:32px;font-weight:700;margin-top:4px}
+#hint{opacity:.8;font-size:13px;margin-top:6px} #loading{position:fixed;inset:0;display:grid;place-items:center;color:#fff;background:#101318;z-index:10;font-size:20px}
+</style>
+</head>
+<body>
+<div id="loading">Loading MK5 model…</div>
+<div id="hud"><b>MK5 3D DRIVE</b><div id="speed">0 km/h</div><div id="hint">W/↑ accelerate · S/↓ brake · A/D steer · Space handbrake · R reset</div></div>
+<script type="importmap">{"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.170.0/build/three.module.js","three/addons/":"https://cdn.jsdelivr.net/npm/three@0.170.0/examples/jsm/"}}</script>
+<script type="module">
+import * as THREE from 'three';
+import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
+import { MTLLoader } from 'three/addons/loaders/MTLLoader.js';
+import { OBJLoader } from 'three/addons/loaders/OBJLoader.js';
+
+const scene=new THREE.Scene();
+scene.background=new THREE.Color(0x9fc7e6);
+scene.fog=new THREE.Fog(0x9fc7e6,80,420);
+const camera=new THREE.PerspectiveCamera(55,innerWidth/innerHeight,.1,1000);
+camera.position.set(0,4.5,9);
+const renderer=new THREE.WebGLRenderer({antialias:true});
+renderer.setPixelRatio(Math.min(devicePixelRatio,2)); renderer.setSize(innerWidth,innerHeight);
+renderer.shadowMap.enabled=true; renderer.shadowMap.type=THREE.PCFSoftShadowMap;
+renderer.outputColorSpace=THREE.SRGBColorSpace; renderer.toneMapping=THREE.ACESFilmicToneMapping; renderer.toneMappingExposure=1.15;
+document.body.appendChild(renderer.domElement);
+
+scene.add(new THREE.HemisphereLight(0xcfe8ff,0x405040,2.2));
+const sun=new THREE.DirectionalLight(0xffffff,4); sun.position.set(80,120,50); sun.castShadow=true; sun.shadow.mapSize.set(2048,2048); scene.add(sun);
+
+const ground=new THREE.Mesh(new THREE.PlaneGeometry(2000,2000),new THREE.MeshStandardMaterial({color:0x3e693e,roughness:1}));
+ground.rotation.x=-Math.PI/2; ground.receiveShadow=true; scene.add(ground);
+const road=new THREE.Mesh(new THREE.PlaneGeometry(18,2000),new THREE.MeshStandardMaterial({color:0x242629,roughness:.95}));
+road.rotation.x=-Math.PI/2; road.position.y=.015; road.receiveShadow=true; scene.add(road);
+for(let z=-1000;z<1000;z+=12){const l=new THREE.Mesh(new THREE.BoxGeometry(.18,.025,6),new THREE.MeshStandardMaterial({color:0xf2f2f2}));l.position.set(0,.04,z);scene.add(l)}
+
+let car=null, speed=0, steer=0; const keys={};
+addEventListener('keydown',e=>{keys[e.key.toLowerCase()]=true;if(e.code==='Space')e.preventDefault()});
+addEventListener('keyup',e=>keys[e.key.toLowerCase()]=false);
+
+const loading=document.getElementById('loading');
+const speedEl=document.getElementById('speed');
+const mtl=new MTLLoader();
+mtl.setPath('./');
+mtl.load('MKVA90.mtl',materials=>{
+  materials.preload();
+  const obj=new OBJLoader(); obj.setMaterials(materials); obj.setPath('./');
+  obj.load('mk5o.obj',model=>{
+    car=model;
+    car.scale.setScalar(1);
+    car.position.set(0,0,20);
+    car.traverse(o=>{if(o.isMesh){o.castShadow=true;o.receiveShadow=true;if(o.material){o.material.needsUpdate=true}}});
+    // Center and place model on the road automatically.
+    const box=new THREE.Box3().setFromObject(car), size=box.getSize(new THREE.Vector3()), center=box.getCenter(new THREE.Vector3());
+    car.position.x-=center.x; car.position.z-=center.z;
+    car.position.y-=box.min.y;
+    // Normalize oversized/undersized imports to a sensible vehicle length.
+    const length=Math.max(size.x,size.z); if(length>0) car.scale.setScalar(4.7/length);
+    scene.add(car); loading.style.display='none';
+  },undefined,err=>{loading.textContent='Could not load mk5o.obj. Keep OBJ + MTL beside index.html.';console.error(err)});
+},undefined,err=>{loading.textContent='Could not load MKVA90.mtl. Keep OBJ + MTL beside index.html.';console.error(err)});
+
+function reset(){if(!car)return;car.position.set(0,0,20);car.rotation.set(0,0,0);speed=0;steer=0}
+function animate(){requestAnimationFrame(animate);if(car){
+  const accel=(keys.w||keys.arrowup)?0.018:0; const brake=(keys.s||keys.arrowdown)?0.045:0;
+  speed+=accel; if(brake)speed-=brake; if(!accel&&!brake)speed*=.985; if(keys.space)speed*=.94; speed=THREE.MathUtils.clamp(speed,-.45,1.55);
+  const target=((keys.a||keys.arrowleft)?1:0)-((keys.d||keys.arrowright)?1:0); steer=THREE.MathUtils.lerp(steer,target,.12);
+  car.rotation.y+=steer*.025*Math.min(1,Math.abs(speed)*1.5);
+  car.position.x-=Math.sin(car.rotation.y)*speed; car.position.z-=Math.cos(car.rotation.y)*speed;
+  const desired=car.position.clone().add(new THREE.Vector3(0,3.7,8).applyQuaternion(car.quaternion));
+  camera.position.lerp(desired,.08); camera.lookAt(car.position.clone().add(new THREE.Vector3(0,1,0)));
+  speedEl.textContent=Math.max(0,Math.round(Math.abs(speed)*155))+' km/h';
+  if(keys.r)reset();
+}
+renderer.render(scene,camera)}animate();
+addEventListener('resize',()=>{camera.aspect=innerWidth/innerHeight;camera.updateProjectionMatrix();renderer.setSize(innerWidth,innerHeight)});
+</script>
+</body></html>

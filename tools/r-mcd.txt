@@ -1,0 +1,16 @@
+GLB version 2 total 386328 bin bytes 384696
+--- nodes ( 2 ) ---
+0 "(unnamed)" mesh:0 T[] S[] 
+1 "(unnamed)" mesh:- T[] S[] 
+--- meshes ( 1 ) ---
+0 "(unnamed)" prims:1
+--- materials ( 1 ) ---
+0 "TexMap"
+--- animations ( 0 ) ---
+--- textures/images ( 1 ) ---
+0 "(embedded)" image/jpeg
+--- scene graph (roots) ---
+scene "AuxScene" roots: [1]
+--- raw position bounds (pre-node-transform, min) ---
+-1.25, -0.31, -0.46   max: 1.25, 0.31, 0.46
+    size: 2.50 x 0.63 x 0.93

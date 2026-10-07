@@ -1,0 +1,17 @@
+# Dependencies
+node_modules/
+
+# Cloudflare & build artifacts
+.wrangler/
+dist/
+.cache/
+
+# OS and editor files
+.DS_Store
+Thumbs.db
+*.log
+.vscode/
+.idea/
+
+# Temporary models and working files
+tmp_m3model/

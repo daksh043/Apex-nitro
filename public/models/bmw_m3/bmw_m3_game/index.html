@@ -1,0 +1,88 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>M3 Competition 3D Drive</title>
+<style>
+html,body{margin:0;height:100%;overflow:hidden;background:#111;font-family:Arial,sans-serif}canvas{display:block}
+#hud{position:fixed;left:18px;top:18px;color:#fff;background:rgba(0,0,0,.48);padding:12px 15px;border-radius:12px;z-index:5;backdrop-filter:blur(5px)}
+#speed{font-size:32px;font-weight:800}#help{font-size:13px;opacity:.8;margin-top:4px}
+#loading{position:fixed;inset:0;display:grid;place-items:center;color:white;background:#101318;z-index:10;font-size:18px}
+#cross{position:fixed;left:50%;top:50%;width:4px;height:4px;background:#fff;border-radius:50%;opacity:.35}
+</style></head>
+<body>
+<div id="loading">Loading BMW 3D model…</div>
+<div id="hud"><div id="speed">0 km/h</div><div id="help">W/↑ accelerate · S/↓ brake · A/D steer · Space handbrake · R reset</div></div>
+<div id="cross"></div>
+<script type="module">
+import * as THREE from 'https://cdn.jsdelivr.net/npm/three@0.170.0/build/three.module.js';
+import {GLTFLoader} from 'https://cdn.jsdelivr.net/npm/three@0.170.0/examples/jsm/loaders/GLTFLoader.js';
+
+const scene=new THREE.Scene();
+scene.background=new THREE.Color(0x91b7d8);
+scene.fog=new THREE.Fog(0x91b7d8,70,420);
+const camera=new THREE.PerspectiveCamera(60,innerWidth/innerHeight,.05,1000);
+const renderer=new THREE.WebGLRenderer({antialias:true});
+renderer.setSize(innerWidth,innerHeight); renderer.setPixelRatio(Math.min(devicePixelRatio,2));
+renderer.shadowMap.enabled=true; renderer.shadowMap.type=THREE.PCFSoftShadowMap;
+renderer.outputColorSpace=THREE.SRGBColorSpace; renderer.toneMapping=THREE.ACESFilmicToneMapping; renderer.toneMappingExposure=1.05;
+document.body.appendChild(renderer.domElement);
+
+scene.add(new THREE.HemisphereLight(0xddeeff,0x43503b,2.1));
+const sun=new THREE.DirectionalLight(0xffffff,3.2); sun.position.set(80,120,40); sun.castShadow=true; sun.shadow.mapSize.set(2048,2048); scene.add(sun);
+
+// Ground
+const ground=new THREE.Mesh(new THREE.PlaneGeometry(1200,1200),new THREE.MeshStandardMaterial({color:0x40513e,roughness:1}));
+ground.rotation.x=-Math.PI/2; ground.receiveShadow=true; scene.add(ground);
+// Road
+const road=new THREE.Mesh(new THREE.PlaneGeometry(16,1200),new THREE.MeshStandardMaterial({color:0x24272a,roughness:.92}));
+road.rotation.x=-Math.PI/2; road.position.y=.015; scene.add(road);
+// Road markings
+for(let z=-580;z<600;z+=12){const m=new THREE.Mesh(new THREE.BoxGeometry(.22,.035,5.5),new THREE.MeshStandardMaterial({color:0xe8e8e8}));m.position.set(0,.05,z);scene.add(m)}
+for(const x of [-8,8]){const edge=new THREE.Mesh(new THREE.BoxGeometry(.12,.04,1200),new THREE.MeshStandardMaterial({color:0xd7d7d7}));edge.position.set(x,.05,0);scene.add(edge)}
+// Simple roadside trees
+for(let z=-560;z<600;z+=28){for(const x of [-22,22]){const trunk=new THREE.Mesh(new THREE.CylinderGeometry(.22,.3,2.2,8),new THREE.MeshStandardMaterial({color:0x60412c}));trunk.position.set(x,1.1,z);scene.add(trunk);const crown=new THREE.Mesh(new THREE.SphereGeometry(1.7,12,8),new THREE.MeshStandardMaterial({color:0x244c29,roughness:1}));crown.position.set(x,3,z);crown.castShadow=true;scene.add(crown)}}
+
+const car=new THREE.Group(); scene.add(car);
+let carModel;
+const loader=new GLTFLoader();
+loader.load('./bmw.glb',g=>{
+ carModel=g.scene; carModel.traverse(o=>{if(o.isMesh){o.castShadow=true;o.receiveShadow=true;if(o.material){o.material.envMapIntensity=1.2}}});
+ // Normalize model to a practical game size while preserving proportions.
+ const box=new THREE.Box3().setFromObject(carModel), size=box.getSize(new THREE.Vector3()), center=box.getCenter(new THREE.Vector3());
+ const targetLength=4.8; const scale=targetLength/Math.max(size.x,size.z); carModel.scale.setScalar(scale);
+ // Recenter after scaling.
+ const box2=new THREE.Box3().setFromObject(carModel), c2=box2.getCenter(new THREE.Vector3());
+ carModel.position.sub(c2); carModel.position.y-=box2.min.y;
+ car.add(carModel); document.getElementById('loading').style.display='none';
+},undefined,e=>{document.getElementById('loading').textContent='Could not load bmw.glb. Keep bmw.glb beside index.html.';console.error(e)});
+
+const keys={}; addEventListener('keydown',e=>{keys[e.key.toLowerCase()]=true;if(e.key.toLowerCase()==='r')reset()}); addEventListener('keyup',e=>keys[e.key.toLowerCase()]=false);
+let speed=0, steer=0; const clock=new THREE.Clock();
+function reset(){car.position.set(0,0,40);car.rotation.set(0,0,0);speed=0;steer=0}
+reset();
+
+function animate(){requestAnimationFrame(animate);const dt=Math.min(clock.getDelta(),.04);
+ const gas=keys.w||keys.arrowup, brake=keys.s||keys.arrowdown, hand=keys[' '];
+ if(gas)speed+=7.8*dt; else speed*=Math.pow(.992,dt*60);
+ if(brake)speed-=13*dt;
+ if(hand)speed*=Math.pow(.975,dt*60);
+ speed=THREE.MathUtils.clamp(speed,-6,48);
+ const steerInput=(keys.a||keys.arrowleft?1:0)-(keys.d||keys.arrowright?1:0);
+ steer=THREE.MathUtils.lerp(steer,steerInput,.12);
+ const yaw=steer*(0.65+Math.min(Math.abs(speed)/48,.9))*dt*(speed>=0?1:-1);
+ car.rotation.y+=yaw;
+ car.position.x-=Math.sin(car.rotation.y)*speed*dt;
+ car.position.z-=Math.cos(car.rotation.y)*speed*dt;
+ car.position.x=THREE.MathUtils.clamp(car.position.x,-6.8,6.8);
+ // chase camera
+ const forward=new THREE.Vector3(0,0,1).applyQuaternion(car.quaternion);
+ const desired=car.position.clone().add(new THREE.Vector3(0,2.9,7.8).applyQuaternion(car.quaternion));
+ camera.position.lerp(desired,.075); const look=car.position.clone().add(new THREE.Vector3(0,1, -5).applyQuaternion(car.quaternion)); camera.lookAt(look);
+ document.getElementById('speed').textContent=Math.round(Math.abs(speed)*3.6)+' km/h';
+ renderer.render(scene,camera);
+}
+animate();
+addEventListener('resize',()=>{camera.aspect=innerWidth/innerHeight;camera.updateProjectionMatrix();renderer.setSize(innerWidth,innerHeight)});
+</script></body></html>

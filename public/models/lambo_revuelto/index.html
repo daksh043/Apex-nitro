@@ -1,0 +1,177 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Lamborghini Revuelto — 3D Drive</title>
+<style>
+html,body{margin:0;height:100%;overflow:hidden;background:#080a0d;font-family:Arial,sans-serif}
+#hud{position:fixed;top:16px;left:16px;z-index:5;color:#fff;background:rgba(0,0,0,.48);backdrop-filter:blur(8px);padding:14px 16px;border-radius:12px;min-width:180px}
+#hud b{font-size:18px}.muted{opacity:.72;font-size:12px;margin-top:5px;line-height:1.5}
+#speed{font-size:34px;font-weight:800;margin-top:8px}.unit{font-size:12px;opacity:.7}
+#status{position:fixed;bottom:16px;left:50%;transform:translateX(-50%);z-index:5;color:#fff;background:rgba(0,0,0,.55);padding:9px 14px;border-radius:999px;font-size:13px}
+#view{position:fixed;right:16px;top:16px;z-index:5;border:0;border-radius:10px;padding:10px 14px;background:#fff;color:#111;font-weight:700;cursor:pointer}
+canvas{display:block}
+</style>
+</head>
+<body>
+<div id="hud">
+  <b>Lamborghini Revuelto</b>
+  <div id="speed">0 <span class="unit">km/h</span></div>
+  <div class="muted">W/↑ accelerate · S/↓ brake/reverse<br>A/D steer · Space handbrake · R reset<br>C switch exterior/interior camera</div>
+</div>
+<button id="view">Interior View</button>
+<div id="status">Loading the original GLB materials and interior…</div>
+
+<script type="module">
+import * as THREE from "https://cdn.jsdelivr.net/npm/three@0.170.0/build/three.module.js";
+import {GLTFLoader} from "https://cdn.jsdelivr.net/npm/three@0.170.0/examples/jsm/loaders/GLTFLoader.js";
+
+const scene=new THREE.Scene();
+scene.background=new THREE.Color(0x91b7d2);
+scene.fog=new THREE.Fog(0x91b7d2,35,220);
+
+const camera=new THREE.PerspectiveCamera(62,innerWidth/innerHeight,.01,1000);
+const renderer=new THREE.WebGLRenderer({antialias:true});
+renderer.setPixelRatio(Math.min(devicePixelRatio,2));
+renderer.setSize(innerWidth,innerHeight);
+renderer.shadowMap.enabled=true;
+renderer.outputColorSpace=THREE.SRGBColorSpace;
+renderer.toneMapping=THREE.ACESFilmicToneMapping;
+renderer.toneMappingExposure=1.15;
+document.body.appendChild(renderer.domElement);
+
+scene.add(new THREE.HemisphereLight(0xdbeeff,0x39412d,2.0));
+const sun=new THREE.DirectionalLight(0xffffff,3.2);
+sun.position.set(-35,55,25); sun.castShadow=true; scene.add(sun);
+
+const ground=new THREE.Mesh(
+  new THREE.PlaneGeometry(500,500),
+  new THREE.MeshStandardMaterial({color:0x315c35,roughness:1})
+);
+ground.rotation.x=-Math.PI/2; ground.receiveShadow=true; scene.add(ground);
+
+const road=new THREE.Mesh(
+  new THREE.PlaneGeometry(14,500),
+  new THREE.MeshStandardMaterial({color:0x24262a,roughness:.9})
+);
+road.rotation.x=-Math.PI/2; road.position.y=.002; scene.add(road);
+
+for(let z=-245;z<250;z+=10){
+  const mark=new THREE.Mesh(
+    new THREE.BoxGeometry(.14,.025,5),
+    new THREE.MeshStandardMaterial({color:0xf2f2e8})
+  );
+  mark.position.set(0,.025,z); scene.add(mark);
+}
+
+let car=null, modelRoot=null, interior=false;
+let speed=0, steer=0;
+const keys={};
+
+addEventListener("keydown",e=>{
+  keys[e.key.toLowerCase()]=true;
+  if(["arrowup","arrowdown","arrowleft","arrowright"," "].includes(e.key.toLowerCase())) e.preventDefault();
+  if(e.key.toLowerCase()==="c") toggleView();
+  if(e.key.toLowerCase()==="r") resetCar();
+});
+addEventListener("keyup",e=>keys[e.key.toLowerCase()]=false);
+
+const loader=new GLTFLoader();
+loader.load("./Lamborghini+Revuelto.glb",g=>{
+  modelRoot=g.scene;
+  modelRoot.traverse(o=>{
+    if(o.isMesh){
+      o.castShadow=true; o.receiveShadow=true;
+      if(o.material){
+        const mats=Array.isArray(o.material)?o.material:[o.material];
+        mats.forEach(m=>{ if(m.map) m.map.colorSpace=THREE.SRGBColorSpace; });
+      }
+    }
+  });
+
+  // Keep the uploaded model's geometry, colors, textures and interior unchanged.
+  car=new THREE.Group();
+  car.add(modelRoot);
+  scene.add(car);
+
+  // The supplied model is already approximately 1:1 game scale.
+  car.position.set(0,0,15);
+  resetCar();
+  document.getElementById("status").textContent="Ready — original model materials/interior preserved.";
+  setTimeout(()=>document.getElementById("status").style.display="none",2600);
+},undefined,err=>{
+  document.getElementById("status").textContent="Could not load the GLB. Keep the GLB beside index.html.";
+  console.error(err);
+});
+
+function resetCar(){
+  if(!car)return;
+  car.position.set(0,0,15);
+  car.rotation.set(0,0,0);
+  speed=0; steer=0;
+}
+
+function toggleView(){
+  interior=!interior;
+  document.getElementById("view").textContent=interior?"Exterior View":"Interior View";
+}
+
+function clamp(v,a,b){return Math.max(a,Math.min(b,v));}
+
+function animate(){
+  requestAnimationFrame(animate);
+
+  if(car){
+    const throttle=keys.w||keys.arrowup;
+    const brake=keys.s||keys.arrowdown;
+    if(throttle) speed+=0.018;
+    else speed*=0.985;
+    if(brake) speed-=0.035;
+    if(keys[" "]) speed*=0.94;
+    speed=clamp(speed,-.55,2.0);
+
+    const targetSteer=((keys.a||keys.arrowleft)?1:0)-((keys.d||keys.arrowright)?1:0);
+    steer=THREE.MathUtils.lerp(steer,targetSteer,.12);
+
+    car.rotation.y += steer * Math.min(Math.abs(speed),1.25)*0.018;
+    car.position.x -= Math.sin(car.rotation.y)*speed;
+    car.position.z -= Math.cos(car.rotation.y)*speed;
+
+    // Keep the car on the road.
+    car.position.x=clamp(car.position.x,-5.4,5.4);
+
+    const kmh=Math.round(Math.abs(speed)*85);
+    document.getElementById("speed").firstChild.textContent=kmh+" ";
+
+    if(interior){
+      // Driver cockpit position chosen from the supplied Revuelto model layout.
+      const localCam=new THREE.Vector3(-0.42,0.78,0.05);
+      const look=new THREE.Vector3(-0.15,0.78,1.7);
+      localCam.applyQuaternion(car.quaternion).add(car.position);
+      look.applyQuaternion(car.quaternion).add(car.position);
+      camera.position.lerp(localCam,.18);
+      camera.lookAt(look);
+    }else{
+      const localCam=new THREE.Vector3(0,2.65,-6.5);
+      const look=new THREE.Vector3(0,.65,1.0);
+      localCam.applyQuaternion(car.quaternion).add(car.position);
+      look.applyQuaternion(car.quaternion).add(car.position);
+      camera.position.lerp(localCam,.09);
+      camera.lookAt(look);
+    }
+  }
+
+  renderer.render(scene,camera);
+}
+animate();
+
+addEventListener("resize",()=>{
+  camera.aspect=innerWidth/innerHeight;
+  camera.updateProjectionMatrix();
+  renderer.setSize(innerWidth,innerHeight);
+});
+document.getElementById("view").addEventListener("click",toggleView);
+</script>
+</body>
+</html>
