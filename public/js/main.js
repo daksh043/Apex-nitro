@@ -7,6 +7,7 @@ import { FX } from './fx.js';
 import { HUD } from './hud.js';
 import { GameAudio } from './audio.js';
 import { Net, RemoteCar } from './net.js';
+import { initCompliance } from './compliance.js';
 
 const LAPS = 3;
 
@@ -58,6 +59,19 @@ const selSpec = () => CARS[state.carSel] || CARS[0];
 const keys = {};
 const touchState = { left: false, right: false, gas: false, brake: false, nitro: false };
 addEventListener('keydown', (e) => {
+  if (e.target && ['INPUT', 'TEXTAREA', 'SELECT'].includes(e.target.tagName)) {
+    if (e.key === 'Escape') {
+      e.target.blur();
+      if (window.__closeAllComplianceModals) window.__closeAllComplianceModals();
+    }
+    return;
+  }
+  if (window.__isComplianceModalOpen && window.__isComplianceModalOpen()) {
+    if (e.key === 'Escape') {
+      if (window.__closeAllComplianceModals) window.__closeAllComplianceModals();
+    }
+    return;
+  }
   if (['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight', ' '].includes(e.key)) e.preventDefault();
   keys[e.key.toLowerCase()] = true;
   if (e.key === 'c' || e.key === 'C') state.camMode = (state.camMode + 1) % 2;
@@ -190,13 +204,21 @@ function wireUI() {
     els.colorRow.innerHTML = '';
     spec.colors.forEach((p) => {
       const b = document.createElement('button');
+      const hex = '#' + p.toString(16).padStart(6, '0');
       b.className = 'swatch' + (p === chosen ? ' sel' : '');
-      b.style.background = '#' + p.toString(16).padStart(6, '0');
+      b.style.background = hex;
+      b.setAttribute('role', 'radio');
+      b.setAttribute('aria-checked', p === chosen ? 'true' : 'false');
+      b.setAttribute('aria-label', `Color ${hex}`);
       b.onclick = () => {
         chosen = p;
         localStorage.setItem('na_color_' + spec.id, p);
-        els.colorRow.querySelectorAll('.swatch').forEach(s => s.classList.remove('sel'));
+        els.colorRow.querySelectorAll('.swatch').forEach(s => {
+          s.classList.remove('sel');
+          s.setAttribute('aria-checked', 'false');
+        });
         b.classList.add('sel');
+        b.setAttribute('aria-checked', 'true');
         buildPreview();
       };
       els.colorRow.appendChild(b);
@@ -213,11 +235,18 @@ function wireUI() {
     const t = document.createElement('button');
     t.className = 'car-tab' + (i === state.carSel ? ' sel' : '');
     t.textContent = c.name;
+    t.setAttribute('role', 'tab');
+    t.setAttribute('aria-selected', i === state.carSel ? 'true' : 'false');
+    t.setAttribute('aria-label', `${c.name} - ${c.sub}`);
     t.onclick = () => {
       state.carSel = i;
       localStorage.setItem('na_car', i);
-      els.carTabs.querySelectorAll('.car-tab').forEach(x => x.classList.remove('sel'));
+      els.carTabs.querySelectorAll('.car-tab').forEach(x => {
+        x.classList.remove('sel');
+        x.setAttribute('aria-selected', 'false');
+      });
       t.classList.add('sel');
+      t.setAttribute('aria-selected', 'true');
       buildSwatches();
       buildPreview();
     };
@@ -263,6 +292,9 @@ function wireUI() {
     bind('tLeft', 'left'); bind('tRight', 'right'); bind('tGas', 'gas');
     bind('tBrake', 'brake'); bind('tNitro', 'nitro');
   }
+
+  // Initialize compliance, cookie banner, legal center, and accessibility controls
+  initCompliance();
 }
 
 function connectMP(name, color, room, car) {
