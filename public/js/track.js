@@ -463,10 +463,10 @@ export class Track {
           rot: rnd() * Math.PI * 2, scale: 0.7 + rnd() * 0.9 });
       }
     }
-    // keep clearances around the landmark buildings
+    // keep clearances around the landmark buildings (expanded for large footprint)
     for (const r of this.reservedSpots) {
       for (let i = pts.length - 1; i >= 0; i--) {
-        if (Math.hypot(pts[i].x - r.x, pts[i].z - r.z) < 14) pts.splice(i, 1);
+        if (Math.hypot(pts[i].x - r.x, pts[i].z - r.z) < 26) pts.splice(i, 1);
       }
     }
     this._treePts = pts;
@@ -535,13 +535,14 @@ export class Track {
     for (const sp of spots) {
       const smp = this.sampleAtArc(sp.arc);
       const right = new THREE.Vector3(Math.cos(smp.a), 0, -Math.sin(smp.a));
-      const pos = smp.p.clone().addScaledVector(right, sp.side * (WALL_LAT + 22));
+      const pos = smp.p.clone().addScaledVector(right, sp.side * (WALL_LAT + 24));
       this.reservedSpots.push({ x: pos.x, z: pos.z });
       new GLTFLoader().load(sp.url, (gltf) => {
         const b = gltf.scene;
         const box = new THREE.Box3().setFromObject(b);
         const size = box.getSize(new THREE.Vector3());
-        const s = 9 / Math.max(size.x, size.z);      // ~9 m footprint
+        // Large footprint (~28 m) for prominent roadside commercial buildings
+        const s = 28 / Math.max(size.x, size.z);
         b.scale.setScalar(s);
         b.updateMatrixWorld(true);
         const bb = new THREE.Box3().setFromObject(b);
@@ -551,10 +552,23 @@ export class Track {
         b.position.y -= bb.min.y;
         b.position.x += pos.x;
         b.position.z += pos.z;
-        // face the road (sign side toward the track)
-        b.rotation.y = smp.a + (sp.side > 0 ? Math.PI / 2 : -Math.PI / 2);
-        b.traverse((o) => { if (o.isMesh) { o.castShadow = true; o.receiveShadow = true; } });
+        // Face the road: point front facade and landmark sign directly towards the track
+        b.rotation.y = smp.a - sp.side * (Math.PI / 2);
+        b.traverse((o) => {
+          if (o.isMesh) {
+            o.castShadow = true;
+            o.receiveShadow = true;
+            if (o.material) {
+              o.material.roughness = Math.min(o.material.roughness || 0.6, 0.7);
+            }
+          }
+        });
         this.group.add(b);
+
+        // Warm commercial light illuminating the storefront and sign at dusk
+        const lmLight = new THREE.PointLight(0xffeedd, 35, 50, 1.2);
+        lmLight.position.set(pos.x, pos.y + 12, pos.z);
+        this.group.add(lmLight);
       }, undefined, (e) => {
         window.__errs.push('landmark ' + sp.url + ': ' + String(e && e.message || e).slice(0, 200));
       });
