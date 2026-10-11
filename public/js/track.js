@@ -208,7 +208,7 @@ export class Track {
   }
 
   /* ---------- road ribbon ---------- */
-  _ribbon(latFrom, latTo, yFrom, yTo, mat, vScale, yLift = 0) {
+  _ribbon(latFrom, latTo, yFrom, yTo, mat, vScale, yLift = 0, yToAbsolute = null) {
     const N = SAMPLES;
     const pos = [], uv = [], idx = [];
     for (let i = 0; i <= N; i++) {
@@ -216,7 +216,8 @@ export class Track {
       const right = new THREE.Vector3(Math.cos(s.a), 0, -Math.sin(s.a));
       const ax = s.p.x + right.x * latFrom, az = s.p.z + right.z * latFrom;
       const bx = s.p.x + right.x * latTo, bz = s.p.z + right.z * latTo;
-      pos.push(ax, s.p.y + yFrom + yLift, az, bx, s.p.y + yTo + yLift, bz);
+      const by = yToAbsolute !== null ? yToAbsolute : s.p.y + yTo + yLift;
+      pos.push(ax, s.p.y + yFrom + yLift, az, bx, by, bz);
       const v = s.arc / vScale;
       uv.push(0, v, 1, v);
     }
@@ -519,14 +520,19 @@ export class Track {
     g.receiveShadow = true;
     this.group.add(g);
 
-    // Lush grass shoulders following the track curve
+    // Lush grass shoulders and outfield terraces following the track curve
     const vergeMat = new THREE.MeshStandardMaterial({
       map: this.tex.ground,
       color: 0x62a853,
       roughness: 0.82,
     });
-    this.group.add(this._ribbon(-WALL_LAT - 26, -WALL_LAT, -0.02, 0.0, vergeMat, 10));
-    this.group.add(this._ribbon(WALL_LAT, WALL_LAT + 26, 0.0, -0.02, vergeMat, 10));
+    // Inner broad shoulder (65m wide, keeps track elevation with gentle -0.05m slope)
+    this.group.add(this._ribbon(-WALL_LAT - 65, -WALL_LAT, -0.05, 0.0, vergeMat, 10));
+    this.group.add(this._ribbon(WALL_LAT, WALL_LAT + 65, 0.0, -0.05, vergeMat, 10));
+
+    // Outer rolling meadow skirt transitioning smoothly from the track hills down to the level plain (-0.06m)
+    this.group.add(this._ribbon(-WALL_LAT - 65, -WALL_LAT - 180, -0.05, 0, vergeMat, 16, 0, -0.06));
+    this.group.add(this._ribbon(WALL_LAT + 65, WALL_LAT + 180, -0.05, 0, vergeMat, 16, 0, -0.06));
   }
 
   /* ---------- 3D Physical Grass Tufts ---------- */
@@ -621,7 +627,7 @@ export class Track {
       const dist = WALL_LAT + 28 + rnd() * 110;
       const px = smp.p.x + right.x * side * dist;
       const pz = smp.p.z + right.z * side * dist;
-      const py = smp.p.y;
+      const py = dist <= 65 ? smp.p.y - 0.05 : THREE.MathUtils.lerp(smp.p.y - 0.05, -0.06, Math.min(1, (dist - 65) / 115));
 
       const scale = 0.85 + rnd() * 0.65;
       sc.set(scale, scale, scale);
@@ -720,7 +726,7 @@ export class Track {
       pts.forEach((p, i) => {
         e.set(0, p.rot, 0); q.setFromEuler(e);
         const base = new THREE.Matrix4().compose(
-          new THREE.Vector3(p.x, p.y + yOff, p.z), q,
+          new THREE.Vector3(p.x, p.y + yOff - 1.05, p.z), q,
           new THREE.Vector3(p.scale, p.scale, p.scale)
         );
         for (const { im, local } of instanced) {
@@ -752,10 +758,10 @@ export class Track {
   /* ---------- landmark buildings (KFC / McDonald's from the city pack) ---------- */
   _buildLandmarks() {
     const spots = [
-      { url: KFC_URL, arc: 240, side: 1, footprint: 60, dist: WALL_LAT + 42 },
-      { url: KFC_URL, arc: 700, side: -1, footprint: 60, dist: WALL_LAT + 42 },
-      { url: MCD_URL, arc: 430, side: 1, footprint: 64, dist: WALL_LAT + 25 },
-      { url: MCD_URL, arc: 950, side: -1, footprint: 64, dist: WALL_LAT + 25 },
+      { url: KFC_URL, arc: 240, side: 1, footprint: 60, dist: WALL_LAT + 38 },
+      { url: KFC_URL, arc: 700, side: -1, footprint: 60, dist: WALL_LAT + 38 },
+      { url: MCD_URL, arc: 430, side: 1, footprint: 64, dist: WALL_LAT + 24 },
+      { url: MCD_URL, arc: 950, side: -1, footprint: 64, dist: WALL_LAT + 24 },
     ];
     for (const sp of spots) {
       const smp = this.sampleAtArc(sp.arc);
@@ -770,15 +776,48 @@ export class Track {
         const s = sp.footprint / Math.max(size.x, size.z);
         b.scale.setScalar(s);
         b.updateMatrixWorld(true);
+
         const bb = new THREE.Box3().setFromObject(b);
         const c = bb.getCenter(new THREE.Vector3());
-        b.position.x -= c.x;
-        b.position.z -= c.z;
-        b.position.y -= bb.min.y;
-        b.position.x += pos.x;
-        b.position.z += pos.z;
-        // Face the road: point front facade and landmark sign directly towards the track
-        b.rotation.y = smp.a - sp.side * (Math.PI / 2);
+        const width = bb.max.x - bb.min.x;
+        const depth = bb.max.z - bb.min.z;
+
+        // Elevated commercial plaza foundation base platform
+        const baseHeight = 0.85; // Raised base height so model rests on the platform surface
+        const pivot = new THREE.Group();
+        pivot.position.set(pos.x, pos.y, pos.z);
+        pivot.rotation.y = smp.a - sp.side * (Math.PI / 2);
+
+        // Position model inside pivot so its center is at (0,0) and its bottom sits exactly on top of the base height
+        b.position.set(-c.x, baseHeight - bb.min.y, -c.z);
+        pivot.add(b);
+
+        // 3D Commercial Plaza Base Platform (touching the surface and providing a clean foundation)
+        const padW = width * 1.08;
+        const padD = depth * 1.12;
+        const padGeo = new THREE.BoxGeometry(padW, baseHeight + 0.8, padD);
+        padGeo.translate(0, (baseHeight - 0.8) * 0.5, 0); // top at baseHeight, bottom 0.8m below surface
+        const padMat = new THREE.MeshStandardMaterial({
+          map: this.tex.pavement,
+          roughness: 0.78,
+          metalness: 0.05,
+        });
+        const padMesh = new THREE.Mesh(padGeo, padMat);
+        padMesh.receiveShadow = true;
+        padMesh.castShadow = true;
+        pivot.add(padMesh);
+
+        // 3D Plaza curb perimeter trim
+        const curbPadGeo = new THREE.BoxGeometry(padW + 0.6, 0.22, padD + 0.6);
+        curbPadGeo.translate(0, baseHeight - 0.11, 0);
+        const curbPadMat = new THREE.MeshStandardMaterial({
+          map: this.tex.curb,
+          roughness: 0.65,
+        });
+        const curbPadMesh = new THREE.Mesh(curbPadGeo, curbPadMat);
+        curbPadMesh.receiveShadow = true;
+        pivot.add(curbPadMesh);
+
         b.traverse((o) => {
           if (o.isMesh) {
             o.castShadow = true;
@@ -788,15 +827,15 @@ export class Track {
             }
           }
         });
-        this.group.add(b);
+        this.group.add(pivot);
 
         // Warm commercial light illuminating the storefront and sign at dusk
         const lmLight = new THREE.PointLight(0xffeedd, 70, 95, 1.2);
-        lmLight.position.set(pos.x, pos.y + 18, pos.z);
+        lmLight.position.set(pos.x, pos.y + baseHeight + 18, pos.z);
         this.group.add(lmLight);
 
         const signGlow = new THREE.PointLight(0xffaa33, 40, 60, 1.3);
-        signGlow.position.set(pos.x - (sp.side * 12), pos.y + 15, pos.z);
+        signGlow.position.set(pos.x - (sp.side * 12), pos.y + baseHeight + 15, pos.z);
         this.group.add(signGlow);
       }, undefined, (e) => {
         window.__errs.push('landmark ' + sp.url + ': ' + String(e && e.message || e).slice(0, 200));
