@@ -43,9 +43,10 @@
 ## ✨ Features
 
 - 🏎️ **Supercar & Sport Roster**
+  - **Lamborghini Terzo Millennio** — 1000+ HP Electric Concept Hypercar (Top Speed: 365 km/h)
   - **Lamborghini Revuelto** — 1015 HP V12 Hybrid Hypercar (Top Speed: 352 km/h)
-  - **Apex GT-R** — 780 HP Track Monster (Top Speed: 317 km/h)
-  - **BMW M4 Competition** — 510 HP Turbo Coupe (Top Speed: 299 km/h)
+  - **Nissan GT-R Nismo** — 600 HP Twin-Turbo AWD Legend (Top Speed: 330 km/h)
+  - **Porsche 911 Carrera 4S** — 443 HP Rear-Engine Sport Coupe (Top Speed: 306 km/h)
   - **BMW M3 Competition** — 510 HP Sport Sedan (Top Speed: 295 km/h)
   - **Toyota GR Supra** — 382 HP Agile Drift Coupe (Top Speed: 290 km/h)
   - *Full custom paint options, real-time stat bars, and detailed 3D chassis meshes.*

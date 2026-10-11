@@ -24,6 +24,7 @@ function finishModel(src, cfg) {
     box = new THREE.Box3().setFromObject(src);
     size = box.getSize(new THREE.Vector3());
     if (size.x > size.z) src.rotateY(Math.PI / 2);
+    if (cfg.rotateY) src.rotateY(cfg.rotateY);
     // scale to target length, ground and center
     box = new THREE.Box3().setFromObject(src);
     size = box.getSize(new THREE.Vector3());
@@ -34,6 +35,7 @@ function finishModel(src, cfg) {
     src.position.x -= c.x;
     src.position.z -= c.z;
     src.position.y -= box.min.y;
+    if (cfg.yOff) src.position.y += cfg.yOff;
   } else {
     src.scale.setScalar(cfg.scale);
     src.position.y = cfg.yOff;
@@ -776,15 +778,6 @@ export const MODEL_CFGS = {
     exhaust: { x: 0.55, y: 0.32, z: -1.95 },
     paint: /car_paint/i,
   },
-  m4: {
-    url: '/models/bmw_m4_city/m4_city_game_build/assets/m4.glb',
-    autoOrient: true,           // Z-up authoring → length along Y → upright
-    targetLen: 4.92,
-    wheelPivots: false,         // wheels are baked into merged meshes → keep them static
-    tail: { y: 0.74, z: -2.36, w: 1.45 },
-    exhaust: { x: 0.60, y: 0.34, z: -2.40 },
-    paint: 'largest',
-  },
   revuelto: {
     url: '/models/lambo_revuelto/revuelto.glb',
     scale: 1, yOff: 0.01,       // meters already, wheels sit ~grounded
@@ -810,6 +803,36 @@ export const MODEL_CFGS = {
     tail: false,                // own taillights (MKV.Taillight)
     exhaust: { x: 0.45, y: 0.38, z: -2.15 },
     eye: { x: 0.36, y: 1.05, z: -0.1 },
+  },
+  porsche: {
+    url: '/models/porsche_911/porsche.glb',
+    autoOrient: true,
+    targetLen: 4.52,
+    wheelPivots: false,
+    paintMat: /paint/i,
+    tail: { y: 0.72, z: -2.12, w: 1.40 },
+    exhaust: { x: 0.50, y: 0.30, z: -2.10 },
+  },
+  gtr: {
+    url: '/models/nissan_gtr/gtr.glb',
+    autoOrient: true,
+    targetLen: 4.69,
+    wheelPivots: false,
+    paintMat: /^nismo_gtr_paint$/i,
+    tail: { y: 0.76, z: -2.25, w: 1.45 },
+    exhaust: { x: 0.60, y: 0.32, z: -2.25 },
+  },
+  terzo: {
+    url: '/models/lambo_terzo/terzo.glb',
+    autoOrient: true,
+    rotateY: Math.PI,
+    targetLen: 4.85,
+    wheelPivots: false,
+    paintMat: /carosserie/i,
+    tail: false,
+    exhaust: { x: 0.45, y: 0.45, z: -2.35 },
+    eye: { x: 0.36, y: 0.98, z: -0.35 },
+    aiExclude: true,
   },
 };
 
@@ -894,7 +917,24 @@ export function createModelMesh(paint, opts = {}, cfg) {
   group.add(body);
 
   // paint tint (multiplies the model's own base color / baked texture)
-  if (cfg.paint instanceof RegExp) {
+  if (cfg.paintMat instanceof RegExp) {
+    body.traverse((o) => {
+      if (!o.isMesh || !o.material) return;
+      const applyMat = (mat) => {
+        if (mat && cfg.paintMat.test(mat.name || '')) {
+          const m = mat.clone();
+          m.color = paintTint;
+          return m;
+        }
+        return mat;
+      };
+      if (Array.isArray(o.material)) {
+        o.material = o.material.map(applyMat);
+      } else {
+        o.material = applyMat(o.material);
+      }
+    });
+  } else if (cfg.paint instanceof RegExp) {
     body.traverse((o) => {
       if (o.isMesh && cfg.paint.test(o.name) && o.material) {
         o.material = o.material.clone();
@@ -979,12 +1019,6 @@ export const CARS = [
     build: (p, o) => createModelMesh(p, o, MODEL_CFGS.m3),
   },
   {
-    id: 'm4', name: 'BMW M4 COMPETITION', sub: 'COUPE · 510 HP',
-    vmax: 83, accel: 15.6, nitro: 8.8, grip: 9.3, topKmh: 299,
-    colors: [0xf3d34a, 0x8a1114, 0x1b3a6b, 0xf2f3f5, 0x15161a, 0x6b7076],
-    build: (p, o) => createModelMesh(p, o, MODEL_CFGS.m4),
-  },
-  {
     id: 'revuelto', name: 'LAMBORGHINI REVUELTO', sub: 'V12 HYBRID · 1015 HP',
     vmax: 97, accel: 18, nitro: 10, grip: 9.4, topKmh: 352,
     colors: [0x7cc576, 0xf06511, 0x7b2d8b, 0xf7e017, 0xf2f3f5, 0x15161a],
@@ -997,10 +1031,22 @@ export const CARS = [
     build: (p, o) => createModelMesh(p, o, MODEL_CFGS.mk5),
   },
   {
-    id: 'apex', name: 'APEX GT-R', sub: 'HYPERCAR · 780 HP',
-    vmax: 88, accel: 16.5, nitro: 9.5, grip: 9.0, topKmh: 317,
-    colors: [0xe8352a, 0x0a6cff, 0xff7a00, 0x00d4b8, 0xffd400, 0x9b30ff, 0xf2f3f5, 0x15161a],
-    build: createCarMesh,
+    id: 'porsche', name: 'PORSCHE 911 CARRERA 4S', sub: 'SPORT COUPE · 443 HP',
+    vmax: 85, accel: 16.0, nitro: 9.0, grip: 9.6, topKmh: 306,
+    colors: [0xf2f3f5, 0xd91424, 0xf5d000, 0x1b3b6f, 0x595b61, 0x121316],
+    build: (p, o) => createModelMesh(p, o, MODEL_CFGS.porsche),
+  },
+  {
+    id: 'gtr', name: 'NISSAN GT-R NISMO', sub: 'TWIN-TURBO AWD · 600 HP',
+    vmax: 92, accel: 17.2, nitro: 9.6, grip: 9.8, topKmh: 330,
+    colors: [0xf4f5f8, 0x65686f, 0x121314, 0xc8102e, 0x1d4ed8],
+    build: (p, o) => createModelMesh(p, o, MODEL_CFGS.gtr),
+  },
+  {
+    id: 'terzo', name: 'LAMBORGHINI TERZO MILLENNIO', sub: 'ELECTRIC CONCEPT · 1000+ HP',
+    vmax: 101, accel: 19.0, nitro: 10.5, grip: 9.7, topKmh: 365,
+    colors: [0x18191c, 0xff6600, 0x7cc576, 0xf4f5f8, 0x6b21a8],
+    build: (p, o) => createModelMesh(p, o, MODEL_CFGS.terzo),
   },
 ];
 
