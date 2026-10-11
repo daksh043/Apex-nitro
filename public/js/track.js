@@ -469,9 +469,9 @@ export class Track {
           const rotY = Math.atan2(-side * right.x, -side * right.z) + (rnd() - 0.5) * 0.15;
           canalPts.push({ x, y: s.p.y, z, scale, rotY });
         } else {
-          // Sleeker, more proportionate modern tower
-          const scaleXZ = 0.32 + rnd() * 0.28;
-          const scaleY = 0.30 + rnd() * 0.38;
+          // Atlanta corporate office tower
+          const scaleXZ = 0.22 + rnd() * 0.16;
+          const scaleY = 0.22 + rnd() * 0.18;
           const rotY = (rnd() * 4 | 0) * (Math.PI / 2) + (rnd() - 0.5) * 0.25;
           bldgPts.push({ x, y: s.p.y, z, scaleXZ, scaleY, rotY });
         }
@@ -486,16 +486,20 @@ export class Track {
       const r = 680 + rnd() * 240;
       const x = cx + Math.cos(ang) * r, z = cz + Math.sin(ang) * r;
       if (nearTrack(x, z, 50)) continue;
-      const scaleXZ = 0.55 + rnd() * 0.45;
-      const scaleY = 0.50 + rnd() * 0.70;
+      const scaleXZ = 0.35 + rnd() * 0.30;
+      const scaleY = 0.35 + rnd() * 0.35;
       const rotY = (rnd() * 4 | 0) * (Math.PI / 2);
       bldgPts.push({ x, y: -0.06, z, scaleXZ, scaleY, rotY });
     }
 
-    // 1. Instance Modern High-Rise Buildings
+    // 1. Instance Modern Atlanta Corporate High-Rise Buildings
     new GLTFLoader().load(BUILDING_URL, (gltf) => {
       const tpl = gltf.scene;
       const box = new THREE.Box3().setFromObject(tpl);
+      const center = new THREE.Vector3();
+      box.getCenter(center);
+      const tCenter = new THREE.Matrix4().makeTranslation(-center.x, -box.min.y, -center.z);
+
       const parts = [];
       tpl.traverse((o) => {
         if (o.isMesh) {
@@ -503,7 +507,7 @@ export class Track {
           o.receiveShadow = true;
           if (o.material) {
             o.material.roughness = Math.min(o.material.roughness || 0.6, 0.7);
-            if (o.material.emissiveMap) {
+            if (o.material.emissiveMap || (o.material.emissive && o.material.emissive.getHex() > 0)) {
               o.material.emissiveIntensity = 2.0;
             }
           }
@@ -513,6 +517,7 @@ export class Track {
 
       const n = bldgPts.length;
       const m = new THREE.Matrix4(), q = new THREE.Quaternion(), e = new THREE.Euler(), sc = new THREE.Vector3();
+      const tPos = new THREE.Matrix4(), baseMat = new THREE.Matrix4();
       const instanced = parts.map((part) => {
         const im = new THREE.InstancedMesh(part.geometry, part.material, n);
         im.castShadow = true;
@@ -528,14 +533,12 @@ export class Track {
         q.setFromEuler(e);
         sc.set(p.scaleXZ, p.scaleY, p.scaleXZ);
 
-        // Grounding: base sits 1m below foundation level
-        const posY = (p.y - 1.0) - (box.min.y * p.scaleY);
+        // Grounding: base sits 0.5m into ground foundation
+        tPos.compose(new THREE.Vector3(p.x, p.y - 0.5, p.z), q, sc);
+        baseMat.multiplyMatrices(tPos, tCenter);
 
-        const base = new THREE.Matrix4().compose(
-          new THREE.Vector3(p.x, posY, p.z), q, sc
-        );
         for (const { im, local } of instanced) {
-          m.copy(base).multiply(local);
+          m.copy(baseMat).multiply(local);
           im.setMatrixAt(i, m);
         }
 
