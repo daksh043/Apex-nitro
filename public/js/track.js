@@ -458,15 +458,15 @@ export class Track {
         if (rnd() < 0.72) continue;
         const s = this.sampleAtArc(arc);
         const right = new THREE.Vector3(Math.cos(s.a), 0, -Math.sin(s.a));
-        const off = WALL_LAT + 6 + rnd() * 22;
+        const off = WALL_LAT + 10 + rnd() * 26;
         pts.push({ x: s.p.x + right.x * side * off, y: s.p.y, z: s.p.z + right.z * side * off,
-          rot: rnd() * Math.PI * 2, scale: 0.85 + rnd() * 0.55 });
+          rot: rnd() * Math.PI * 2, scale: 0.9 + rnd() * 0.5 });
       }
     }
     // keep clearances around the landmark buildings (expanded for large footprint)
     for (const r of this.reservedSpots) {
       for (let i = pts.length - 1; i >= 0; i--) {
-        if (Math.hypot(pts[i].x - r.x, pts[i].z - r.z) < 48) pts.splice(i, 1);
+        if (Math.hypot(pts[i].x - r.x, pts[i].z - r.z) < 55) pts.splice(i, 1);
       }
     }
     this._treePts = pts;
@@ -475,8 +475,8 @@ export class Track {
       const tpl = gltf.scene;
       const box = new THREE.Box3().setFromObject(tpl);
       const size = box.getSize(new THREE.Vector3());
-      // Mature highway tree height ≈ 19 m (scaled up from 5.6 m)
-      const s = 19.0 / size.y;
+      // Giant mature tree height ≈ 40 m (scaled up for high-impact presence)
+      const s = 40.0 / size.y;
       tpl.scale.setScalar(s);
       tpl.updateMatrixWorld(true);
       const bb = new THREE.Box3().setFromObject(tpl);
@@ -509,8 +509,8 @@ export class Track {
   }
 
   _buildConeTrees(pts) {
-    const trunkGeo = new THREE.CylinderGeometry(0.5, 0.7, 7.5, 6);
-    const leafGeo = new THREE.ConeGeometry(5.2, 13.5, 8);
+    const trunkGeo = new THREE.CylinderGeometry(1.1, 1.5, 16.0, 6);
+    const leafGeo = new THREE.ConeGeometry(11.0, 28.0, 8);
     const trunkMat = new THREE.MeshStandardMaterial({ color: 0x3a2a1c, roughness: 1 });
     const leafMat = new THREE.MeshStandardMaterial({ color: 0x14301c, roughness: 1 });
     const trunks = new THREE.InstancedMesh(trunkGeo, trunkMat, pts.length);
@@ -518,8 +518,8 @@ export class Track {
     const m = new THREE.Matrix4(), q = new THREE.Quaternion(), one = new THREE.Vector3();
     pts.forEach((p, i) => {
       one.set(p.scale, p.scale, p.scale);
-      m.compose(new THREE.Vector3(p.x, p.y + 3.75 * p.scale, p.z), q, one); trunks.setMatrixAt(i, m);
-      m.compose(new THREE.Vector3(p.x, p.y + 11.5 * p.scale, p.z), q, one); leaves.setMatrixAt(i, m);
+      m.compose(new THREE.Vector3(p.x, p.y + 8.0 * p.scale, p.z), q, one); trunks.setMatrixAt(i, m);
+      m.compose(new THREE.Vector3(p.x, p.y + 24.0 * p.scale, p.z), q, one); leaves.setMatrixAt(i, m);
     });
     leaves.castShadow = true;
     this.group.add(trunks, leaves);
