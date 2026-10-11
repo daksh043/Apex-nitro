@@ -36,10 +36,12 @@ export class Track {
     this._buildSamples();
     this._buildSky(scene);
     this._buildRoad();
+    this._buildRoadNetwork();
     this._buildBarriers();
     this._buildLamps();
     this._buildCity();
     this._buildGround();
+    this._buildGrassTufts();
     this._buildStartGear();
     this.reservedSpots = [];
     this._buildLandmarks();
@@ -189,10 +191,10 @@ export class Track {
     this.group.add(moon);
 
     // fog
-    scene.fog = new THREE.Fog(0x151228, 130, 1100);
+    scene.fog = new THREE.Fog(0x18172c, 160, 1200);
 
-    // lights
-    const hemi = new THREE.HemisphereLight(0x44548a, 0x2a1f28, 0.85);
+    // lights — rich dusk ambient with natural meadow bounce
+    const hemi = new THREE.HemisphereLight(0x556ea8, 0x324d26, 1.15);
     scene.add(hemi);
     const sun = new THREE.DirectionalLight(0xff7b33, 2.9);
     sun.castShadow = true;
@@ -234,16 +236,116 @@ export class Track {
 
   _buildRoad() {
     const roadMat = new THREE.MeshStandardMaterial({
-      map: this.tex.asphalt, roughness: 0.85, metalness: 0.0,
+      map: this.tex.asphalt, roughness: 0.82, metalness: 0.04,
     });
     const road = this._ribbon(-ROAD_HALF, ROAD_HALF, 0, 0, roadMat, 12);
     road.material.polygonOffset = true; road.material.polygonOffsetFactor = -1; road.material.polygonOffsetUnits = -1;
     this.group.add(road);
 
-    // curbs
-    const curbMat = new THREE.MeshStandardMaterial({ map: this.tex.curb, roughness: 0.7 });
-    this.group.add(this._ribbon(-ROAD_HALF - 0.55, -ROAD_HALF, 0.02, 0.0, curbMat, 3));
-    this.group.add(this._ribbon(ROAD_HALF, ROAD_HALF + 0.55, 0.0, 0.02, curbMat, 3));
+    // 3D beveled curbs with vertical elevation (0.13m raised curb blocks)
+    const curbMat = new THREE.MeshStandardMaterial({ map: this.tex.curb, roughness: 0.65 });
+    this.group.add(this._ribbon(-ROAD_HALF - 0.75, -ROAD_HALF, 0.13, 0.01, curbMat, 3));
+    this.group.add(this._ribbon(ROAD_HALF, ROAD_HALF + 0.75, 0.01, 0.13, curbMat, 3));
+
+    // 3D paved pedestrian sidewalks flanking the asphalt curbs
+    const paveMat = new THREE.MeshStandardMaterial({ map: this.tex.pavement, roughness: 0.75 });
+    this.group.add(this._ribbon(-WALL_LAT, -ROAD_HALF - 0.75, 0.12, 0.13, paveMat, 5));
+    this.group.add(this._ribbon(ROAD_HALF + 0.75, WALL_LAT, 0.13, 0.12, paveMat, 5));
+  }
+
+  /* ---------- 3D secondary city road network & plaza access streets ---------- */
+  _buildRoadNetwork() {
+    const sideRoadMat = new THREE.MeshStandardMaterial({
+      map: this.tex.sideRoad, roughness: 0.82, metalness: 0.05
+    });
+    const paveMat = new THREE.MeshStandardMaterial({ map: this.tex.pavement, roughness: 0.78 });
+
+    // Secondary city avenues branching outward into the urban skyline & restaurant plazas
+    const avenues = [
+      { arc: 90, side: -1, len: 150, w: 14 },
+      { arc: 190, side: -1, len: 140, w: 14 },
+      { arc: 240, side: 1, len: 170, w: 16 },  // Avenue leading into KFC plaza
+      { arc: 340, side: -1, len: 150, w: 14 },
+      { arc: 430, side: 1, len: 170, w: 18 },  // Avenue leading into McDonald's plaza
+      { arc: 560, side: 1, len: 145, w: 14 },
+      { arc: 700, side: -1, len: 170, w: 16 }, // Avenue leading into KFC 2 plaza
+      { arc: 810, side: 1, len: 140, w: 14 },
+      { arc: 950, side: -1, len: 170, w: 18 }, // Avenue leading into McDonald's 2 plaza
+    ];
+
+    for (const av of avenues) {
+      const smp = this.sampleAtArc(av.arc);
+      const right = new THREE.Vector3(Math.cos(smp.a), 0, -Math.sin(smp.a));
+      const roadDir = right.clone().multiplyScalar(av.side);
+      const roadWidthDir = smp.t.clone();
+
+      const startDist = WALL_LAT - 0.5;
+      const endDist = startDist + av.len;
+      const halfW = av.w * 0.5;
+
+      const p1 = smp.p.clone().addScaledVector(roadDir, startDist).addScaledVector(roadWidthDir, -halfW);
+      const p2 = smp.p.clone().addScaledVector(roadDir, startDist).addScaledVector(roadWidthDir, halfW);
+      const p3 = smp.p.clone().addScaledVector(roadDir, endDist).addScaledVector(roadWidthDir, halfW);
+      const p4 = smp.p.clone().addScaledVector(roadDir, endDist).addScaledVector(roadWidthDir, -halfW);
+
+      const pos = [
+        p1.x, p1.y + 0.02, p1.z,
+        p2.x, p2.y + 0.02, p2.z,
+        p3.x, p3.y + 0.02, p3.z,
+        p1.x, p1.y + 0.02, p1.z,
+        p3.x, p3.y + 0.02, p3.z,
+        p4.x, p4.y + 0.02, p4.z,
+      ];
+      const uvs = [
+        0, 0,
+        1, 0,
+        1, av.len / 16,
+        0, 0,
+        1, av.len / 16,
+        0, av.len / 16,
+      ];
+
+      const geom = new THREE.BufferGeometry();
+      geom.setAttribute('position', new THREE.Float32BufferAttribute(pos, 3));
+      geom.setAttribute('uv', new THREE.Float32BufferAttribute(uvs, 2));
+      geom.computeVertexNormals();
+
+      const roadMesh = new THREE.Mesh(geom, sideRoadMat);
+      roadMesh.receiveShadow = true;
+      this.group.add(roadMesh);
+
+      // Flanking 3D concrete sidewalks on both sides of each avenue
+      for (const swSide of [-1, 1]) {
+        const swWidth = 3.2;
+        const swInner = halfW * swSide;
+        const swOuter = (halfW + swWidth) * swSide;
+
+        const s1 = smp.p.clone().addScaledVector(roadDir, startDist).addScaledVector(roadWidthDir, swInner);
+        const s2 = smp.p.clone().addScaledVector(roadDir, startDist).addScaledVector(roadWidthDir, swOuter);
+        const s3 = smp.p.clone().addScaledVector(roadDir, endDist).addScaledVector(roadWidthDir, swOuter);
+        const s4 = smp.p.clone().addScaledVector(roadDir, endDist).addScaledVector(roadWidthDir, swInner);
+
+        const swPos = [
+          s1.x, s1.y + 0.08, s1.z,
+          s2.x, s2.y + 0.08, s2.z,
+          s3.x, s3.y + 0.08, s3.z,
+          s1.x, s1.y + 0.08, s1.z,
+          s3.x, s3.y + 0.08, s3.z,
+          s4.x, s4.y + 0.08, s4.z,
+        ];
+        const swUvs = [
+          0, 0, 1, 0, 1, av.len / 8,
+          0, 0, 1, av.len / 8, 0, av.len / 8,
+        ];
+        const swGeom = new THREE.BufferGeometry();
+        swGeom.setAttribute('position', new THREE.Float32BufferAttribute(swPos, 3));
+        swGeom.setAttribute('uv', new THREE.Float32BufferAttribute(swUvs, 2));
+        swGeom.computeVertexNormals();
+        const swMesh = new THREE.Mesh(swGeom, paveMat);
+        swMesh.receiveShadow = true;
+        this.group.add(swMesh);
+      }
+    }
   }
 
   _buildBarriers() {
@@ -402,14 +504,135 @@ export class Track {
 
   /* ---------- ground ---------- */
   _buildGround() {
+    // Expansive lush grass meadow base
     const g = new THREE.Mesh(
-      new THREE.CircleGeometry(1500, 48),
-      new THREE.MeshStandardMaterial({ map: this.tex.ground, color: 0xbfc3cc, roughness: 1 })
+      new THREE.CircleGeometry(1600, 64),
+      new THREE.MeshStandardMaterial({
+        map: this.tex.ground,
+        color: 0x5a9a4c,
+        roughness: 0.85,
+        metalness: 0.04,
+      })
     );
     g.rotation.x = -Math.PI / 2;
-    g.position.set(60, -0.08, -150);
+    g.position.set(60, -0.06, -150);
     g.receiveShadow = true;
     this.group.add(g);
+
+    // Lush grass shoulders following the track curve
+    const vergeMat = new THREE.MeshStandardMaterial({
+      map: this.tex.ground,
+      color: 0x62a853,
+      roughness: 0.82,
+    });
+    this.group.add(this._ribbon(-WALL_LAT - 26, -WALL_LAT, -0.02, 0.0, vergeMat, 10));
+    this.group.add(this._ribbon(WALL_LAT, WALL_LAT + 26, 0.0, -0.02, vergeMat, 10));
+  }
+
+  /* ---------- 3D Physical Grass Tufts ---------- */
+  _buildGrassTufts() {
+    const tuftGeo = new THREE.BufferGeometry();
+    const w = 2.4, h = 1.65;
+    const quadVertices = [];
+    const quadUVs = [];
+    const quadIndices = [];
+
+    const angles = [0, Math.PI / 3, (2 * Math.PI) / 3];
+    angles.forEach((ang, qIdx) => {
+      const cos = Math.cos(ang) * (w * 0.5);
+      const sin = Math.sin(ang) * (w * 0.5);
+      const baseIdx = qIdx * 4;
+      quadVertices.push(
+        -cos, 0, -sin,
+         cos, 0,  sin,
+         cos, h,  sin,
+        -cos, h, -sin
+      );
+      quadUVs.push(
+        0, 1,
+        1, 1,
+        1, 0,
+        0, 0
+      );
+      quadIndices.push(
+        baseIdx, baseIdx + 1, baseIdx + 2,
+        baseIdx, baseIdx + 2, baseIdx + 3
+      );
+    });
+
+    tuftGeo.setAttribute('position', new THREE.Float32BufferAttribute(quadVertices, 3));
+    tuftGeo.setAttribute('uv', new THREE.Float32BufferAttribute(quadUVs, 2));
+    tuftGeo.setIndex(quadIndices);
+    tuftGeo.computeVertexNormals();
+
+    const tuftMat = new THREE.MeshStandardMaterial({
+      map: this.tex.grassTuft,
+      alphaTest: 0.28,
+      transparent: true,
+      side: THREE.DoubleSide,
+      color: 0x82cc68,
+      roughness: 0.82,
+      metalness: 0.05,
+      shadowSide: THREE.DoubleSide,
+    });
+
+    const grassCount = 9200;
+    const grassMesh = new THREE.InstancedMesh(tuftGeo, tuftMat, grassCount);
+    grassMesh.receiveShadow = true;
+    grassMesh.frustumCulled = false;
+
+    let seed = 47;
+    const rnd = () => { seed = (seed * 48271) % 2147483647; return seed / 2147483647; };
+
+    const m = new THREE.Matrix4(), q = new THREE.Quaternion(), e = new THREE.Euler(), sc = new THREE.Vector3();
+    let idx = 0;
+
+    // Trackside grass belts hugging both sides of the racing circuit
+    for (let arc = 0; arc < this.length && idx < grassCount - 600; arc += 4.5) {
+      const smp = this.sampleAtArc(arc);
+      const right = new THREE.Vector3(Math.cos(smp.a), 0, -Math.sin(smp.a));
+
+      for (const side of [-1, 1]) {
+        const clusterSize = 2 + ((rnd() * 3) | 0);
+        for (let k = 0; k < clusterSize && idx < grassCount; k++) {
+          const latOffset = WALL_LAT + 1.2 + rnd() * 30;
+          const px = smp.p.x + right.x * side * latOffset + (rnd() - 0.5) * 2.5;
+          const pz = smp.p.z + right.z * side * latOffset + (rnd() - 0.5) * 2.5;
+          const py = smp.p.y;
+
+          const scale = 0.85 + rnd() * 0.75;
+          sc.set(scale, scale * (0.85 + rnd() * 0.4), scale);
+          e.set(0, rnd() * Math.PI * 2, (rnd() - 0.5) * 0.12);
+          q.setFromEuler(e);
+
+          m.compose(new THREE.Vector3(px, py, pz), q, sc);
+          grassMesh.setMatrixAt(idx++, m);
+        }
+      }
+    }
+
+    // Infield & outfield lush meadow fields
+    while (idx < grassCount) {
+      const arc = rnd() * this.length;
+      const smp = this.sampleAtArc(arc);
+      const right = new THREE.Vector3(Math.cos(smp.a), 0, -Math.sin(smp.a));
+      const side = rnd() < 0.5 ? -1 : 1;
+      const dist = WALL_LAT + 28 + rnd() * 110;
+      const px = smp.p.x + right.x * side * dist;
+      const pz = smp.p.z + right.z * side * dist;
+      const py = smp.p.y;
+
+      const scale = 1.0 + rnd() * 0.95;
+      sc.set(scale, scale, scale);
+      e.set(0, rnd() * Math.PI * 2, 0);
+      q.setFromEuler(e);
+
+      m.compose(new THREE.Vector3(px, py, pz), q, sc);
+      grassMesh.setMatrixAt(idx++, m);
+    }
+
+    grassMesh.instanceMatrix.needsUpdate = true;
+    this.group.add(grassMesh);
   }
 
   /* ---------- start line + gantry ---------- */
