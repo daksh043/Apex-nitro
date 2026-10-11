@@ -8,6 +8,7 @@ import { HUD } from './hud.js';
 import { GameAudio } from './audio.js';
 import { Net, RemoteCar } from './net.js';
 import { initCompliance } from './compliance.js';
+import { initGraphicsUI, shouldSkipFrame } from './graphics.js';
 
 const LAPS = 3;
 
@@ -21,7 +22,8 @@ const els = {
   colorRow: $('colorRow'), btnSolo: $('btnSolo'), btnMulti: $('btnMulti'),
   joinCode: $('joinCode'), btnCreate: $('btnCreate'), btnJoin: $('btnJoin'),
   lbPanel: $('lbPanel'), btnStartRace: $('btnStartRace'), btnLobbyLeave: $('btnLobbyLeave'),
-  pause: $('pause'), btnResume: $('btnResume'), btnQuit: $('btnQuit'),
+  pause: $('pause'), pauseMainPanel: $('pauseMainPanel'), pauseGraphicsPanel: $('pauseGraphicsPanel'),
+  btnResume: $('btnResume'), btnGraphics: $('btnGraphics'), btnGraphicsBack: $('btnGraphicsBack'), btnQuit: $('btnQuit'),
   loading: $('loading'), loadMsg: $('loadMsg'), musicToggle: $('musicToggle'),
   touch: $('touch'), backToLobbyBtn: $('btnBackToLobby'),
 };
@@ -295,6 +297,7 @@ function wireUI() {
 
   // Initialize compliance, cookie banner, legal center, and accessibility controls
   initCompliance();
+  initGraphicsUI(renderer, fx);
 }
 
 function connectMP(name, color, room, car) {
@@ -477,6 +480,7 @@ let timeAcc = 0;
 
 function loop(now) {
   requestAnimationFrame(loop);
+  if (shouldSkipFrame(now)) return;
   let dt = (now - lastT) / 1000;
   lastT = now;
   dt = Math.min(dt, 0.05);
@@ -829,6 +833,10 @@ function togglePause() {
   if (state.mptype === 'mp') return; // no pausing in MP
   state.paused = !state.paused;
   els.pause.style.display = state.paused ? 'flex' : 'none';
+  if (state.paused) {
+    if (els.pauseMainPanel) els.pauseMainPanel.style.display = 'block';
+    if (els.pauseGraphicsPanel) els.pauseGraphicsPanel.style.display = 'none';
+  }
   audio.setEngine(0.2, 0, false, 0);
 }
 

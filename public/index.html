@@ -145,10 +145,64 @@
 
 <!-- ============ PAUSE ============ -->
 <div id="pause" style="display:none" role="dialog" aria-modal="true" aria-label="Game Paused">
-  <div class="panel">
+  <div class="panel" id="pauseMainPanel" style="min-width: 320px;">
     <h2>PAUSED</h2>
     <button id="btnResume" class="btn primary big" aria-label="Resume race">RESUME</button>
+    <button id="btnGraphics" class="btn big" aria-label="Adjust graphics settings">⚙ GRAPHICS</button>
     <button id="btnQuit" class="btn big" aria-label="Quit race to main menu">QUIT TO MENU</button>
+  </div>
+
+  <!-- Graphics Settings Submenu -->
+  <div class="panel" id="pauseGraphicsPanel" style="display:none; max-width: 480px; width: 92%;">
+    <h2>GRAPHICS SETTINGS</h2>
+    
+    <div class="gfx-row">
+      <span class="gfx-title">PRESET</span>
+      <div class="gfx-group" id="gfxGroupPreset">
+        <button class="gfx-btn" data-preset="low">LOW</button>
+        <button class="gfx-btn" data-preset="medium">MED</button>
+        <button class="gfx-btn" data-preset="high">HIGH</button>
+        <button class="gfx-btn" data-preset="ultra">ULTRA</button>
+      </div>
+    </div>
+
+    <div class="gfx-row">
+      <span class="gfx-title">RESOLUTION SCALE</span>
+      <div class="gfx-group" id="gfxGroupRes">
+        <button class="gfx-btn" data-res="0.75">0.75x</button>
+        <button class="gfx-btn" data-res="1.0">1.0x</button>
+        <button class="gfx-btn" data-res="1.5">1.5x</button>
+        <button class="gfx-btn" data-res="2.0">MAX</button>
+      </div>
+    </div>
+
+    <div class="gfx-row">
+      <span class="gfx-title">SHADOWS</span>
+      <div class="gfx-group" id="gfxGroupShadows">
+        <button class="gfx-btn" data-shadow="off">OFF</button>
+        <button class="gfx-btn" data-shadow="med">MED</button>
+        <button class="gfx-btn" data-shadow="soft">SOFT</button>
+      </div>
+    </div>
+
+    <div class="gfx-row">
+      <span class="gfx-title">BLOOM & MOTION WARP</span>
+      <div class="gfx-group" id="gfxGroupFx">
+        <button class="gfx-btn" data-fx="off">OFF</button>
+        <button class="gfx-btn" data-fx="on">ON</button>
+      </div>
+    </div>
+
+    <div class="gfx-row">
+      <span class="gfx-title">FRAME RATE CAP</span>
+      <div class="gfx-group" id="gfxGroupFps">
+        <button class="gfx-btn" data-fps="30">30 FPS</button>
+        <button class="gfx-btn" data-fps="60">60 FPS</button>
+        <button class="gfx-btn" data-fps="0">UNCAPPED</button>
+      </div>
+    </div>
+
+    <button id="btnGraphicsBack" class="btn primary big" style="margin-top: 16px;" aria-label="Back to Pause Menu">APPLY & BACK</button>
   </div>
 </div>
 

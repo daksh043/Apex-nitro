@@ -413,6 +413,48 @@ body.reduced-motion *, body.reduced-motion *:before, body.reduced-motion *:after
   position: fixed; inset: 0; display: flex; align-items: center; justify-content: center;
   background: rgba(2, 4, 9, 0.7); z-index: 26; backdrop-filter: blur(4px);
 }
+.gfx-row {
+  margin-bottom: 12px;
+  text-align: left;
+}
+.gfx-title {
+  display: block;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 2px;
+  color: var(--text-muted);
+  margin-bottom: 6px;
+  text-transform: uppercase;
+}
+.gfx-group {
+  display: flex;
+  gap: 6px;
+}
+.gfx-btn {
+  flex: 1;
+  padding: 8px 4px;
+  font-family: inherit;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 1px;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  color: #cdd6e4;
+  transform: skewX(-8deg);
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+.gfx-btn:hover {
+  background: rgba(0, 229, 255, 0.15);
+  border-color: rgba(0, 229, 255, 0.4);
+  color: #fff;
+}
+.gfx-btn.active {
+  background: linear-gradient(100deg, rgba(0, 119, 255, 0.5), rgba(0, 229, 255, 0.6));
+  border-color: var(--cyan);
+  color: #fff;
+  box-shadow: 0 0 10px rgba(0, 229, 255, 0.35);
+}
 
 /* ---------- touch ---------- */
 #touch { display: none; position: fixed; inset: 0; pointer-events: none; z-index: 18; }
