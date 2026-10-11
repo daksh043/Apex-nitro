@@ -449,13 +449,13 @@ export class Track {
         const right = new THREE.Vector3(Math.cos(s.a), 0, -Math.sin(s.a));
         // Allocate approximately 40% to canal houses, 60% to modern high-rise towers
         const isCanal = rnd() < 0.40;
-        const off = isCanal ? (34 + rnd() * 46) : (50 + rnd() * 85);
-        const x = s.p.x + right.x * side * off + (rnd() - 0.5) * 16;
-        const z = s.p.z + right.z * side * off + (rnd() - 0.5) * 16;
-        const clearance = isCanal ? 18 : 26;
+        const off = isCanal ? (28 + rnd() * 40) : (42 + rnd() * 70);
+        const x = s.p.x + right.x * side * off + (rnd() - 0.5) * 14;
+        const z = s.p.z + right.z * side * off + (rnd() - 0.5) * 14;
+        const clearance = isCanal ? 15 : 22;
         if (nearTrack(x, z, clearance)) continue;
         let clash = false;
-        const minClash = isCanal ? 18 : 34;
+        const minClash = isCanal ? 12 : 22;
         for (const b of placed) {
           const dx = b.x - x, dz = b.z - z;
           if (dx * dx + dz * dz < minClash * minClash) { clash = true; break; }
@@ -463,14 +463,15 @@ export class Track {
         if (clash) continue;
 
         if (isCanal) {
-          // Authentic Dutch canal townhouse: ~18-26m tall
-          const scale = 18.0 + rnd() * 8.0;
+          // Dutch canal townhouse: ~10-14m height
+          const scale = 10.0 + rnd() * 4.0;
           // Front (+Z in model space) rotated to directly face towards the racetrack/road
           const rotY = Math.atan2(-side * right.x, -side * right.z) + (rnd() - 0.5) * 0.15;
           canalPts.push({ x, y: s.p.y, z, scale, rotY });
         } else {
-          const scaleXZ = 0.65 + rnd() * 0.5;
-          const scaleY = 0.55 + rnd() * 0.8;
+          // Sleeker, more proportionate modern tower
+          const scaleXZ = 0.32 + rnd() * 0.28;
+          const scaleY = 0.30 + rnd() * 0.38;
           const rotY = (rnd() * 4 | 0) * (Math.PI / 2) + (rnd() - 0.5) * 0.25;
           bldgPts.push({ x, y: s.p.y, z, scaleXZ, scaleY, rotY });
         }
@@ -484,9 +485,9 @@ export class Track {
       const ang = (i / 48) * Math.PI * 2;
       const r = 680 + rnd() * 240;
       const x = cx + Math.cos(ang) * r, z = cz + Math.sin(ang) * r;
-      if (nearTrack(x, z, 60)) continue;
-      const scaleXZ = 1.0 + rnd() * 0.9;
-      const scaleY = 0.9 + rnd() * 1.5;
+      if (nearTrack(x, z, 50)) continue;
+      const scaleXZ = 0.55 + rnd() * 0.45;
+      const scaleY = 0.50 + rnd() * 0.70;
       const rotY = (rnd() * 4 | 0) * (Math.PI / 2);
       bldgPts.push({ x, y: -0.06, z, scaleXZ, scaleY, rotY });
     }
@@ -540,7 +541,7 @@ export class Track {
 
         // Rooftop aviation beacon on tall skyscrapers
         const totalHeight = (box.max.y - box.min.y) * p.scaleY;
-        if (totalHeight > 80 && rnd() < 0.6) {
+        if (totalHeight > 50 && rnd() < 0.6) {
           const bcn = new THREE.Mesh(
             new THREE.SphereGeometry(0.65, 8, 8),
             new THREE.MeshBasicMaterial({ color: 0xff2020, fog: false })
