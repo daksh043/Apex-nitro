@@ -425,13 +425,16 @@ export class Track {
   /* ---------- buildings & skyline ---------- */
   _buildCity() {
     const facades = [this.tex.facadeA, this.tex.facadeB, this.tex.facadeC, this.tex.facadeD];
-    const mats = facades.map(f => new THREE.MeshStandardMaterial({
-      map: f, emissiveMap: f, emissive: 0xffffff, emissiveIntensity: 0.95,
-      color: 0x9ba0ad, roughness: 0.85, metalness: 0.1,
+    const wallMats = facades.map(f => new THREE.MeshStandardMaterial({
+      map: f, emissiveMap: f, emissive: 0xffffff, emissiveIntensity: 1.05,
+      color: 0xa2a8b6, roughness: 0.68, metalness: 0.12,
     }));
+    const roofMat = new THREE.MeshStandardMaterial({
+      map: this.tex.roof, roughness: 0.88, color: 0x828894,
+    });
     const farMat = new THREE.MeshStandardMaterial({
-      map: this.tex.far, emissiveMap: this.tex.far, emissive: 0xffffff, emissiveIntensity: 0.5,
-      color: 0x2a2f3d, roughness: 1,
+      map: this.tex.far, emissiveMap: this.tex.far, emissive: 0xffffff, emissiveIntensity: 0.85,
+      color: 0x484f60, roughness: 0.9,
     });
     const placed = [];
     const nearTrack = (x, z, r) => {
@@ -462,33 +465,64 @@ export class Track {
           if (dx * dx + dz * dz < 30 * 30) { clash = true; break; }
         }
         if (clash) continue;
-        const w = 12 + rnd() * 20, d = 12 + rnd() * 20, h = 14 + rnd() * rnd() * 62;
-        const mat = mats[(rnd() * mats.length) | 0];
+        const w = 12 + rnd() * 20, d = 12 + rnd() * 20, h = 18 + rnd() * rnd() * 62;
+        const wallMat = wallMats[(rnd() * wallMats.length) | 0];
+        // Multi-material box: 4 perimeter walls + top roof deck + bottom
+        const bldgMats = [wallMat, wallMat, roofMat, wallMat, wallMat, wallMat];
         const g = boxBase.clone();
         const uv = g.attributes.uv;
 
-        // Clone facade design all over the entire building (all 6 faces, full perimeter and height)
-        const repX = Math.max(1, Math.round(w / 4));
-        const repZ = Math.max(1, Math.round(d / 4));
-        const repY = Math.max(1, Math.round(h / 3.5));
+        // Clone facade design all over the entire building matching the reference tower
+        const repX = Math.max(2, Math.round(w / 3.0));
+        const repZ = Math.max(2, Math.round(d / 3.0));
+        const repY = Math.max(3, Math.round(h / 3.2));
 
         for (let face = 0; face < 6; face++) {
-          const rx = (face === 0 || face === 1) ? repZ : repX;
-          const ry = (face === 2 || face === 3) ? repZ : repY;
+          const rx = (face === 0 || face === 1) ? repZ : (face === 2 ? Math.max(1, Math.round(w / 8)) : repX);
+          const ry = (face === 2 || face === 3) ? Math.max(1, Math.round(d / 8)) : repY;
           for (let j = 0; j < 4; j++) {
             const idx = face * 4 + j;
             uv.setXY(idx, uv.getX(idx) * rx, uv.getY(idx) * ry);
           }
         }
 
-        const mesh = new THREE.Mesh(g, mat);
+        const mesh = new THREE.Mesh(g, bldgMats);
         mesh.position.set(x, s.p.y - 1, z);
         mesh.scale.set(w, h, d);
         mesh.rotation.y = rnd() * Math.PI;
         mesh.castShadow = mesh.receiveShadow = true;
         this.group.add(mesh);
         placed.push({ x, z });
-        if (h > 55 && rnd() < 0.7) { // rooftop beacon
+
+        // Rooftop mechanical HVAC chillers (twin AC condenser units matching reference)
+        if (h > 24) {
+          const hvacMat = new THREE.MeshStandardMaterial({ color: 0xd4d8e0, roughness: 0.4, metalness: 0.5 });
+          const fanMat = new THREE.MeshStandardMaterial({ color: 0x242830, roughness: 0.8 });
+          const acBoxGeo = new THREE.BoxGeometry(2.4, 1.6, 1.4);
+          const fanGeo = new THREE.CylinderGeometry(0.5, 0.5, 0.15, 12);
+
+          const hvacGroup = new THREE.Group();
+          for (const acZ of [0, -1.9]) {
+            const ac = new THREE.Mesh(acBoxGeo, hvacMat);
+            ac.position.set(0, 0.8, acZ);
+            ac.castShadow = true;
+            const fan = new THREE.Mesh(fanGeo, fanMat);
+            fan.position.set(0, 1.62, acZ);
+            hvacGroup.add(ac, fan);
+          }
+          // Position on rooftop corner
+          const acCornerX = w * 0.30;
+          const acCornerZ = d * 0.28;
+          hvacGroup.position.set(
+            x + Math.cos(mesh.rotation.y) * acCornerX - Math.sin(mesh.rotation.y) * acCornerZ,
+            s.p.y + h - 1,
+            z + Math.sin(mesh.rotation.y) * acCornerX + Math.cos(mesh.rotation.y) * acCornerZ
+          );
+          hvacGroup.rotation.y = mesh.rotation.y;
+          this.group.add(hvacGroup);
+        }
+
+        if (h > 65 && rnd() < 0.6) { // rooftop beacon
           const bcn = new THREE.Mesh(
             new THREE.SphereGeometry(0.5, 8, 8),
             new THREE.MeshBasicMaterial({ color: 0xff2020, fog: false })
@@ -509,8 +543,8 @@ export class Track {
       const w = 30 + rnd() * 50, h = 60 + rnd() * 160;
       const g = boxBase.clone();
       const uv = g.attributes.uv;
-      const repW = Math.max(2, Math.round(w / 6));
-      const repH = Math.max(4, Math.round(h / 8));
+      const repW = Math.max(4, Math.round(w / 4));
+      const repH = Math.max(6, Math.round(h / 4.5));
       for (let u = 0; u < uv.count; u++) uv.setXY(u, uv.getX(u) * repW, uv.getY(u) * repH);
       const mesh = new THREE.Mesh(g, farMat);
       mesh.position.set(x, 0, z);

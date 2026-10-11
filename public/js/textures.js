@@ -70,96 +70,132 @@ function checker() {
   return c;
 }
 
-/* Building facade: seamless window grid, lit office clusters, architectural mullions */
-function facade(litRatio, warmRatio, style = 1) {
-  const [c, x] = canvas(256, 256);
-  // Dark architectural concrete/granite cladding base
-  x.fillStyle = '#0e111a';
-  x.fillRect(0, 0, 256, 256);
+/* High-rise tower facade matching the reference modern apartment / office tower:
+   Precast concrete floor spandrels + dark window ribbons + warm glowing amber interior windows */
+function skyscraperFacade(litDensity, seed = 1) {
+  const [c, x] = canvas(512, 512);
 
-  const cols = 16, floors = 16;
-  const colW = 16, floorH = 16;
-  const winW = 11, winH = 10;
-  const offX = 2, offY = 3;
+  // Background: architectural dark mullion & spandrel tone
+  x.fillStyle = '#10131b';
+  x.fillRect(0, 0, 512, 512);
 
-  // Render seamless window grid across every floor and column
+  const floors = 16, cols = 16;
+  const floorH = 32, colW = 32;
+  const slabH = 12, winH = 18;
+
+  // Render 16 seamless floors
   for (let f = 0; f < floors; f++) {
-    const wy = f * floorH + offY;
-    // Floor structural divider band
-    x.fillStyle = 'rgba(255,255,255,0.06)';
-    x.fillRect(0, f * floorH, 256, 2);
+    const fy = f * floorH;
+
+    // 1. Precast Concrete Floor Spandrel Slab (light grey architectural slate)
+    x.fillStyle = '#565d6c';
+    x.fillRect(0, fy, 512, slabH);
+
+    // Concrete bevel top highlight
+    x.fillStyle = 'rgba(255, 255, 255, 0.18)';
+    x.fillRect(0, fy, 512, 1.5);
+
+    // Concrete mid panel texture
+    x.fillStyle = 'rgba(255, 255, 255, 0.06)';
+    x.fillRect(0, fy + 2, 512, slabH - 4);
+
+    // Concrete bottom shadow groove
+    x.fillStyle = 'rgba(10, 14, 22, 0.55)';
+    x.fillRect(0, fy + slabH - 1.5, 512, 1.5);
+
+    // Vertical precast concrete joint seams every 64px
+    x.fillStyle = 'rgba(20, 24, 34, 0.4)';
+    for (let jx = 0; jx < 512; jx += 64) {
+      x.fillRect(jx, fy, 1.5, slabH);
+    }
+
+    // 2. Horizontal Window Ribbon Band
+    const wy = fy + slabH;
+
+    // Window frame recess shadow
+    x.fillStyle = '#0c0f16';
+    x.fillRect(0, wy, 512, winH);
+
+    // Floor occupancy distribution: top 3 floors have much fewer lights (penthouse/mechanical)
+    const floorOccupancy = f < 3 ? 0.20 : (f < 6 ? 0.45 : 0.60);
 
     for (let col = 0; col < cols; col++) {
-      const wx = col * colW + offX;
-      // Window frame / sill
-      x.fillStyle = '#080a10';
-      x.fillRect(wx - 1, wy - 1, winW + 2, winH + 2);
+      const wx = col * colW;
+      const paneW = colW - 3; // 29px wide, 3px vertical mullion
 
-      const lit = Math.random() < litRatio;
-      if (lit) {
-        let hue;
-        if (Math.random() < warmRatio) {
-          hue = Math.random() < 0.6 ? '255, 185, 95' : '255, 150, 70'; // Warm office & residential
-        } else {
-          hue = Math.random() < 0.7 ? '185, 225, 255' : '100, 230, 245'; // Modern white LED & cyan
-        }
-        const alpha = 0.75 + Math.random() * 0.25;
+      // Vertical dark metal mullion divider
+      x.fillStyle = '#141822';
+      x.fillRect(wx + paneW, wy, 3, winH);
 
-        // Window glow fill
-        x.fillStyle = `rgba(${hue}, ${alpha})`;
-        x.fillRect(wx, wy, winW, winH);
+      const isLit = Math.random() < litDensity * floorOccupancy;
+      if (isLit) {
+        // Exact warm golden amber glowing interior lighting from reference
+        const amberTone = Math.random() < 0.65 ? '255, 182, 85' : (Math.random() < 0.5 ? '255, 155, 55' : '255, 210, 120');
+        const bright = 0.88 + Math.random() * 0.12;
 
-        // Interior blinds / mullion division line
-        if (Math.random() < 0.5) {
-          x.fillStyle = 'rgba(10, 14, 22, 0.45)';
-          x.fillRect(wx, wy + 4, winW, 1.5);
-        } else if (Math.random() < 0.3) {
-          x.fillStyle = 'rgba(10, 14, 22, 0.4)';
-          x.fillRect(wx + 5, wy, 1.5, winH);
-        }
+        x.fillStyle = `rgba(${amberTone}, ${bright})`;
+        x.fillRect(wx + 1, wy + 1, paneW - 1, winH - 2);
+
+        // Interior horizontal blinds / window mullion line
+        x.fillStyle = 'rgba(20, 26, 38, 0.35)';
+        x.fillRect(wx + 1, wy + 6, paneW - 1, 1.5);
+        x.fillRect(wx + 1, wy + 11, paneW - 1, 1.5);
+
+        // Warm light spill onto the concrete ledge below
+        x.fillStyle = `rgba(${amberTone}, 0.22)`;
+        x.fillRect(wx, wy + winH - 1, paneW, 2);
       } else {
-        // Dark reflective glass with subtle sky reflection
-        x.fillStyle = 'rgba(24, 32, 48, 0.9)';
-        x.fillRect(wx, wy, winW, winH);
-        // Glass sheen highlight
-        x.fillStyle = 'rgba(255, 255, 255, 0.05)';
-        x.fillRect(wx, wy, winW, 2);
+        // Deep dark blue-grey/slate reflective glass
+        x.fillStyle = '#181e2b';
+        x.fillRect(wx + 1, wy + 1, paneW - 1, winH - 2);
+
+        // Subtle sky reflection horizontal sheen
+        x.fillStyle = 'rgba(180, 205, 240, 0.08)';
+        x.fillRect(wx + 1, wy + 1, paneW - 1, 2);
       }
     }
-  }
-
-  // Vertical architectural column pilasters
-  x.fillStyle = 'rgba(255,255,255,0.03)';
-  for (let col = 0; col < cols; col += 4) {
-    x.fillRect(col * colW, 0, 2, 256);
-  }
-
-  // Accent vertical neon trims on select styles
-  if (style === 2) {
-    x.fillStyle = 'rgba(0, 230, 255, 0.7)';
-    x.fillRect(0, 0, 2, 256);
-    x.fillRect(254, 0, 2, 256);
-  } else if (style === 3) {
-    x.fillStyle = 'rgba(255, 170, 50, 0.7)';
-    x.fillRect(126, 0, 3, 256);
   }
 
   return c;
 }
 
-/* Skyline for far silhouettes (seamless glowing city grid) */
+/* Rooftop surface: dark gravel deck with perimeter parapet trim */
+function roof() {
+  const [c, x] = canvas(256, 256);
+  x.fillStyle = '#1e2129';
+  x.fillRect(0, 0, 256, 256);
+  noise(x, 256, 256, 1200, 0.12);
+  // Parapet concrete edge border
+  x.strokeStyle = '#484d59';
+  x.lineWidth = 12;
+  x.strokeRect(6, 6, 244, 244);
+  x.strokeStyle = '#2b2e38';
+  x.lineWidth = 2;
+  x.strokeRect(12, 12, 232, 232);
+  return c;
+}
+
+/* Skyline for far silhouettes (seamless glowing city grid matching reference) */
 function farFacade() {
   const [c, x] = canvas(256, 256);
-  x.fillStyle = '#080a12';
+  x.fillStyle = '#0a0d14';
   x.fillRect(0, 0, 256, 256);
 
   const cols = 16, floors = 16;
   for (let f = 0; f < floors; f++) {
+    // Concrete floor spandrel stripe
+    x.fillStyle = 'rgba(86, 93, 108, 0.65)';
+    x.fillRect(0, f * 16, 256, 5);
+
+    // Warm amber window lights on lower & middle floors
+    const litChance = f < 3 ? 0.18 : 0.48;
     for (let col = 0; col < cols; col++) {
-      if (Math.random() < 0.45) {
-        const colVal = Math.random() < 0.65 ? 'rgba(255, 180, 90, 0.8)' : 'rgba(140, 200, 255, 0.8)';
-        x.fillStyle = colVal;
-        x.fillRect(col * 16 + 4, f * 16 + 5, 8, 6);
+      if (Math.random() < litChance) {
+        x.fillStyle = Math.random() < 0.7 ? 'rgba(255, 182, 85, 0.95)' : 'rgba(255, 150, 50, 0.9)';
+        x.fillRect(col * 16 + 2, f * 16 + 6, 12, 8);
+      } else {
+        x.fillStyle = 'rgba(24, 30, 42, 0.8)';
+        x.fillRect(col * 16 + 2, f * 16 + 6, 12, 8);
       }
     }
   }
@@ -351,10 +387,11 @@ export function makeTextures() {
     asphalt: toTex(asphalt(), { repeat: [1, 1] }),
     curb: toTex(curb(), { repeat: [1, 1] }),
     checker: toTex(checker()),
-    facadeA: toTex(facade(0.68, 0.75, 1), { repeat: [1, 1] }),
-    facadeB: toTex(facade(0.52, 0.30, 2), { repeat: [1, 1] }),
-    facadeC: toTex(facade(0.78, 0.85, 3), { repeat: [1, 1] }),
-    facadeD: toTex(facade(0.40, 0.50, 4), { repeat: [1, 1] }),
+    facadeA: toTex(skyscraperFacade(0.55, 1), { repeat: [1, 1] }),
+    facadeB: toTex(skyscraperFacade(0.42, 2), { repeat: [1, 1] }),
+    facadeC: toTex(skyscraperFacade(0.65, 3), { repeat: [1, 1] }),
+    facadeD: toTex(skyscraperFacade(0.35, 4), { repeat: [1, 1] }),
+    roof: toTex(roof(), { repeat: [1, 1] }),
     far: toTex(farFacade(), { repeat: [1, 1] }),
     puff: toTex(puff()),
     streak: toTex(streak()),
