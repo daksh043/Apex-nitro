@@ -532,7 +532,7 @@ export class Track {
   /* ---------- 3D Physical Grass Tufts ---------- */
   _buildGrassTufts() {
     const tuftGeo = new THREE.BufferGeometry();
-    const w = 2.4, h = 1.65;
+    const w = 1.8, h = 1.15;
     const quadVertices = [];
     const quadUVs = [];
     const quadIndices = [];
@@ -548,11 +548,12 @@ export class Track {
          cos, h,  sin,
         -cos, h, -sin
       );
+      // Correct UV orientation: v = 0 is root (y = 0), v = 1 is tip (y = h)
       quadUVs.push(
-        0, 1,
-        1, 1,
+        0, 0,
         1, 0,
-        0, 0
+        1, 1,
+        0, 1
       );
       quadIndices.push(
         baseIdx, baseIdx + 1, baseIdx + 2,
@@ -600,8 +601,8 @@ export class Track {
           const pz = smp.p.z + right.z * side * latOffset + (rnd() - 0.5) * 2.5;
           const py = smp.p.y;
 
-          const scale = 0.85 + rnd() * 0.75;
-          sc.set(scale, scale * (0.85 + rnd() * 0.4), scale);
+          const scale = 0.75 + rnd() * 0.55;
+          sc.set(scale, scale * (0.85 + rnd() * 0.35), scale);
           e.set(0, rnd() * Math.PI * 2, (rnd() - 0.5) * 0.12);
           q.setFromEuler(e);
 
@@ -622,7 +623,7 @@ export class Track {
       const pz = smp.p.z + right.z * side * dist;
       const py = smp.p.y;
 
-      const scale = 1.0 + rnd() * 0.95;
+      const scale = 0.85 + rnd() * 0.65;
       sc.set(scale, scale, scale);
       e.set(0, rnd() * Math.PI * 2, 0);
       q.setFromEuler(e);
