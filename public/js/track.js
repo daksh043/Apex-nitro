@@ -11,6 +11,7 @@ const TREE_URL = '/models/bmw_m4_city/m4_city_game_build/assets/tree.glb';
 const KFC_URL = '/models/bmw_m4_city/m4_city_game_build/assets/kfc.glb';
 const MCD_URL = '/models/bmw_m4_city/m4_city_game_build/assets/mcd.glb';
 const BUILDING_URL = '/models/building.glb';
+const CANAL_HOUSE_URL = '/models/canal_house.glb';
 
 /* Control points of the circuit (x, y elevation, z) — ~1.5 km loop */
 const CONTROL = [
@@ -438,32 +439,46 @@ export class Track {
     const rnd = () => { seed = (seed * 16807) % 2147483647; return seed / 2147483647; };
 
     const bldgPts = [];
+    const canalPts = [];
 
-    // Near trackside high-rise towers
-    for (let arc = 0; arc < this.length; arc += 22) {
+    // Near trackside cityscape (mix of modern skyscrapers and historic Amsterdam canal houses)
+    for (let arc = 0; arc < this.length; arc += 18) {
       for (const side of [-1, 1]) {
-        if (rnd() < 0.28) continue;
+        if (rnd() < 0.22) continue;
         const s = this.sampleAtArc(arc + rnd() * 10);
         const right = new THREE.Vector3(Math.cos(s.a), 0, -Math.sin(s.a));
-        const off = 50 + rnd() * 85;
-        const x = s.p.x + right.x * side * off + (rnd() - 0.5) * 18;
-        const z = s.p.z + right.z * side * off + (rnd() - 0.5) * 18;
-        if (nearTrack(x, z, 26)) continue;
+        // Allocate approximately 40% to canal houses, 60% to modern high-rise towers
+        const isCanal = rnd() < 0.40;
+        const off = isCanal ? (34 + rnd() * 46) : (50 + rnd() * 85);
+        const x = s.p.x + right.x * side * off + (rnd() - 0.5) * 16;
+        const z = s.p.z + right.z * side * off + (rnd() - 0.5) * 16;
+        const clearance = isCanal ? 18 : 26;
+        if (nearTrack(x, z, clearance)) continue;
         let clash = false;
+        const minClash = isCanal ? 18 : 34;
         for (const b of placed) {
           const dx = b.x - x, dz = b.z - z;
-          if (dx * dx + dz * dz < 35 * 35) { clash = true; break; }
+          if (dx * dx + dz * dz < minClash * minClash) { clash = true; break; }
         }
         if (clash) continue;
-        const scaleXZ = 0.65 + rnd() * 0.5;
-        const scaleY = 0.55 + rnd() * 0.8;
-        const rotY = (rnd() * 4 | 0) * (Math.PI / 2) + (rnd() - 0.5) * 0.25;
-        bldgPts.push({ x, y: s.p.y, z, scaleXZ, scaleY, rotY });
+
+        if (isCanal) {
+          // Authentic Dutch canal townhouse: ~18-26m tall
+          const scale = 18.0 + rnd() * 8.0;
+          // Front (+Z in model space) rotated to directly face towards the racetrack/road
+          const rotY = Math.atan2(-side * right.x, -side * right.z) + (rnd() - 0.5) * 0.15;
+          canalPts.push({ x, y: s.p.y, z, scale, rotY });
+        } else {
+          const scaleXZ = 0.65 + rnd() * 0.5;
+          const scaleY = 0.55 + rnd() * 0.8;
+          const rotY = (rnd() * 4 | 0) * (Math.PI / 2) + (rnd() - 0.5) * 0.25;
+          bldgPts.push({ x, y: s.p.y, z, scaleXZ, scaleY, rotY });
+        }
         placed.push({ x, z });
       }
     }
 
-    // Far skyline ring (grand urban metropolis on the horizon)
+    // Far skyline ring (modern high-rise towers across the horizon)
     const cx = 60, cz = -150;
     for (let i = 0; i < 48; i++) {
       const ang = (i / 48) * Math.PI * 2;
@@ -476,6 +491,7 @@ export class Track {
       bldgPts.push({ x, y: -0.06, z, scaleXZ, scaleY, rotY });
     }
 
+    // 1. Instance Modern High-Rise Buildings
     new GLTFLoader().load(BUILDING_URL, (gltf) => {
       const tpl = gltf.scene;
       const box = new THREE.Box3().setFromObject(tpl);
@@ -539,6 +555,47 @@ export class Track {
         im.instanceMatrix.needsUpdate = true;
       }
     });
+
+    // 2. Instance Historic Amsterdam Canal Townhouses
+    if (canalPts.length > 0) {
+      new GLTFLoader().load(CANAL_HOUSE_URL, (gltf) => {
+        const tpl = gltf.scene;
+        const box = new THREE.Box3().setFromObject(tpl);
+        let houseMesh = null;
+        tpl.traverse((o) => {
+          if (o.isMesh && !houseMesh) {
+            o.castShadow = true;
+            o.receiveShadow = true;
+            if (o.material) {
+              o.material.roughness = 0.8;
+            }
+            houseMesh = o;
+          }
+        });
+        if (!houseMesh) return;
+
+        const n = canalPts.length;
+        const im = new THREE.InstancedMesh(houseMesh.geometry, houseMesh.material, n);
+        im.castShadow = true;
+        im.receiveShadow = true;
+        im.frustumCulled = false;
+        this.group.add(im);
+
+        const m = new THREE.Matrix4(), q = new THREE.Quaternion(), e = new THREE.Euler(), sc = new THREE.Vector3();
+        canalPts.forEach((p, i) => {
+          e.set(0, p.rotY, 0);
+          q.setFromEuler(e);
+          sc.set(p.scale, p.scale, p.scale);
+
+          // Grounding: base sits 0.2m below foundation level
+          const posY = (p.y - 0.2) - (box.min.y * p.scale);
+          m.compose(new THREE.Vector3(p.x, posY, p.z), q, sc);
+          im.setMatrixAt(i, m);
+        });
+
+        im.instanceMatrix.needsUpdate = true;
+      });
+    }
   }
 
   /* ---------- ground ---------- */
