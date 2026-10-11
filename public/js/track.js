@@ -10,6 +10,7 @@ const SAMPLES = 900;
 const TREE_URL = '/models/bmw_m4_city/m4_city_game_build/assets/tree.glb';
 const KFC_URL = '/models/bmw_m4_city/m4_city_game_build/assets/kfc.glb';
 const MCD_URL = '/models/bmw_m4_city/m4_city_game_build/assets/mcd.glb';
+const BUILDING_URL = '/models/building.glb';
 
 /* Control points of the circuit (x, y elevation, z) — ~1.5 km loop */
 const CONTROL = [
@@ -422,20 +423,8 @@ export class Track {
     this.group.add(poles, arms, heads, cones);
   }
 
-  /* ---------- buildings & skyline ---------- */
+  /* ---------- modern high-rise city buildings & skyline ---------- */
   _buildCity() {
-    const facades = [this.tex.facadeA, this.tex.facadeB, this.tex.facadeC, this.tex.facadeD];
-    const wallMats = facades.map(f => new THREE.MeshStandardMaterial({
-      map: f, emissiveMap: f, emissive: 0xffffff, emissiveIntensity: 1.05,
-      color: 0xa2a8b6, roughness: 0.68, metalness: 0.12,
-    }));
-    const roofMat = new THREE.MeshStandardMaterial({
-      map: this.tex.roof, roughness: 0.88, color: 0x828894,
-    });
-    const farMat = new THREE.MeshStandardMaterial({
-      map: this.tex.far, emissiveMap: this.tex.far, emissive: 0xffffff, emissiveIntensity: 0.85,
-      color: 0x484f60, roughness: 0.9,
-    });
     const placed = [];
     const nearTrack = (x, z, r) => {
       for (let i = 0; i < SAMPLES; i += 5) {
@@ -445,112 +434,111 @@ export class Track {
       }
       return false;
     };
-    const boxBase = new THREE.BoxGeometry(1, 1, 1);
-    boxBase.translate(0, 0.5, 0);
     let seed = 7;
     const rnd = () => { seed = (seed * 16807) % 2147483647; return seed / 2147483647; };
 
-    for (let arc = 0; arc < this.length; arc += 24) {
+    const bldgPts = [];
+
+    // Near trackside high-rise towers
+    for (let arc = 0; arc < this.length; arc += 22) {
       for (const side of [-1, 1]) {
-        if (rnd() < 0.30) continue;
-        const s = this.sampleAtArc(arc + rnd() * 12);
+        if (rnd() < 0.28) continue;
+        const s = this.sampleAtArc(arc + rnd() * 10);
         const right = new THREE.Vector3(Math.cos(s.a), 0, -Math.sin(s.a));
-        const off = 46 + rnd() * 85;
+        const off = 50 + rnd() * 85;
         const x = s.p.x + right.x * side * off + (rnd() - 0.5) * 18;
         const z = s.p.z + right.z * side * off + (rnd() - 0.5) * 18;
         if (nearTrack(x, z, 26)) continue;
         let clash = false;
         for (const b of placed) {
           const dx = b.x - x, dz = b.z - z;
-          if (dx * dx + dz * dz < 30 * 30) { clash = true; break; }
+          if (dx * dx + dz * dz < 35 * 35) { clash = true; break; }
         }
         if (clash) continue;
-        const w = 12 + rnd() * 20, d = 12 + rnd() * 20, h = 18 + rnd() * rnd() * 62;
-        const wallMat = wallMats[(rnd() * wallMats.length) | 0];
-        // Multi-material box: 4 perimeter walls + top roof deck + bottom
-        const bldgMats = [wallMat, wallMat, roofMat, wallMat, wallMat, wallMat];
-        const g = boxBase.clone();
-        const uv = g.attributes.uv;
-
-        // Clone facade design all over the entire building matching the reference tower
-        const repX = Math.max(2, Math.round(w / 3.0));
-        const repZ = Math.max(2, Math.round(d / 3.0));
-        const repY = Math.max(3, Math.round(h / 3.2));
-
-        for (let face = 0; face < 6; face++) {
-          const rx = (face === 0 || face === 1) ? repZ : (face === 2 ? Math.max(1, Math.round(w / 8)) : repX);
-          const ry = (face === 2 || face === 3) ? Math.max(1, Math.round(d / 8)) : repY;
-          for (let j = 0; j < 4; j++) {
-            const idx = face * 4 + j;
-            uv.setXY(idx, uv.getX(idx) * rx, uv.getY(idx) * ry);
-          }
-        }
-
-        const mesh = new THREE.Mesh(g, bldgMats);
-        mesh.position.set(x, s.p.y - 1, z);
-        mesh.scale.set(w, h, d);
-        mesh.rotation.y = rnd() * Math.PI;
-        mesh.castShadow = mesh.receiveShadow = true;
-        this.group.add(mesh);
+        const scaleXZ = 0.65 + rnd() * 0.5;
+        const scaleY = 0.55 + rnd() * 0.8;
+        const rotY = (rnd() * 4 | 0) * (Math.PI / 2) + (rnd() - 0.5) * 0.25;
+        bldgPts.push({ x, y: s.p.y, z, scaleXZ, scaleY, rotY });
         placed.push({ x, z });
-
-        // Rooftop mechanical HVAC chillers (twin AC condenser units matching reference)
-        if (h > 24) {
-          const hvacMat = new THREE.MeshStandardMaterial({ color: 0xd4d8e0, roughness: 0.4, metalness: 0.5 });
-          const fanMat = new THREE.MeshStandardMaterial({ color: 0x242830, roughness: 0.8 });
-          const acBoxGeo = new THREE.BoxGeometry(2.4, 1.6, 1.4);
-          const fanGeo = new THREE.CylinderGeometry(0.5, 0.5, 0.15, 12);
-
-          const hvacGroup = new THREE.Group();
-          for (const acZ of [0, -1.9]) {
-            const ac = new THREE.Mesh(acBoxGeo, hvacMat);
-            ac.position.set(0, 0.8, acZ);
-            ac.castShadow = true;
-            const fan = new THREE.Mesh(fanGeo, fanMat);
-            fan.position.set(0, 1.62, acZ);
-            hvacGroup.add(ac, fan);
-          }
-          // Position on rooftop corner
-          const acCornerX = w * 0.30;
-          const acCornerZ = d * 0.28;
-          hvacGroup.position.set(
-            x + Math.cos(mesh.rotation.y) * acCornerX - Math.sin(mesh.rotation.y) * acCornerZ,
-            s.p.y + h - 1,
-            z + Math.sin(mesh.rotation.y) * acCornerX + Math.cos(mesh.rotation.y) * acCornerZ
-          );
-          hvacGroup.rotation.y = mesh.rotation.y;
-          this.group.add(hvacGroup);
-        }
-
-        if (h > 65 && rnd() < 0.6) { // rooftop beacon
-          const bcn = new THREE.Mesh(
-            new THREE.SphereGeometry(0.5, 8, 8),
-            new THREE.MeshBasicMaterial({ color: 0xff2020, fog: false })
-          );
-          bcn.position.set(x, s.p.y + h + 0.6, z);
-          this.group.add(bcn);
-          this.beacons.push({ mesh: bcn, phase: rnd() * 6.28 });
-        }
       }
     }
-    // far skyline ring
+
+    // Far skyline ring (grand urban metropolis on the horizon)
     const cx = 60, cz = -150;
-    for (let i = 0; i < 46; i++) {
-      const ang = (i / 46) * Math.PI * 2;
+    for (let i = 0; i < 48; i++) {
+      const ang = (i / 48) * Math.PI * 2;
       const r = 680 + rnd() * 240;
       const x = cx + Math.cos(ang) * r, z = cz + Math.sin(ang) * r;
       if (nearTrack(x, z, 60)) continue;
-      const w = 30 + rnd() * 50, h = 60 + rnd() * 160;
-      const g = boxBase.clone();
-      const uv = g.attributes.uv;
-      const repW = Math.max(4, Math.round(w / 4));
-      const repH = Math.max(6, Math.round(h / 4.5));
-      for (let u = 0; u < uv.count; u++) uv.setXY(u, uv.getX(u) * repW, uv.getY(u) * repH);
-      const mesh = new THREE.Mesh(g, farMat);
-      mesh.position.set(x, 0, z);
-      mesh.scale.set(w, h, w);
-      this.group.add(mesh);
+      const scaleXZ = 1.0 + rnd() * 0.9;
+      const scaleY = 0.9 + rnd() * 1.5;
+      const rotY = (rnd() * 4 | 0) * (Math.PI / 2);
+      bldgPts.push({ x, y: -0.06, z, scaleXZ, scaleY, rotY });
     }
+
+    new GLTFLoader().load(BUILDING_URL, (gltf) => {
+      const tpl = gltf.scene;
+      const box = new THREE.Box3().setFromObject(tpl);
+      const parts = [];
+      tpl.traverse((o) => {
+        if (o.isMesh) {
+          o.castShadow = true;
+          o.receiveShadow = true;
+          if (o.material) {
+            o.material.roughness = Math.min(o.material.roughness || 0.6, 0.7);
+            if (o.material.emissiveMap) {
+              o.material.emissiveIntensity = 2.0;
+            }
+          }
+          parts.push(o);
+        }
+      });
+
+      const n = bldgPts.length;
+      const m = new THREE.Matrix4(), q = new THREE.Quaternion(), e = new THREE.Euler(), sc = new THREE.Vector3();
+      const instanced = parts.map((part) => {
+        const im = new THREE.InstancedMesh(part.geometry, part.material, n);
+        im.castShadow = true;
+        im.receiveShadow = true;
+        im.frustumCulled = false;
+        const local = part.matrixWorld.clone().multiply(new THREE.Matrix4().copy(tpl.matrixWorld).invert());
+        this.group.add(im);
+        return { im, local };
+      });
+
+      bldgPts.forEach((p, i) => {
+        e.set(0, p.rotY, 0);
+        q.setFromEuler(e);
+        sc.set(p.scaleXZ, p.scaleY, p.scaleXZ);
+
+        // Grounding: base sits 1m below foundation level
+        const posY = (p.y - 1.0) - (box.min.y * p.scaleY);
+
+        const base = new THREE.Matrix4().compose(
+          new THREE.Vector3(p.x, posY, p.z), q, sc
+        );
+        for (const { im, local } of instanced) {
+          m.copy(base).multiply(local);
+          im.setMatrixAt(i, m);
+        }
+
+        // Rooftop aviation beacon on tall skyscrapers
+        const totalHeight = (box.max.y - box.min.y) * p.scaleY;
+        if (totalHeight > 80 && rnd() < 0.6) {
+          const bcn = new THREE.Mesh(
+            new THREE.SphereGeometry(0.65, 8, 8),
+            new THREE.MeshBasicMaterial({ color: 0xff2020, fog: false })
+          );
+          bcn.position.set(p.x, p.y + totalHeight - 0.5, p.z);
+          this.group.add(bcn);
+          this.beacons.push({ mesh: bcn, phase: rnd() * 6.28 });
+        }
+      });
+
+      for (const { im } of instanced) {
+        im.instanceMatrix.needsUpdate = true;
+      }
+    });
   }
 
   /* ---------- ground ---------- */
