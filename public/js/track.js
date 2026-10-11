@@ -466,7 +466,21 @@ export class Track {
         const mat = mats[(rnd() * mats.length) | 0];
         const g = boxBase.clone();
         const uv = g.attributes.uv;
-        for (let u = 0; u < uv.count; u++) uv.setXY(u, uv.getX(u) * Math.round(w / 6), uv.getY(u) * Math.round(h / 5));
+
+        // Clone facade design all over the entire building (all 6 faces, full perimeter and height)
+        const repX = Math.max(1, Math.round(w / 4));
+        const repZ = Math.max(1, Math.round(d / 4));
+        const repY = Math.max(1, Math.round(h / 3.5));
+
+        for (let face = 0; face < 6; face++) {
+          const rx = (face === 0 || face === 1) ? repZ : repX;
+          const ry = (face === 2 || face === 3) ? repZ : repY;
+          for (let j = 0; j < 4; j++) {
+            const idx = face * 4 + j;
+            uv.setXY(idx, uv.getX(idx) * rx, uv.getY(idx) * ry);
+          }
+        }
+
         const mesh = new THREE.Mesh(g, mat);
         mesh.position.set(x, s.p.y - 1, z);
         mesh.scale.set(w, h, d);
@@ -495,7 +509,9 @@ export class Track {
       const w = 30 + rnd() * 50, h = 60 + rnd() * 160;
       const g = boxBase.clone();
       const uv = g.attributes.uv;
-      for (let u = 0; u < uv.count; u++) uv.setXY(u, uv.getX(u) * 6, uv.getY(u) * 14);
+      const repW = Math.max(2, Math.round(w / 6));
+      const repH = Math.max(4, Math.round(h / 8));
+      for (let u = 0; u < uv.count; u++) uv.setXY(u, uv.getX(u) * repW, uv.getY(u) * repH);
       const mesh = new THREE.Mesh(g, farMat);
       mesh.position.set(x, 0, z);
       mesh.scale.set(w, h, w);

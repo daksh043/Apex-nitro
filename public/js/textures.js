@@ -7,10 +7,15 @@ function canvas(w, h) {
   return [c, c.getContext('2d')];
 }
 
-function toTex(c, { srgb = true, repeat = null, aniso = 8 } = {}) {
+function toTex(c, { srgb = true, repeat = null, wrap = true, aniso = 8 } = {}) {
   const t = new THREE.CanvasTexture(c);
   if (srgb) t.colorSpace = THREE.SRGBColorSpace;
-  if (repeat) { t.wrapS = t.wrapT = THREE.RepeatWrapping; t.repeat.set(repeat[0], repeat[1]); }
+  if (wrap || repeat) {
+    t.wrapS = t.wrapT = THREE.RepeatWrapping;
+  }
+  if (repeat) {
+    t.repeat.set(repeat[0], repeat[1]);
+  }
   t.anisotropy = aniso;
   return t;
 }
@@ -65,37 +70,98 @@ function checker() {
   return c;
 }
 
-/* Building facade: window grid, some lit. warm/cool variants */
-function facade(litRatio, warm) {
-  const [c, x] = canvas(128, 256);
-  x.fillStyle = '#10131c'; x.fillRect(0, 0, 128, 256);
-  const cw = 16, ch = 12, gx = 4, gy = 8;
-  for (let wy = 6; wy < 244; wy += ch + gy) {
-    for (let wx = 6; wx < 118; wx += cw + gx) {
+/* Building facade: seamless window grid, lit office clusters, architectural mullions */
+function facade(litRatio, warmRatio, style = 1) {
+  const [c, x] = canvas(256, 256);
+  // Dark architectural concrete/granite cladding base
+  x.fillStyle = '#0e111a';
+  x.fillRect(0, 0, 256, 256);
+
+  const cols = 16, floors = 16;
+  const colW = 16, floorH = 16;
+  const winW = 11, winH = 10;
+  const offX = 2, offY = 3;
+
+  // Render seamless window grid across every floor and column
+  for (let f = 0; f < floors; f++) {
+    const wy = f * floorH + offY;
+    // Floor structural divider band
+    x.fillStyle = 'rgba(255,255,255,0.06)';
+    x.fillRect(0, f * floorH, 256, 2);
+
+    for (let col = 0; col < cols; col++) {
+      const wx = col * colW + offX;
+      // Window frame / sill
+      x.fillStyle = '#080a10';
+      x.fillRect(wx - 1, wy - 1, winW + 2, winH + 2);
+
       const lit = Math.random() < litRatio;
       if (lit) {
-        const hue = Math.random() < warm ? '255,170,90' : '130,190,255';
-        const b = 0.55 + Math.random() * 0.45;
-        x.fillStyle = `rgba(${hue},${b})`;
+        let hue;
+        if (Math.random() < warmRatio) {
+          hue = Math.random() < 0.6 ? '255, 185, 95' : '255, 150, 70'; // Warm office & residential
+        } else {
+          hue = Math.random() < 0.7 ? '185, 225, 255' : '100, 230, 245'; // Modern white LED & cyan
+        }
+        const alpha = 0.75 + Math.random() * 0.25;
+
+        // Window glow fill
+        x.fillStyle = `rgba(${hue}, ${alpha})`;
+        x.fillRect(wx, wy, winW, winH);
+
+        // Interior blinds / mullion division line
+        if (Math.random() < 0.5) {
+          x.fillStyle = 'rgba(10, 14, 22, 0.45)';
+          x.fillRect(wx, wy + 4, winW, 1.5);
+        } else if (Math.random() < 0.3) {
+          x.fillStyle = 'rgba(10, 14, 22, 0.4)';
+          x.fillRect(wx + 5, wy, 1.5, winH);
+        }
       } else {
-        x.fillStyle = 'rgba(40,50,70,0.5)';
+        // Dark reflective glass with subtle sky reflection
+        x.fillStyle = 'rgba(24, 32, 48, 0.9)';
+        x.fillRect(wx, wy, winW, winH);
+        // Glass sheen highlight
+        x.fillStyle = 'rgba(255, 255, 255, 0.05)';
+        x.fillRect(wx, wy, winW, 2);
       }
-      x.fillRect(wx, wy, cw, ch);
     }
   }
-  // floor slabs
-  x.fillStyle = 'rgba(255,255,255,0.05)';
-  for (let wy = 0; wy < 256; wy += ch + gy) x.fillRect(0, wy - 2, 128, 2);
+
+  // Vertical architectural column pilasters
+  x.fillStyle = 'rgba(255,255,255,0.03)';
+  for (let col = 0; col < cols; col += 4) {
+    x.fillRect(col * colW, 0, 2, 256);
+  }
+
+  // Accent vertical neon trims on select styles
+  if (style === 2) {
+    x.fillStyle = 'rgba(0, 230, 255, 0.7)';
+    x.fillRect(0, 0, 2, 256);
+    x.fillRect(254, 0, 2, 256);
+  } else if (style === 3) {
+    x.fillStyle = 'rgba(255, 170, 50, 0.7)';
+    x.fillRect(126, 0, 3, 256);
+  }
+
   return c;
 }
 
-/* Skyline for far silhouettes (mostly dark, sparse lights) */
+/* Skyline for far silhouettes (seamless glowing city grid) */
 function farFacade() {
-  const [c, x] = canvas(128, 128);
-  x.fillStyle = '#0a0c14'; x.fillRect(0, 0, 128, 128);
-  for (let i = 0; i < 40; i++) {
-    x.fillStyle = Math.random() < 0.75 ? 'rgba(120,150,220,0.5)' : 'rgba(255,170,90,0.6)';
-    x.fillRect(8 + Math.random() * 112, 8 + Math.random() * 110, 3, 4);
+  const [c, x] = canvas(256, 256);
+  x.fillStyle = '#080a12';
+  x.fillRect(0, 0, 256, 256);
+
+  const cols = 16, floors = 16;
+  for (let f = 0; f < floors; f++) {
+    for (let col = 0; col < cols; col++) {
+      if (Math.random() < 0.45) {
+        const colVal = Math.random() < 0.65 ? 'rgba(255, 180, 90, 0.8)' : 'rgba(140, 200, 255, 0.8)';
+        x.fillStyle = colVal;
+        x.fillRect(col * 16 + 4, f * 16 + 5, 8, 6);
+      }
+    }
   }
   return c;
 }
@@ -285,11 +351,11 @@ export function makeTextures() {
     asphalt: toTex(asphalt(), { repeat: [1, 1] }),
     curb: toTex(curb(), { repeat: [1, 1] }),
     checker: toTex(checker()),
-    facadeA: toTex(facade(0.5, true)),
-    facadeB: toTex(facade(0.35, false)),
-    facadeC: toTex(facade(0.62, true)),
-    facadeD: toTex(facade(0.15, false)),
-    far: toTex(farFacade()),
+    facadeA: toTex(facade(0.68, 0.75, 1), { repeat: [1, 1] }),
+    facadeB: toTex(facade(0.52, 0.30, 2), { repeat: [1, 1] }),
+    facadeC: toTex(facade(0.78, 0.85, 3), { repeat: [1, 1] }),
+    facadeD: toTex(facade(0.40, 0.50, 4), { repeat: [1, 1] }),
+    far: toTex(farFacade(), { repeat: [1, 1] }),
     puff: toTex(puff()),
     streak: toTex(streak()),
     shadow: toTex(blob(), { srgb: false }),
