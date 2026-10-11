@@ -466,7 +466,7 @@ export class Track {
     // keep clearances around the landmark buildings (expanded for large footprint)
     for (const r of this.reservedSpots) {
       for (let i = pts.length - 1; i >= 0; i--) {
-        if (Math.hypot(pts[i].x - r.x, pts[i].z - r.z) < 26) pts.splice(i, 1);
+        if (Math.hypot(pts[i].x - r.x, pts[i].z - r.z) < 48) pts.splice(i, 1);
       }
     }
     this._treePts = pts;
@@ -527,22 +527,22 @@ export class Track {
   /* ---------- landmark buildings (KFC / McDonald's from the city pack) ---------- */
   _buildLandmarks() {
     const spots = [
-      { url: KFC_URL, arc: 240, side: 1 },
-      { url: KFC_URL, arc: 700, side: -1 },
-      { url: MCD_URL, arc: 430, side: 1 },
-      { url: MCD_URL, arc: 950, side: -1 },
+      { url: KFC_URL, arc: 240, side: 1, footprint: 60, dist: WALL_LAT + 42 },
+      { url: KFC_URL, arc: 700, side: -1, footprint: 60, dist: WALL_LAT + 42 },
+      { url: MCD_URL, arc: 430, side: 1, footprint: 64, dist: WALL_LAT + 25 },
+      { url: MCD_URL, arc: 950, side: -1, footprint: 64, dist: WALL_LAT + 25 },
     ];
     for (const sp of spots) {
       const smp = this.sampleAtArc(sp.arc);
       const right = new THREE.Vector3(Math.cos(smp.a), 0, -Math.sin(smp.a));
-      const pos = smp.p.clone().addScaledVector(right, sp.side * (WALL_LAT + 24));
+      const pos = smp.p.clone().addScaledVector(right, sp.side * sp.dist);
       this.reservedSpots.push({ x: pos.x, z: pos.z });
       new GLTFLoader().load(sp.url, (gltf) => {
         const b = gltf.scene;
         const box = new THREE.Box3().setFromObject(b);
         const size = box.getSize(new THREE.Vector3());
-        // Large footprint (~28 m) for prominent roadside commercial buildings
-        const s = 28 / Math.max(size.x, size.z);
+        // Large footprint (60m - 64m) for impressive commercial roadside landmarks
+        const s = sp.footprint / Math.max(size.x, size.z);
         b.scale.setScalar(s);
         b.updateMatrixWorld(true);
         const bb = new THREE.Box3().setFromObject(b);
@@ -566,9 +566,13 @@ export class Track {
         this.group.add(b);
 
         // Warm commercial light illuminating the storefront and sign at dusk
-        const lmLight = new THREE.PointLight(0xffeedd, 35, 50, 1.2);
-        lmLight.position.set(pos.x, pos.y + 12, pos.z);
+        const lmLight = new THREE.PointLight(0xffeedd, 70, 95, 1.2);
+        lmLight.position.set(pos.x, pos.y + 18, pos.z);
         this.group.add(lmLight);
+
+        const signGlow = new THREE.PointLight(0xffaa33, 40, 60, 1.3);
+        signGlow.position.set(pos.x - (sp.side * 12), pos.y + 15, pos.z);
+        this.group.add(signGlow);
       }, undefined, (e) => {
         window.__errs.push('landmark ' + sp.url + ': ' + String(e && e.message || e).slice(0, 200));
       });
