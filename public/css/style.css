@@ -487,20 +487,301 @@ body.reduced-motion *, body.reduced-motion *:before, body.reduced-motion *:after
   box-shadow: 0 0 10px rgba(0, 229, 255, 0.35);
 }
 
-/* ---------- touch ---------- */
-#touch { display: none; position: fixed; inset: 0; pointer-events: none; z-index: 18; }
-#touch button {
-  pointer-events: auto; position: absolute;
-  width: 78px; height: 78px; border-radius: 50%;
-  background: rgba(8, 12, 22, 0.6); border: 1px solid rgba(255,255,255,0.28);
-  color: #fff; font-size: 18px; font-weight: 700; backdrop-filter: blur(4px);
+/* ---------- touch controls & mobile gaming (Android & iOS) ---------- */
+#touch {
+  display: none; position: fixed; inset: 0; pointer-events: none; z-index: 40;
+  padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  user-select: none;
 }
-#touch button:active { background: rgba(0, 229, 255, 0.35); }
-#tLeft { left: 24px; bottom: 40px; }
-#tRight { left: 120px; bottom: 40px; }
-#tGas { right: 24px; bottom: 40px; background: rgba(0, 229, 255, 0.22); }
-#tBrake { right: 120px; bottom: 40px; }
-#tNitro { right: 72px; bottom: 136px; background: rgba(255, 94, 58, 0.28); }
+#touch.touch-active { display: block; }
+
+.t-btn, .t-btn-small {
+  pointer-events: auto;
+  font-family: 'Orbitron', 'Rajdhani', sans-serif;
+  user-select: none;
+  -webkit-user-select: none;
+  touch-action: none;
+  -webkit-tap-highlight-color: transparent;
+  outline: none;
+  border: none;
+  transition: transform 0.08s ease, box-shadow 0.08s ease, background 0.08s ease;
+}
+
+/* Top mobile bar: Pause, Camera, Reset */
+.t-top-bar {
+  position: absolute;
+  top: calc(14px + env(safe-area-inset-top));
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  gap: 10px;
+  pointer-events: auto;
+  z-index: 45;
+}
+.t-btn-small {
+  background: rgba(8, 14, 26, 0.78);
+  border: 1px solid rgba(0, 229, 255, 0.35);
+  color: #cde7f6;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 1.5px;
+  padding: 8px 14px;
+  border-radius: 18px;
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.4);
+}
+.t-btn-small:active {
+  background: rgba(0, 229, 255, 0.3);
+  color: #fff;
+  transform: scale(0.94);
+}
+
+/* Left cluster: Steering */
+.t-left {
+  position: absolute;
+  left: calc(18px + env(safe-area-inset-left));
+  bottom: calc(18px + env(safe-area-inset-bottom));
+  display: flex;
+  gap: 12px;
+  pointer-events: auto;
+}
+.t-btn.t-steer {
+  width: 74px;
+  height: 74px;
+  border-radius: 50%;
+  background: rgba(8, 14, 26, 0.75);
+  border: 2px solid rgba(0, 229, 255, 0.45);
+  color: #00e5ff;
+  font-size: 26px;
+  font-weight: 900;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.6), inset 0 0 10px rgba(0, 229, 255, 0.1);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+}
+.t-btn.t-steer:active, .t-btn.t-steer.active {
+  background: rgba(0, 229, 255, 0.35);
+  border-color: #00e5ff;
+  color: #fff;
+  transform: scale(0.92);
+  box-shadow: 0 0 18px rgba(0, 229, 255, 0.65);
+}
+
+/* Right cluster: Gas, Brake, Nitro, Drift */
+.t-right {
+  position: absolute;
+  right: calc(18px + env(safe-area-inset-right));
+  bottom: calc(18px + env(safe-area-inset-bottom));
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 10px;
+  pointer-events: auto;
+}
+.t-upper-row, .t-lower-row {
+  display: flex;
+  gap: 10px;
+}
+.t-btn.t-nitro {
+  width: 74px;
+  height: 52px;
+  border-radius: 26px;
+  background: rgba(255, 94, 58, 0.28);
+  border: 2px solid #ff5e3a;
+  color: #fff;
+  font-size: 13px;
+  font-weight: 900;
+  letter-spacing: 1px;
+  text-shadow: 0 0 12px rgba(255, 94, 58, 0.85);
+  box-shadow: 0 4px 14px rgba(255, 94, 58, 0.35);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+}
+.t-btn.t-nitro:active, .t-btn.t-nitro.active {
+  background: rgba(255, 94, 58, 0.6);
+  transform: scale(0.92);
+  box-shadow: 0 0 22px rgba(255, 94, 58, 0.9);
+}
+
+.t-btn.t-drift {
+  width: 74px;
+  height: 52px;
+  border-radius: 26px;
+  background: rgba(180, 80, 255, 0.25);
+  border: 2px solid #b450ff;
+  color: #f0caff;
+  font-size: 12px;
+  font-weight: 900;
+  letter-spacing: 1px;
+  text-shadow: 0 0 10px rgba(180, 80, 255, 0.7);
+  box-shadow: 0 4px 14px rgba(180, 80, 255, 0.3);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+}
+.t-btn.t-drift:active, .t-btn.t-drift.active {
+  background: rgba(180, 80, 255, 0.55);
+  color: #fff;
+  transform: scale(0.92);
+  box-shadow: 0 0 20px rgba(180, 80, 255, 0.85);
+}
+
+.t-btn.t-brake {
+  width: 76px;
+  height: 72px;
+  border-radius: 22px;
+  background: rgba(235, 45, 45, 0.28);
+  border: 2px solid rgba(255, 65, 65, 0.75);
+  color: #ffb8b8;
+  font-size: 13px;
+  font-weight: 900;
+  letter-spacing: 1px;
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+}
+.t-btn.t-brake:active, .t-btn.t-brake.active {
+  background: rgba(255, 45, 45, 0.6);
+  color: #fff;
+  transform: scale(0.92);
+  box-shadow: 0 0 20px rgba(255, 45, 45, 0.85);
+}
+
+.t-btn.t-gas {
+  width: 88px;
+  height: 72px;
+  border-radius: 22px;
+  background: linear-gradient(135deg, rgba(0, 119, 255, 0.45), rgba(0, 229, 255, 0.5));
+  border: 2px solid var(--cyan);
+  color: #fff;
+  font-size: 16px;
+  font-weight: 900;
+  letter-spacing: 2px;
+  text-shadow: 0 0 12px rgba(0, 229, 255, 0.85);
+  box-shadow: 0 6px 20px rgba(0, 229, 255, 0.35);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+}
+.t-btn.t-gas:active, .t-btn.t-gas.active {
+  background: linear-gradient(135deg, rgba(0, 119, 255, 0.75), rgba(0, 229, 255, 0.85));
+  transform: scale(0.92);
+  box-shadow: 0 0 24px rgba(0, 229, 255, 0.85);
+}
+
+/* Portrait orientation overlay for mobile phones */
+.portrait-overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  background: rgba(3, 5, 12, 0.96);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  color: #fff;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 24px;
+}
+
+@media (orientation: portrait) {
+  .portrait-overlay {
+    display: flex;
+  }
+}
+
+.po-box {
+  max-width: 360px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+}
+.po-phone {
+  width: 54px;
+  height: 94px;
+  border: 3px solid var(--cyan);
+  border-radius: 12px;
+  position: relative;
+  box-shadow: 0 0 24px rgba(0, 229, 255, 0.45);
+  animation: rotatePhone 2.4s infinite cubic-bezier(0.4, 0, 0.2, 1);
+}
+.po-screen {
+  position: absolute;
+  inset: 5px;
+  background: rgba(0, 229, 255, 0.15);
+  border-radius: 6px;
+}
+@keyframes rotatePhone {
+  0%, 15% { transform: rotate(0deg); }
+  45%, 70% { transform: rotate(90deg); }
+  95%, 100% { transform: rotate(0deg); }
+}
+.po-box h2 {
+  font-family: 'Orbitron', sans-serif;
+  font-size: 20px;
+  font-weight: 900;
+  letter-spacing: 3px;
+  color: var(--cyan);
+  text-shadow: 0 0 16px rgba(0, 229, 255, 0.6);
+  margin-top: 8px;
+}
+.po-box p {
+  font-size: 14px;
+  color: var(--text-muted);
+  line-height: 1.5;
+}
+.po-hint {
+  font-family: 'Orbitron', sans-serif;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 2px;
+  color: #ff5e3a;
+  text-transform: uppercase;
+}
+
+/* Mobile HUD adjustments when touch is active */
+@media (max-width: 1024px) {
+  #speedo {
+    right: calc(180px + env(safe-area-inset-right));
+    bottom: calc(10px + env(safe-area-inset-bottom));
+    transform: scale(0.68);
+    transform-origin: bottom right;
+  }
+  #nitroWrap {
+    right: calc(320px + env(safe-area-inset-right));
+    bottom: calc(14px + env(safe-area-inset-bottom));
+    height: 120px;
+    width: 15px;
+  }
+  #minimap {
+    top: calc(10px + env(safe-area-inset-top));
+    right: calc(12px + env(safe-area-inset-right));
+    transform: scale(0.72);
+    transform-origin: top right;
+  }
+  #topLeft {
+    top: calc(10px + env(safe-area-inset-top));
+    left: calc(12px + env(safe-area-inset-left));
+    transform: scale(0.82);
+    transform-origin: top left;
+  }
+  #menu {
+    padding: calc(16px + env(safe-area-inset-top)) calc(20px + env(safe-area-inset-right)) calc(16px + env(safe-area-inset-bottom)) calc(20px + env(safe-area-inset-left));
+  }
+  .menu-left {
+    max-width: 360px;
+  }
+  .logo h1 {
+    font-size: 42px;
+  }
+  .panel {
+    width: 340px;
+    padding: 18px 20px;
+  }
+}
 
 /* ---------- loading ---------- */
 #loading {

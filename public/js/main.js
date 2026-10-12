@@ -59,7 +59,8 @@ const selSpec = () => CARS[state.carSel] || CARS[0];
 
 /* ---------- input ---------- */
 const keys = {};
-const touchState = { left: false, right: false, gas: false, brake: false, nitro: false };
+const touchState = { left: false, right: false, gas: false, brake: false, nitro: false, drift: false };
+const isTouchDevice = ('ontouchstart' in window) || (navigator.maxTouchPoints > 0) || ('msMaxTouchPoints' in navigator);
 addEventListener('keydown', (e) => {
   if (e.target && ['INPUT', 'TEXTAREA', 'SELECT'].includes(e.target.tagName)) {
     if (e.key === 'Escape') {
@@ -89,7 +90,7 @@ function playerInput() {
   const throttle = (keys['w'] || keys['arrowup'] || touchState.gas) ? 1 : 0;
   const brake = !!(keys['s'] || keys['arrowdown'] || touchState.brake);
   const nitro = !!(keys['shift'] || touchState.nitro);
-  const hand = !!keys[' '];
+  const hand = !!(keys[' '] || touchState.drift);
   return { steer, throttle, brake, nitro, hand };
 }
 
@@ -314,18 +315,88 @@ function wireUI() {
     els.musicToggle.textContent = audio.musicEnabled ? '♪ MUSIC ON' : '♪ MUSIC OFF';
   };
 
-  // touch controls
-  if ('ontouchstart' in window) {
-    els.touch.style.display = 'block';
-    const bind = (id, key) => {
-      const el = $(id);
-      el.addEventListener('touchstart', (e) => { e.preventDefault(); touchState[key] = true; }, { passive: false });
-      el.addEventListener('touchend', () => { touchState[key] = false; });
-      el.addEventListener('touchcancel', () => { touchState[key] = false; });
+  // touch controls & mobile bindings (Android & iOS)
+  const setupTouchBtn = (id, key) => {
+    const el = $(id);
+    if (!el) return;
+    const onDown = (e) => {
+      if (e.cancelable) e.preventDefault();
+      touchState[key] = true;
+      el.classList.add('active');
+      if (navigator.vibrate) try { navigator.vibrate(15); } catch (_) {}
     };
-    bind('tLeft', 'left'); bind('tRight', 'right'); bind('tGas', 'gas');
-    bind('tBrake', 'brake'); bind('tNitro', 'nitro');
+    const onUp = (e) => {
+      if (e.cancelable) e.preventDefault();
+      touchState[key] = false;
+      el.classList.remove('active');
+    };
+    el.addEventListener('pointerdown', onDown);
+    el.addEventListener('pointerup', onUp);
+    el.addEventListener('pointercancel', onUp);
+    el.addEventListener('pointerleave', onUp);
+    // Touch event fallbacks for WebKit iOS
+    el.addEventListener('touchstart', onDown, { passive: false });
+    el.addEventListener('touchend', onUp, { passive: false });
+    el.addEventListener('touchcancel', onUp, { passive: false });
+  };
+
+  setupTouchBtn('tLeft', 'left');
+  setupTouchBtn('tRight', 'right');
+  setupTouchBtn('tGas', 'gas');
+  setupTouchBtn('tBrake', 'brake');
+  setupTouchBtn('tNitro', 'nitro');
+  setupTouchBtn('tDrift', 'drift');
+
+  // Mobile top action bar (Pause, Cam, Respawn)
+  const btnPause = $('tPause');
+  if (btnPause) {
+    btnPause.addEventListener('pointerdown', (e) => { e.preventDefault(); togglePause(); });
+    btnPause.addEventListener('touchstart', (e) => { e.preventDefault(); togglePause(); }, { passive: false });
   }
+  const btnCam = $('tCam');
+  if (btnCam) {
+    btnCam.addEventListener('pointerdown', (e) => { e.preventDefault(); state.camMode = (state.camMode + 1) % 2; });
+    btnCam.addEventListener('touchstart', (e) => { e.preventDefault(); state.camMode = (state.camMode + 1) % 2; }, { passive: false });
+  }
+  const btnReset = $('tReset');
+  if (btnReset) {
+    btnReset.addEventListener('pointerdown', (e) => {
+      e.preventDefault();
+      if (state.player && state.mode === 'race') state.player.resetToTrack(track);
+    });
+    btnReset.addEventListener('touchstart', (e) => {
+      e.preventDefault();
+      if (state.player && state.mode === 'race') state.player.resetToTrack(track);
+    }, { passive: false });
+  }
+
+  // Audio unlock on initial mobile user gesture
+  const unlockAudio = () => {
+    audio.ensure();
+    audio.resume();
+  };
+  ['touchstart', 'touchend', 'pointerdown', 'click'].forEach((evt) => {
+    window.addEventListener(evt, unlockAudio, { passive: true });
+  });
+
+  // Handle visibility changes on mobile
+  document.addEventListener('visibilitychange', () => {
+    if (document.hidden) {
+      if (state.mode === 'race' && !state.paused) togglePause();
+      if (audio && audio.ctx && audio.ctx.state === 'running') audio.ctx.suspend();
+    } else {
+      if (audio && audio.ctx && audio.ctx.state === 'suspended') audio.ctx.resume();
+    }
+  });
+
+  // Handle mobile orientation resize
+  window.addEventListener('orientationchange', () => {
+    setTimeout(() => {
+      camera.aspect = innerWidth / innerHeight;
+      camera.updateProjectionMatrix();
+      applyGraphics(renderer, fx);
+    }, 150);
+  });
 
   // Initialize compliance, cookie banner, legal center, and accessibility controls
   initCompliance();
@@ -491,6 +562,7 @@ function beginCountdown(goAtPerfNow) {
   hud.show(true);
   hud.hideResults();
   hud.centerMsg('');
+  if (els.touch && isTouchDevice) els.touch.classList.add('touch-active');
   if (state.mptype === 'solo') audio.beep(false);
   updateMenuOrRaceCam(0.016, true);
 }
@@ -819,6 +891,7 @@ function resolveCarCollisions(dt) {
             audio.crash(relSpeed * 0.5);
             if (a === state.player || b === state.player) {
               fx.shake = Math.min(1, fx.shake + 0.2);
+              if (navigator.vibrate) try { navigator.vibrate(25); } catch (_) {}
             }
           }
         }
@@ -842,6 +915,7 @@ function triggerWreck(victim, attacker) {
 
   if (isPlayerVictim || isPlayerAttacker) {
     fx.shake = 0.85;
+    if (navigator.vibrate) try { navigator.vibrate(isPlayerVictim ? [50, 40, 80] : [30, 20, 50]); } catch (_) {}
   }
 
   if (isPlayerAttacker) {
@@ -871,6 +945,7 @@ function checkBoosterPads(car) {
       if (car === state.player) {
         audio.boost();
         fx.shake = 0.35;
+        if (navigator.vibrate) try { navigator.vibrate(35); } catch (_) {}
         hud.centerMsg('⚡ BOOST PAD! ⚡', 900);
       }
       break;
@@ -981,6 +1056,7 @@ function backToLobby() {
   state.racing = false;
   hud.show(false);
   hud.hideResults();
+  if (els.touch) els.touch.classList.remove('touch-active');
   els.menu.style.display = 'flex';
   els.soloPanel.style.display = 'none';
   els.mpPanel.style.display = 'none';
@@ -998,6 +1074,7 @@ function quitRace(toMenu) {
   hud.hideResults();
   hud.wrongWay(false);
   hud.countdown(null);
+  if (els.touch) els.touch.classList.remove('touch-active');
   els.menu.style.display = 'flex';
   if (state.mptype === 'mp' && net) { net.close(); net = null; }
   els.soloPanel.style.display = 'block';
@@ -1011,6 +1088,10 @@ function togglePause() {
   if (state.mptype === 'mp') return; // no pausing in MP
   state.paused = !state.paused;
   els.pause.style.display = state.paused ? 'flex' : 'none';
+  if (els.touch && isTouchDevice) {
+    if (state.paused) els.touch.classList.remove('touch-active');
+    else els.touch.classList.add('touch-active');
+  }
   if (state.paused) {
     if (els.pauseMainPanel) els.pauseMainPanel.style.display = 'block';
     if (els.pauseGraphicsPanel) els.pauseGraphicsPanel.style.display = 'none';

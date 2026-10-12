@@ -2,10 +2,16 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
 <title>NITRO APEX — Street Racing (Compliance & Accessibility Enhanced)</title>
 <meta name="description" content="Nitro Apex is an arcade 3D street racing game built on Three.js and WebGL. Fast, responsive, accessible, and privacy-respecting browser gaming.">
 <meta name="theme-color" content="#00e5ff">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Nitro Apex">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="format-detection" content="telephone=no">
+<link rel="manifest" href="/manifest.json">
 <meta name="author" content="Nitro Apex Team">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -211,16 +217,41 @@
   </div>
 </div>
 
-<!-- ============ TOUCH CONTROLS ============ -->
+<!-- ============ TOUCH CONTROLS (Android & iOS) ============ -->
 <div id="touch" role="region" aria-label="On-Screen Touch Controls">
-  <div class="t-left">
-    <button id="tLeft" aria-label="Steer Left">◀</button>
-    <button id="tRight" aria-label="Steer Right">▶</button>
+  <!-- Top Quick Actions Bar (Safe from thumbs) -->
+  <div class="t-top-bar">
+    <button id="tPause" class="t-btn-small" aria-label="Pause Race">⏸ PAUSE</button>
+    <button id="tCam" class="t-btn-small" aria-label="Switch Camera View">🎥 CAM</button>
+    <button id="tReset" class="t-btn-small" aria-label="Respawn Car on Track">↺ RESET</button>
   </div>
+  <!-- Left Steering Cluster -->
+  <div class="t-left">
+    <button id="tLeft" class="t-btn t-steer" aria-label="Steer Left">◀</button>
+    <button id="tRight" class="t-btn t-steer" aria-label="Steer Right">▶</button>
+  </div>
+  <!-- Right Throttle, Brake, Nitro & Drift Cluster -->
   <div class="t-right">
-    <button id="tNitro" aria-label="Activate Nitro Boost">N₂O</button>
-    <button id="tBrake" aria-label="Brake and Reverse">BRAKE</button>
-    <button id="tGas" aria-label="Accelerate Throttle">GAS</button>
+    <div class="t-upper-row">
+      <button id="tNitro" class="t-btn t-nitro" aria-label="Activate Nitro Boost">⚡ N₂O</button>
+      <button id="tDrift" class="t-btn t-drift" aria-label="Handbrake Drift">DRIFT</button>
+    </div>
+    <div class="t-lower-row">
+      <button id="tBrake" class="t-btn t-brake" aria-label="Brake and Reverse">BRAKE</button>
+      <button id="tGas" class="t-btn t-gas" aria-label="Accelerate Throttle">GAS</button>
+    </div>
+  </div>
+</div>
+
+<!-- ============ PORTRAIT ORIENTATION NOTICE ============ -->
+<div id="portraitOverlay" class="portrait-overlay" aria-hidden="true">
+  <div class="po-box">
+    <div class="po-phone">
+      <div class="po-screen"></div>
+    </div>
+    <h2>ROTATE DEVICE</h2>
+    <p>NITRO APEX is built for high-speed street racing in landscape mode.</p>
+    <span class="po-hint">Rotate your phone sideways to play</span>
   </div>
 </div>
 

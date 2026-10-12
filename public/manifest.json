@@ -1,0 +1,25 @@
+{
+  "name": "NITRO APEX — Street Racing",
+  "short_name": "Nitro Apex",
+  "description": "Arcade 3D street racing game with responsive handling, dynamic neon lighting, and high-speed drift physics.",
+  "start_url": "/",
+  "display": "standalone",
+  "orientation": "landscape",
+  "background_color": "#05070d",
+  "theme_color": "#00e5ff",
+  "categories": ["games", "arcade", "racing"],
+  "icons": [
+    {
+      "src": "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 192 192'><rect width='192' height='192' rx='36' fill='%2305070d'/><path d='M30 140 L96 40 L162 140 L130 140 L96 85 L62 140 Z' fill='%2300e5ff'/><circle cx='96' cy='110' r='18' fill='%23ff5e3a'/></svg>",
+      "sizes": "192x192",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'><rect width='512' height='512' rx='96' fill='%2305070d'/><path d='M80 380 L256 110 L432 380 L350 380 L256 220 L162 380 Z' fill='%2300e5ff'/><circle cx='256' cy='300' r='48' fill='%23ff5e3a'/></svg>",
+      "sizes": "512x512",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}

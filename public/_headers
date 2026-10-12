@@ -13,3 +13,8 @@
 
 /*.mtl
   Cache-Control: public, max-age=31536000, immutable
+
+/manifest.json
+  Content-Type: application/manifest+json; charset=utf-8
+  Cache-Control: public, max-age=86400
+
