@@ -48,7 +48,11 @@ export class Track {
     this.reservedSpots = [];
     this._buildLandmarks();
     this._buildTrees();
+    this._buildBoosterPads();
     this._minimap();
+    this.timeOfDay = 'dusk';
+    try { const saved = localStorage.getItem('na_tod'); if (saved) this.timeOfDay = saved; } catch (_) {}
+    this.setTimeOfDay(this.timeOfDay);
   }
 
   /* ---------- sampling helpers ---------- */
@@ -142,30 +146,39 @@ export class Track {
 
   /* ---------- sky & lights ---------- */
   _buildSky(scene) {
+    this.scene = scene;
     this.sunDir = new THREE.Vector3(-0.62, 0.18, -0.42).normalize();
     const skyMat = new THREE.ShaderMaterial({
       side: THREE.BackSide, depthWrite: false, fog: false,
-      uniforms: { sunDir: { value: this.sunDir } },
+      uniforms: {
+        sunDir: { value: this.sunDir },
+        zenith: { value: new THREE.Vector3(0.020, 0.031, 0.090) },
+        mid: { value: new THREE.Vector3(0.10, 0.11, 0.26) },
+        horizon: { value: new THREE.Vector3(0.55, 0.25, 0.28) },
+        sunWarm: { value: new THREE.Vector3(1.0, 0.45, 0.15) },
+        sunGlow: { value: new THREE.Vector3(1.0, 0.62, 0.25) },
+        sunDisc: { value: new THREE.Vector3(1.0, 0.85, 0.60) },
+      },
       vertexShader: `
         varying vec3 vDir;
         void main(){ vDir = normalize(position); gl_Position = projectionMatrix * modelViewMatrix * vec4(position,1.0); }`,
       fragmentShader: `
         varying vec3 vDir; uniform vec3 sunDir;
+        uniform vec3 zenith; uniform vec3 mid; uniform vec3 horizon;
+        uniform vec3 sunWarm; uniform vec3 sunGlow; uniform vec3 sunDisc;
         void main(){
           float h = clamp(vDir.y, -0.05, 1.0);
-          vec3 zen = vec3(0.020,0.031,0.090);
-          vec3 mid = vec3(0.10,0.11,0.26);
-          vec3 hor = vec3(0.55,0.25,0.28);
-          vec3 col = mix(mix(hor, mid, smoothstep(0.0,0.22,h)), zen, smoothstep(0.18,0.65,h));
+          vec3 col = mix(mix(horizon, mid, smoothstep(0.0,0.22,h)), zenith, smoothstep(0.18,0.65,h));
           float sd = max(dot(vDir, sunDir), 0.0);
-          col += vec3(1.0,0.45,0.15) * pow(sd, 6.0) * 0.35;   // warm side of sky
-          col += vec3(1.0,0.62,0.25) * pow(sd, 60.0) * 1.6;   // sun glow
-          col += vec3(1.0,0.85,0.6) * pow(sd, 400.0) * 4.0;   // sun disc
+          col += sunWarm * pow(sd, 6.0) * 0.35;
+          col += sunGlow * pow(sd, 60.0) * 1.6;
+          col += sunDisc * pow(sd, 400.0) * 4.0;
           gl_FragColor = vec4(col, 1.0);
         }`,
     });
     this.skyMesh = new THREE.Mesh(new THREE.SphereGeometry(1250, 32, 16), skyMat);
     this.group.add(this.skyMesh);
+    this.skyMat = skyMat;
 
     // stars
     const starGeo = new THREE.BufferGeometry();
@@ -191,6 +204,7 @@ export class Track {
     }));
     moon.position.set(420, 560, -820); moon.scale.setScalar(140);
     this.group.add(moon);
+    this.moon = moon;
 
     // fog
     scene.fog = new THREE.Fog(0x18172c, 160, 1200);
@@ -198,6 +212,8 @@ export class Track {
     // lights — rich dusk ambient with natural meadow bounce
     const hemi = new THREE.HemisphereLight(0x556ea8, 0x324d26, 1.15);
     scene.add(hemi);
+    this.hemi = hemi;
+
     const sun = new THREE.DirectionalLight(0xff7b33, 2.9);
     sun.castShadow = true;
     sun.shadow.mapSize.set(1024, 1024);
@@ -449,6 +465,8 @@ export class Track {
       color: 0xffc98a, transparent: true, opacity: 0.03, blending: THREE.AdditiveBlending,
       depthWrite: false, side: THREE.DoubleSide, fog: false,
     });
+    this.lampHeadMat = headMat;
+    this.lampConeMat = coneMat;
     const step = 42;
     const count = Math.floor(this.length / step) * 2;
     const poles = new THREE.InstancedMesh(poleGeo, poleMat, count);
@@ -1023,7 +1041,190 @@ export class Track {
     this.mapToXY = (x, z) => [(x - minX + pad) / w, (z - minZ + pad) / h];
   }
 
+  /* ---------- 3D Physical Booster Pads (Speed Strips) ---------- */
+  _buildBoosterPads() {
+    this.boosters = [];
+    const padMat = new THREE.MeshStandardMaterial({
+      map: this.tex.booster,
+      emissive: 0x00e5ff,
+      emissiveMap: this.tex.booster,
+      emissiveIntensity: 3.2,
+      roughness: 0.2,
+      metalness: 0.1,
+      polygonOffset: true,
+      polygonOffsetFactor: -3,
+      polygonOffsetUnits: -3,
+    });
+
+    const beaconGeo = new THREE.CylinderGeometry(0.18, 0.24, 3.2, 8);
+    const beaconRingGeo = new THREE.TorusGeometry(0.85, 0.12, 8, 16);
+    const beaconMat = new THREE.MeshStandardMaterial({
+      color: 0x0d121c,
+      emissive: 0x00e5ff,
+      emissiveIntensity: 2.5,
+      metalness: 0.8,
+      roughness: 0.3,
+    });
+    const ringMat = new THREE.MeshBasicMaterial({
+      color: 0x00f7ff,
+    });
+
+    // 5 strategic booster pad locations around the 1.5km track
+    const padArcs = [170, 440, 780, 1080, 1360];
+    this.boosterBeacons = [];
+
+    padArcs.forEach((arc) => {
+      const smp = this.sampleAtArc(arc);
+      const right = new THREE.Vector3(Math.cos(smp.a), 0, -Math.sin(smp.a));
+
+      // 1. Road overlay booster strip: 6.8m wide x 11.0m long ribbon
+      const padW = 6.8, padL = 11.0;
+      const g = new THREE.PlaneGeometry(padW, padL, 1, 1);
+      g.rotateX(-Math.PI / 2);
+      g.rotateY(smp.a);
+
+      const mesh = new THREE.Mesh(g, padMat);
+      mesh.position.set(smp.p.x, smp.p.y + 0.095, smp.p.z);
+      mesh.receiveShadow = false;
+      this.group.add(mesh);
+
+      // 2. Flanking speed pylons / neon speed beacons on left and right track shoulders
+      for (const side of [-1, 1]) {
+        const pylonPos = smp.p.clone().addScaledVector(right, side * (WALL_LAT - 0.6));
+        const pylon = new THREE.Mesh(beaconGeo, beaconMat);
+        pylon.position.set(pylonPos.x, smp.p.y + 1.6, pylonPos.z);
+        this.group.add(pylon);
+
+        const ring = new THREE.Mesh(beaconRingGeo, ringMat);
+        ring.position.set(pylonPos.x, smp.p.y + 2.8, pylonPos.z);
+        ring.rotation.y = smp.a;
+        this.group.add(ring);
+        this.boosterBeacons.push(ring);
+      }
+
+      this.boosters.push({
+        arc,
+        pos: smp.p.clone(),
+        width: padW,
+        length: padL,
+        angle: smp.a,
+      });
+    });
+  }
+
+  /* ---------- Time of Day (Day / Night / Dusk) Controls ---------- */
+  setTimeOfDay(mode) {
+    this.timeOfDay = mode;
+    try { localStorage.setItem('na_tod', mode); } catch (_) {}
+
+    if (mode === 'day') {
+      this.sunDir.set(-0.35, 0.75, -0.45).normalize();
+      if (this.skyMat) {
+        this.skyMat.uniforms.sunDir.value.copy(this.sunDir);
+        this.skyMat.uniforms.zenith.value.set(0.12, 0.38, 0.85);
+        this.skyMat.uniforms.mid.value.set(0.38, 0.62, 0.92);
+        this.skyMat.uniforms.horizon.value.set(0.70, 0.85, 0.98);
+        this.skyMat.uniforms.sunWarm.value.set(0.95, 0.90, 0.80);
+        this.skyMat.uniforms.sunGlow.value.set(1.0, 0.95, 0.85);
+        this.skyMat.uniforms.sunDisc.value.set(1.0, 1.0, 0.95);
+      }
+      if (this.sun) {
+        this.sun.color.setHex(0xfff6e6);
+        this.sun.intensity = 3.2;
+      }
+      if (this.hemi) {
+        this.hemi.color.setHex(0x90b8f0);
+        this.hemi.groundColor.setHex(0x4a7834);
+        this.hemi.intensity = 1.35;
+      }
+      if (this.scene && this.scene.fog) {
+        this.scene.fog.color.setHex(0xc2daf2);
+        this.scene.fog.near = 220; this.scene.fog.far = 1800;
+      }
+      if (this.stars) this.stars.visible = false;
+      if (this.moon) this.moon.visible = false;
+      if (this.lampConeMat) this.lampConeMat.opacity = 0.0;
+      if (this.lampHeadMat) this.lampHeadMat.emissiveIntensity = 0.2;
+    } else if (mode === 'night') {
+      this.sunDir.set(-0.25, 0.85, -0.35).normalize();
+      if (this.skyMat) {
+        this.skyMat.uniforms.sunDir.value.copy(this.sunDir);
+        this.skyMat.uniforms.zenith.value.set(0.006, 0.008, 0.022);
+        this.skyMat.uniforms.mid.value.set(0.025, 0.030, 0.085);
+        this.skyMat.uniforms.horizon.value.set(0.075, 0.055, 0.160);
+        this.skyMat.uniforms.sunWarm.value.set(0.3, 0.5, 0.8);
+        this.skyMat.uniforms.sunGlow.value.set(0.6, 0.75, 1.0);
+        this.skyMat.uniforms.sunDisc.value.set(0.85, 0.92, 1.0);
+      }
+      if (this.sun) {
+        this.sun.color.setHex(0x7692c8);
+        this.sun.intensity = 1.25;
+      }
+      if (this.hemi) {
+        this.hemi.color.setHex(0x182440);
+        this.hemi.groundColor.setHex(0x0a0c10);
+        this.hemi.intensity = 0.55;
+      }
+      if (this.scene && this.scene.fog) {
+        this.scene.fog.color.setHex(0x090b14);
+        this.scene.fog.near = 120; this.scene.fog.far = 950;
+      }
+      if (this.stars) {
+        this.stars.visible = true;
+        this.stars.material.opacity = 1.0;
+      }
+      if (this.moon) this.moon.visible = true;
+      if (this.lampConeMat) this.lampConeMat.opacity = 0.08;
+      if (this.lampHeadMat) this.lampHeadMat.emissiveIntensity = 3.6;
+    } else { // 'dusk'
+      this.sunDir.set(-0.62, 0.18, -0.42).normalize();
+      if (this.skyMat) {
+        this.skyMat.uniforms.sunDir.value.copy(this.sunDir);
+        this.skyMat.uniforms.zenith.value.set(0.020, 0.031, 0.090);
+        this.skyMat.uniforms.mid.value.set(0.10, 0.11, 0.26);
+        this.skyMat.uniforms.horizon.value.set(0.55, 0.25, 0.28);
+        this.skyMat.uniforms.sunWarm.value.set(1.0, 0.45, 0.15);
+        this.skyMat.uniforms.sunGlow.value.set(1.0, 0.62, 0.25);
+        this.skyMat.uniforms.sunDisc.value.set(1.0, 0.85, 0.60);
+      }
+      if (this.sun) {
+        this.sun.color.setHex(0xff7b33);
+        this.sun.intensity = 2.9;
+      }
+      if (this.hemi) {
+        this.hemi.color.setHex(0x556ea8);
+        this.hemi.groundColor.setHex(0x324d26);
+        this.hemi.intensity = 1.15;
+      }
+      if (this.scene && this.scene.fog) {
+        this.scene.fog.color.setHex(0x18172c);
+        this.scene.fog.near = 160; this.scene.fog.far = 1200;
+      }
+      if (this.stars) this.stars.visible = true;
+      if (this.moon) this.moon.visible = true;
+      if (this.lampConeMat) this.lampConeMat.opacity = 0.03;
+      if (this.lampHeadMat) this.lampHeadMat.emissiveIntensity = 2.6;
+    }
+  }
+
+  toggleTimeOfDay() {
+    const next = this.timeOfDay === 'day' ? 'night' : (this.timeOfDay === 'night' ? 'dusk' : 'day');
+    this.setTimeOfDay(next);
+    return next;
+  }
+
   update(dt, time, playerPos) {
+    // animated booster pad chevrons stream forward
+    if (this.tex && this.tex.booster) {
+      this.tex.booster.offset.y -= dt * 3.6;
+    }
+    // pulsating beacon rings
+    if (this.boosterBeacons) {
+      const k = 1 + Math.sin(time * 7) * 0.14;
+      for (const ring of this.boosterBeacons) {
+        ring.scale.set(k, k, k);
+      }
+    }
     // beacons blink
     for (const b of this.beacons) {
       const on = Math.sin(time * 2.4 + b.phase) > 0.4;

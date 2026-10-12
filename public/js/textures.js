@@ -449,6 +449,61 @@ function nameTag(name, colorCss) {
   return c;
 }
 
+/* High-tech Neon Booster / Speed Pad Texture (512x512) */
+function boosterPad() {
+  const [c, x] = canvas(512, 512);
+  // Dark carbon-fiber base with glowing cyan borders
+  x.fillStyle = '#060a12';
+  x.fillRect(0, 0, 512, 512);
+
+  // Carbon grid weave
+  x.strokeStyle = 'rgba(0, 229, 255, 0.12)';
+  x.lineWidth = 2;
+  for (let i = 0; i < 512; i += 32) {
+    x.beginPath(); x.moveTo(i, 0); x.lineTo(i, 512); x.stroke();
+    x.beginPath(); x.moveTo(0, i); x.lineTo(512, i); x.stroke();
+  }
+
+  // Neon speed rails on lateral edges
+  const railG = x.createLinearGradient(0, 0, 48, 0);
+  railG.addColorStop(0, '#00e5ff'); railG.addColorStop(1, 'rgba(0,229,255,0)');
+  x.fillStyle = railG; x.fillRect(0, 0, 48, 512);
+  const railR = x.createLinearGradient(512, 0, 464, 0);
+  railR.addColorStop(0, '#00e5ff'); railR.addColorStop(1, 'rgba(0,229,255,0)');
+  x.fillStyle = railR; x.fillRect(464, 0, 48, 512);
+
+  // 3 forward glowing neon chevron arrows (Asphalt/F-Zero style)
+  const drawChevron = (cy, color, glow) => {
+    x.shadowColor = glow;
+    x.shadowBlur = 24;
+    x.fillStyle = color;
+    x.beginPath();
+    // Arrow pointing up (+V direction = forward along track)
+    x.moveTo(256, cy - 65);
+    x.lineTo(440, cy + 30);
+    x.lineTo(395, cy + 55);
+    x.lineTo(256, cy - 15);
+    x.lineTo(117, cy + 55);
+    x.lineTo(72, cy + 30);
+    x.closePath();
+    x.fill();
+    x.shadowBlur = 0;
+  };
+
+  drawChevron(120, '#00e5ff', '#00f7ff');
+  drawChevron(260, '#ffaa00', '#ffd000');
+  drawChevron(400, '#00e5ff', '#00f7ff');
+
+  // Side warning hazard diagonal stripes
+  x.fillStyle = 'rgba(255, 214, 0, 0.85)';
+  for (let y = 0; y < 512; y += 64) {
+    x.fillRect(8, y, 16, 28);
+    x.fillRect(488, y, 16, 28);
+  }
+
+  return c;
+}
+
 export function makeTextures() {
   return {
     asphalt: toTex(asphalt(), { repeat: [1, 1], aniso: 16 }),
@@ -468,6 +523,7 @@ export function makeTextures() {
     pavement: toTex(pavement(), { repeat: [3, 3] }),
     sideRoad: toTex(sideRoad(), { repeat: [1, 6] }),
     startPanel: toTex(panel('NITRO APEX', '#0a0e18', '#00e5ff')),
+    booster: toTex(boosterPad(), { repeat: [1, 1], wrap: true }),
     nameTag: nameTag,
   };
 }

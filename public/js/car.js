@@ -1083,6 +1083,12 @@ export class CarController {
     this.wallHit = 0; this.hitInfo = null;
     this.draft = 0;
     this.wheelSpin = 0;
+    this.wrecked = false;
+    this.wreckTimer = 0;
+    this.invulnerableTimer = 0;
+    this.boostCooldown = 0;
+    this.takedowns = 0;
+    this.wrecks = 0;
   }
 
   get speed() { return this.vF; }
@@ -1097,14 +1103,52 @@ export class CarController {
   resetToTrack(track) {
     const c = track.closest(this.pos, this.trackHint);
     const s = track.samples[c.i];
-    this.pos.set(s.p.x, s.p.y, s.p.z);
+    this.pos.set(s.p.x, s.p.y + 0.08, s.p.z);
     this.yaw = s.a;
-    this.vF *= 0.25; this.vL = 0;
+    this.pitch = 0;
+    this.roll = 0;
+    this.vF = 20; this.vL = 0;
     this.trackHint = c.i;
+  }
+
+  wreck(attacker) {
+    if (this.wrecked || this.invulnerableTimer > 0) return false;
+    this.wrecked = true;
+    this.wreckTimer = 1.7;
+    this.wrecks++;
+    this.nitroOn = false;
+    // Violent spinout impulse
+    this.roll += (Math.random() > 0.5 ? 1 : -1) * (0.8 + Math.random() * 0.5);
+    this.pitch += (Math.random() - 0.5) * 0.6;
+    return true;
   }
 
   update(dt, input, track) {
     if (!this.track) this.track = track;
+    if (this.boostCooldown > 0) this.boostCooldown -= dt;
+    if (this.invulnerableTimer > 0) this.invulnerableTimer -= dt;
+
+    if (this.wrecked) {
+      this.wreckTimer -= dt;
+      // Dramatic tumble and spin-out deceleration
+      this.pitch += 4.5 * dt;
+      this.roll += 6.5 * dt;
+      this.vF *= Math.max(0, 1 - dt * 2.8);
+      this.vL *= Math.max(0, 1 - dt * 2.8);
+      this.pos.x += this.vel.x * dt * 0.4;
+      this.pos.z += this.vel.z * dt * 0.4;
+      if (this.wreckTimer <= 0) {
+        // Respawn safely back on the track
+        this.resetToTrack(track);
+        this.vF = 22;
+        this.vL = 0;
+        this.pitch = 0;
+        this.roll = 0;
+        this.wrecked = false;
+        this.invulnerableTimer = 2.2; // 2.2s temporary ghost invulnerability
+      }
+      return;
+    }
     if (this.finished && this.isPlayer === false) input = { throttle: 0.3, brake: false, steer: 0, nitro: false, hand: false };
 
     // nitro
@@ -1242,6 +1286,14 @@ export class CarController {
     rig.group.rotation.y = this.yaw;
     rig.group.rotation.x = this.pitch;
     rig.group.rotation.z = this.roll;
+
+    // Ghost blinking during respawn invulnerability
+    if (this.invulnerableTimer > 0) {
+      rig.group.visible = Math.floor(this.invulnerableTimer * 14) % 2 === 0;
+    } else {
+      rig.group.visible = true;
+    }
+
     this.steerVis += (this.steer * 0.5 - this.steerVis) * Math.min(1, dt * 12);
     for (let i = 0; i < rig.wheels.length; i++) {
       const w = rig.wheels[i];

@@ -142,8 +142,17 @@ button:focus-visible, input:focus-visible, select:focus-visible, a:focus-visible
 }
 .music-btn:hover { color: #fff; border-color: var(--cyan); }
 
+#btnTimeOfDay {
+  position: fixed; bottom: 22px; right: 335px; z-index: 30;
+  background: var(--panel); color: #ffd000; border: 1px solid rgba(255, 208, 0, 0.45);
+  padding: 8px 16px; letter-spacing: 2px; font-size: 12px; font-weight: 700;
+  backdrop-filter: blur(8px); border-radius: 20px; cursor: pointer;
+  transition: all 0.2s ease;
+}
+#btnTimeOfDay:hover { color: #fff; border-color: #ffd000; box-shadow: 0 0 14px rgba(255, 208, 0, 0.35); }
+
 #quickPerfBtn {
-  position: fixed; bottom: 22px; right: 180px; z-index: 30;
+  position: fixed; bottom: 22px; right: 175px; z-index: 30;
   background: var(--panel); color: #00e5ff; border: 1px solid rgba(0, 229, 255, 0.45);
   padding: 8px 16px; letter-spacing: 2px; font-size: 12px; font-weight: 700;
   backdrop-filter: blur(8px); border-radius: 20px; cursor: pointer;
@@ -159,7 +168,8 @@ button:focus-visible, input:focus-visible, select:focus-visible, a:focus-visible
   pointer-events: none; box-shadow: 0 4px 16px rgba(0, 0, 0, 0.5);
 }
 
-@media (max-width: 680px) {
+@media (max-width: 760px) {
+  #btnTimeOfDay { bottom: 68px; right: 175px; }
   #quickPerfBtn { bottom: 68px; right: 24px; }
 }
 

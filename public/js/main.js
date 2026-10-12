@@ -296,6 +296,40 @@ function wireUI() {
   // Initialize compliance, cookie banner, legal center, and accessibility controls
   initCompliance();
   initGraphicsUI(renderer, fx);
+
+  // Time of Day controls (Day / Night / Dusk)
+  const btnTod = $('btnTimeOfDay');
+  const btnMenuTod = $('btnMenuTimeOfDay');
+  const updateTodUI = () => {
+    const tod = track ? track.timeOfDay : 'dusk';
+    const label = tod === 'day' ? '☀️ DAY' : (tod === 'night' ? '🌙 NIGHT' : '🌅 DUSK');
+    const color = tod === 'day' ? '#ffd000' : (tod === 'night' ? '#00e5ff' : '#ff7b33');
+    if (btnTod) {
+      btnTod.textContent = label;
+      btnTod.style.borderColor = color;
+      btnTod.style.color = color;
+    }
+    if (btnMenuTod) {
+      btnMenuTod.textContent = `TIME: ${label}`;
+      btnMenuTod.style.borderColor = color;
+      btnMenuTod.style.color = color;
+    }
+    if (headL && headR) {
+      const intens = tod === 'day' ? 0 : (tod === 'night' ? 250 : 170);
+      headL.intensity = intens; headR.intensity = intens;
+    }
+  };
+  if (btnTod) {
+    btnTod.onclick = () => {
+      if (track) { track.toggleTimeOfDay(); updateTodUI(); }
+    };
+  }
+  if (btnMenuTod) {
+    btnMenuTod.onclick = () => {
+      if (track) { track.toggleTimeOfDay(); updateTodUI(); }
+    };
+  }
+  updateTodUI();
 }
 
 function connectMP(name, color, room, car) {
@@ -539,8 +573,13 @@ function loop(now) {
   }
   for (const [, r] of state.remotes) r.update(dt, fx);
 
-  // car-car collisions (player vs all others)
-  resolveCollisions(car);
+  // car-car collisions, takedowns and wreckage
+  resolveCarCollisions(dt);
+
+  // boost pads along the track
+  checkBoosterPads(car);
+  for (const [aiCar] of state.ais) checkBoosterPads(aiCar);
+
   // draft
   car.draft = computeDraft(car);
   for (const [aiCar] of state.ais) aiCar.draft = computeDraft(aiCar);
@@ -671,29 +710,136 @@ function updateCarFX(car, dt, isPlayer) {
   if (isPlayer) { /* camera fx handled elsewhere */ }
 }
 
-function resolveCollisions(player) {
-  for (const other of state.cars) {
-    if (other === player) continue;
-    const dx = player.pos.x - other.pos.x, dz = player.pos.z - other.pos.z;
-    const d2 = dx * dx + dz * dz;
-    const minD = 2.6;
-    if (d2 > minD * minD || d2 < 0.0001) continue;
-    const d = Math.sqrt(d2);
-    const nx = dx / d, nz = dz / d;
-    const overlap = minD - d;
-    player.pos.x += nx * overlap * 0.7;
-    player.pos.z += nz * overlap * 0.7;
-    // damp relative approach speed
-    const rel = player.vel.x * nx + player.vel.z * nz;
-    if (rel < 0) {
-      player.vF *= 0.94;
-      const latv = player.vel.x * Math.cos(player.yaw) + player.vel.z * -Math.sin(player.yaw);
-      player.vL -= latv * 0.4;
-      if (Math.abs(rel) > 6) {
-        fx.sparks(new THREE.Vector3(player.pos.x - nx * 1.2, player.pos.y + 0.5, player.pos.z - nz * 1.2), 6, -nx, -nz);
-        audio.crash(Math.abs(rel) * 0.6);
-        fx.shake = Math.min(1, fx.shake + 0.15);
+/* ---------- car-car collisions, takedowns & wreckage ---------- */
+function resolveCarCollisions(dt) {
+  const cars = state.cars;
+  for (let i = 0; i < cars.length; i++) {
+    const a = cars[i];
+    if (a.wrecked) continue;
+    for (let j = i + 1; j < cars.length; j++) {
+      const b = cars[j];
+      if (b.wrecked) continue;
+
+      const dx = a.pos.x - b.pos.x, dz = a.pos.z - b.pos.z;
+      const d2 = dx * dx + dz * dz;
+      const minD = 2.65;
+      if (d2 > minD * minD || d2 < 0.0001) continue;
+
+      const d = Math.sqrt(d2);
+      const nx = dx / d, nz = dz / d; // normal from b to a
+      const overlap = minD - d;
+
+      // Elastic separation
+      a.pos.x += nx * overlap * 0.52;
+      a.pos.z += nz * overlap * 0.52;
+      b.pos.x -= nx * overlap * 0.52;
+      b.pos.z -= nz * overlap * 0.52;
+
+      // Relative approach velocity along contact normal
+      const rvx = a.vel.x - b.vel.x;
+      const rvz = a.vel.z - b.vel.z;
+      const relSpeed = -(rvx * nx + rvz * nz); // positive when closing in
+
+      // Check TAKEDOWN DESTRUCTION:
+      // Takedown happens if one car is boosting (nitroOn) or ramming at high speed difference
+      const speedDiff = Math.abs(a.vF) - Math.abs(b.vF);
+      let aWrecksB = false;
+      let bWrecksA = false;
+
+      if (a.invulnerableTimer <= 0 && b.invulnerableTimer <= 0) {
+        if (a.nitroOn && !b.nitroOn) {
+          aWrecksB = true;
+        } else if (b.nitroOn && !a.nitroOn) {
+          bWrecksA = true;
+        } else if (speedDiff > 9 && relSpeed > 4) {
+          aWrecksB = true;
+        } else if (speedDiff < -9 && relSpeed > 4) {
+          bWrecksA = true;
+        } else if (relSpeed > 24) {
+          // Violent mutual crash
+          aWrecksB = true;
+          bWrecksA = true;
+        }
       }
+
+      if (aWrecksB && !bWrecksA) {
+        triggerWreck(b, a);
+        a.nitro = 100; // Reward attacker with full nitro
+        a.takedowns = (a.takedowns || 0) + 1;
+      } else if (bWrecksA && !aWrecksB) {
+        triggerWreck(a, b);
+        b.nitro = 100; // Reward attacker with full nitro
+        b.takedowns = (b.takedowns || 0) + 1;
+      } else if (aWrecksB && bWrecksA) {
+        triggerWreck(a, b);
+        triggerWreck(b, a);
+      } else {
+        // Physical glance / scrape
+        if (relSpeed > 0) {
+          a.vF *= 0.95; b.vF *= 0.95;
+          if (relSpeed > 4) {
+            const midX = (a.pos.x + b.pos.x) * 0.5;
+            const midY = (a.pos.y + b.pos.y) * 0.5 + 0.4;
+            const midZ = (a.pos.z + b.pos.z) * 0.5;
+            fx.sparks(new THREE.Vector3(midX, midY, midZ), 12, nx, nz);
+            audio.crash(relSpeed * 0.5);
+            if (a === state.player || b === state.player) {
+              fx.shake = Math.min(1, fx.shake + 0.2);
+            }
+          }
+        }
+      }
+    }
+  }
+}
+
+function triggerWreck(victim, attacker) {
+  if (!victim.wreck(attacker)) return;
+  const isPlayerVictim = victim === state.player;
+  const isPlayerAttacker = attacker === state.player;
+
+  // Massive explosion of sparks & smoke debris
+  fx.sparks(new THREE.Vector3(victim.pos.x, victim.pos.y + 0.6, victim.pos.z), 40, 0, 0);
+  for (let k = 0; k < 4; k++) {
+    fx.smoke(new THREE.Vector3(victim.pos.x + (Math.random() - 0.5) * 1.5, victim.pos.y + 0.4, victim.pos.z + (Math.random() - 0.5) * 1.5),
+      new THREE.Vector3((Math.random() - 0.5) * 4, 2 + Math.random() * 3, (Math.random() - 0.5) * 4), 0.7);
+  }
+  audio.wreck();
+
+  if (isPlayerVictim || isPlayerAttacker) {
+    fx.shake = 0.85;
+  }
+
+  if (isPlayerAttacker) {
+    hud.centerMsg(`💥 TAKEDOWN! ${victim.name} (+FULL NITRO)`, 1800);
+  } else if (isPlayerVictim) {
+    hud.centerMsg(`⚠️ WRECKED BY ${attacker.name}! RESPAWNING…`, 1800);
+  }
+}
+
+/* ---------- booster pad speed strips ---------- */
+function checkBoosterPads(car) {
+  if (!track || !track.boosters || car.wrecked || car.boostCooldown > 0) return;
+  for (const b of track.boosters) {
+    const dx = car.pos.x - b.pos.x;
+    const dz = car.pos.z - b.pos.z;
+    const distSq = dx * dx + dz * dz;
+    // Booster pad trigger radius (~5.5m)
+    if (distSq < 5.5 * 5.5) {
+      car.boostCooldown = 2.0; // avoid immediate re-trigger on same pad
+      car.vF = Math.max(car.vF + 26, car.vmax * 1.25);
+      car.nitro = 100;
+      car.nitroOn = true;
+
+      // Sparks & jet effects
+      fx.sparks(new THREE.Vector3(car.pos.x, car.pos.y + 0.3, car.pos.z), 24, Math.sin(b.angle), Math.cos(b.angle));
+
+      if (car === state.player) {
+        audio.boost();
+        fx.shake = 0.35;
+        hud.centerMsg('⚡ BOOST PAD! ⚡', 900);
+      }
+      break;
     }
   }
 }

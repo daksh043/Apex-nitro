@@ -114,6 +114,65 @@ export class GameAudio {
     src.start(t); src.stop(t + 0.65);
   }
 
+  boost() {
+    if (!this.enabled) return;
+    const c = this.ctx, t = c.currentTime;
+    const osc = c.createOscillator(); osc.type = 'sawtooth';
+    osc.frequency.setValueAtTime(320, t);
+    osc.frequency.exponentialRampToValueAtTime(1400, t + 0.35);
+    const filter = c.createBiquadFilter(); filter.type = 'lowpass'; filter.frequency.value = 3200;
+    const gain = c.createGain();
+    gain.gain.setValueAtTime(0.001, t);
+    gain.gain.linearRampToValueAtTime(0.45, t + 0.05);
+    gain.gain.exponentialRampToValueAtTime(0.001, t + 0.55);
+    osc.connect(filter).connect(gain).connect(this.sfxBus);
+    osc.start(t); osc.stop(t + 0.58);
+
+    const bell = c.createOscillator(); bell.type = 'sine';
+    bell.frequency.setValueAtTime(980, t + 0.08);
+    bell.frequency.exponentialRampToValueAtTime(1960, t + 0.32);
+    const bg = c.createGain();
+    bg.gain.setValueAtTime(0.001, t + 0.08);
+    bg.gain.linearRampToValueAtTime(0.35, t + 0.12);
+    bg.gain.exponentialRampToValueAtTime(0.001, t + 0.6);
+    bell.connect(bg).connect(this.sfxBus);
+    bell.start(t + 0.08); bell.stop(t + 0.65);
+
+    this.whoosh();
+  }
+
+  wreck() {
+    if (!this.enabled) return;
+    const c = this.ctx, t = c.currentTime;
+    const sub = c.createOscillator(); sub.type = 'sine';
+    sub.frequency.setValueAtTime(130, t);
+    sub.frequency.exponentialRampToValueAtTime(28, t + 0.6);
+    const subG = c.createGain();
+    subG.gain.setValueAtTime(0.85, t);
+    subG.gain.exponentialRampToValueAtTime(0.001, t + 0.65);
+    sub.connect(subG).connect(this.sfxBus);
+    sub.start(t); sub.stop(t + 0.7);
+
+    const src = c.createBufferSource(); src.buffer = this.noiseBuf;
+    const f = c.createBiquadFilter(); f.type = 'bandpass'; f.Q.value = 2.0;
+    f.frequency.setValueAtTime(1400, t);
+    f.frequency.exponentialRampToValueAtTime(280, t + 0.45);
+    const g = c.createGain();
+    g.gain.setValueAtTime(0.75, t);
+    g.gain.exponentialRampToValueAtTime(0.001, t + 0.55);
+    src.connect(f).connect(g).connect(this.sfxBus);
+    src.start(t); src.stop(t + 0.6);
+
+    const metal = c.createOscillator(); metal.type = 'triangle';
+    metal.frequency.setValueAtTime(440, t);
+    metal.frequency.exponentialRampToValueAtTime(80, t + 0.35);
+    const mg = c.createGain();
+    mg.gain.setValueAtTime(0.5, t);
+    mg.gain.exponentialRampToValueAtTime(0.001, t + 0.4);
+    metal.connect(mg).connect(this.sfxBus);
+    metal.start(t); metal.stop(t + 0.45);
+  }
+
   beep(final) {
     if (!this.enabled) return;
     const c = this.ctx, t = c.currentTime;
