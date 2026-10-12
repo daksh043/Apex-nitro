@@ -509,7 +509,8 @@ export function createCarMesh(paint, opts = {}) {
   const glow = new THREE.Mesh(
     new THREE.PlaneGeometry(3.2, 5.0),
     new THREE.MeshBasicMaterial({
-      color: paint, transparent: true, opacity: 0.10,
+      map: opts.softGlowTex || opts.shadowTex,
+      color: paint, transparent: true, opacity: 0.0,
       blending: THREE.AdditiveBlending, depthWrite: false,
     })
   );
@@ -750,7 +751,8 @@ export function createM3Mesh(paint, opts = {}) {
   const glow = new THREE.Mesh(
     new THREE.PlaneGeometry(3.3, 5.1),
     new THREE.MeshBasicMaterial({
-      color: paint, transparent: true, opacity: 0.10,
+      map: opts.softGlowTex || opts.shadowTex,
+      color: paint, transparent: true, opacity: 0.0,
       blending: THREE.AdditiveBlending, depthWrite: false,
     })
   );
@@ -998,7 +1000,8 @@ export function createModelMesh(paint, opts = {}, cfg) {
   const glow = new THREE.Mesh(
     new THREE.PlaneGeometry(3.3, 5.1),
     new THREE.MeshBasicMaterial({
-      color: paint, transparent: true, opacity: 0.10,
+      map: opts.softGlowTex || opts.shadowTex,
+      color: paint, transparent: true, opacity: 0.0,
       blending: THREE.AdditiveBlending, depthWrite: false,
     })
   );
@@ -1188,8 +1191,8 @@ export class CarController {
       this.yaw += align * Math.min(1, dt * 3);
     }
 
-    // height + attitude
-    this.pos.y = c.height;
+    // height + attitude (grounded on elevated +0.08m road surface)
+    this.pos.y = c.height + 0.08;
     const ahead = track.sampleAtArc(c.arc + 4), behind = track.sampleAtArc(c.arc - 4);
     const slope = (ahead.p.y - behind.p.y) / 8;
     const align = Math.cos(shortAngle(this.yaw - c.a));
@@ -1248,7 +1251,7 @@ export class CarController {
     }
     const braking = this.isPlayer ? this.inputBrake : false;
     if (rig.tail) rig.tail.material.emissiveIntensity = braking ? 6 : 1.2;
-    rig.glow.material.opacity = this.nitroOn ? 0.30 : 0.10;
+    rig.glow.material.opacity = this.nitroOn ? 0.38 : 0.0;
   }
 }
 

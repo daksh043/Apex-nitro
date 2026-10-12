@@ -160,13 +160,13 @@ function buildPreview() {
   const spec = selSpec();
   let rig = null;
   try {
-    rig = spec.build(state._color(), { shadowTex: textures.shadow, kidneyTex: textures.kidney });
+    rig = spec.build(state._color(), { shadowTex: textures.shadow, softGlowTex: textures.softGlow, kidneyTex: textures.kidney });
   } catch (e) {
     window.__errs.push('preview build: ' + (e.stack || e));
     return;
   }
   const s = track.sampleAtArc(300); // midway between street lamps — no flare in frame
-  rig.group.position.set(s.p.x, s.p.y, s.p.z);
+  rig.group.position.set(s.p.x, s.p.y + 0.08, s.p.z);
   scene.add(rig.group);
   state.previewRig = rig;
   menuCam.init = false; // re-snap the showroom camera on return to menu
@@ -369,7 +369,7 @@ function startSolo(name, color) {
     const car = new CarController(false, 'CPU ' + (i + 1), paint, aiSpec);
     const slot = grid[placed++];
     car.placeAt(slot.pos, slot.yaw);
-    const rig = aiSpec.build(paint, { shadowTex: textures.shadow, kidneyTex: textures.kidney });
+    const rig = aiSpec.build(paint, { shadowTex: textures.shadow, softGlowTex: textures.softGlow, kidneyTex: textures.kidney });
     scene.add(rig.group);
     state.cars.push(car); state.rigs.set(car, rig);
     fx.setFlame(rig, false);
@@ -378,7 +378,7 @@ function startSolo(name, color) {
   const car = new CarController(true, name, color, spec);
   const slot = grid[placed];
   car.placeAt(slot.pos, slot.yaw);
-  const rig = spec.build(color, { shadowTex: textures.shadow, kidneyTex: textures.kidney, interior: true, cluster: true });
+  const rig = spec.build(color, { shadowTex: textures.shadow, softGlowTex: textures.softGlow, kidneyTex: textures.kidney, interior: true, cluster: true });
   scene.add(rig.group);
   state.cars.push(car); state.rigs.set(car, rig);
   state.player = car; state.playerRig = rig;
@@ -399,7 +399,7 @@ function startMP(startAtServer) {
       const car = new CarController(true, p.name, p.color, spec);
       const slot = grid[i];
       car.placeAt(slot.pos, slot.yaw);
-      const rig = spec.build(p.color, { shadowTex: textures.shadow, kidneyTex: textures.kidney, interior: true, cluster: true });
+      const rig = spec.build(p.color, { shadowTex: textures.shadow, softGlowTex: textures.softGlow, kidneyTex: textures.kidney, interior: true, cluster: true });
       scene.add(rig.group);
       state.cars.push(car); state.rigs.set(car, rig);
       state.player = car; state.playerRig = rig;

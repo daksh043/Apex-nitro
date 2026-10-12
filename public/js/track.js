@@ -134,7 +134,7 @@ export class Track {
       const s = this.sampleAtArc(arc);
       const right = new THREE.Vector3(Math.cos(s.a), 0, -Math.sin(s.a));
       const pos = s.p.clone().addScaledVector(right, lat);
-      pos.y += 0.0;
+      pos.y += 0.08;
       out.push({ pos, yaw: s.a, arc });
     }
     return out;
@@ -238,22 +238,34 @@ export class Track {
   }
 
   _buildRoad() {
+    // Ultra-realistic PBR asphalt material with normal map, roughness map, and anisotropic filtering
     const roadMat = new THREE.MeshStandardMaterial({
-      map: this.tex.asphalt, roughness: 0.82, metalness: 0.04,
+      map: this.tex.asphalt,
+      normalMap: this.tex.asphaltNormal,
+      normalScale: new THREE.Vector2(0.85, 0.85),
+      roughnessMap: this.tex.asphaltRoughness,
+      roughness: 0.85,
+      metalness: 0.08,
     });
-    const road = this._ribbon(-ROAD_HALF, ROAD_HALF, 0, 0, roadMat, 12);
+    // Elevated road surface (+0.08m over grade)
+    const road = this._ribbon(-ROAD_HALF, ROAD_HALF, 0.08, 0.08, roadMat, 14);
     road.material.polygonOffset = true; road.material.polygonOffsetFactor = -1; road.material.polygonOffsetUnits = -1;
     this.group.add(road);
 
-    // 3D beveled curbs with vertical elevation (0.13m raised curb blocks)
-    const curbMat = new THREE.MeshStandardMaterial({ map: this.tex.curb, roughness: 0.65 });
-    this.group.add(this._ribbon(-ROAD_HALF - 0.75, -ROAD_HALF, 0.13, 0.01, curbMat, 3));
-    this.group.add(this._ribbon(ROAD_HALF, ROAD_HALF + 0.75, 0.01, 0.13, curbMat, 3));
+    // 3D physical asphalt edge drops / roadbed foundation
+    const bedMat = new THREE.MeshStandardMaterial({ color: 0x14161a, roughness: 0.95 });
+    this.group.add(this._ribbon(-ROAD_HALF - 0.08, -ROAD_HALF, -0.06, 0.08, bedMat, 8));
+    this.group.add(this._ribbon(ROAD_HALF, ROAD_HALF + 0.08, 0.08, -0.06, bedMat, 8));
+
+    // 3D beveled FIA curb stones (elevated +0.08m at inner edge rising to +0.18m raised profile)
+    const curbMat = new THREE.MeshStandardMaterial({ map: this.tex.curb, roughness: 0.60 });
+    this.group.add(this._ribbon(-ROAD_HALF - 0.75, -ROAD_HALF, 0.18, 0.08, curbMat, 3));
+    this.group.add(this._ribbon(ROAD_HALF, ROAD_HALF + 0.75, 0.08, 0.18, curbMat, 3));
 
     // 3D paved pedestrian sidewalks flanking the asphalt curbs
     const paveMat = new THREE.MeshStandardMaterial({ map: this.tex.pavement, roughness: 0.75 });
-    this.group.add(this._ribbon(-WALL_LAT, -ROAD_HALF - 0.75, 0.12, 0.13, paveMat, 5));
-    this.group.add(this._ribbon(ROAD_HALF + 0.75, WALL_LAT, 0.13, 0.12, paveMat, 5));
+    this.group.add(this._ribbon(-WALL_LAT, -ROAD_HALF - 0.75, 0.16, 0.18, paveMat, 5));
+    this.group.add(this._ribbon(ROAD_HALF + 0.75, WALL_LAT, 0.18, 0.16, paveMat, 5));
   }
 
   /* ---------- 3D secondary city road network & plaza access streets ---------- */
@@ -292,12 +304,12 @@ export class Track {
       const p4 = smp.p.clone().addScaledVector(roadDir, endDist).addScaledVector(roadWidthDir, -halfW);
 
       const pos = [
-        p1.x, p1.y + 0.02, p1.z,
-        p2.x, p2.y + 0.02, p2.z,
-        p3.x, p3.y + 0.02, p3.z,
-        p1.x, p1.y + 0.02, p1.z,
-        p3.x, p3.y + 0.02, p3.z,
-        p4.x, p4.y + 0.02, p4.z,
+        p1.x, p1.y + 0.08, p1.z,
+        p2.x, p2.y + 0.08, p2.z,
+        p3.x, p3.y + 0.08, p3.z,
+        p1.x, p1.y + 0.08, p1.z,
+        p3.x, p3.y + 0.08, p3.z,
+        p4.x, p4.y + 0.08, p4.z,
       ];
       const uvs = [
         0, 0,
@@ -329,12 +341,12 @@ export class Track {
         const s4 = smp.p.clone().addScaledVector(roadDir, endDist).addScaledVector(roadWidthDir, swInner);
 
         const swPos = [
-          s1.x, s1.y + 0.08, s1.z,
-          s2.x, s2.y + 0.08, s2.z,
-          s3.x, s3.y + 0.08, s3.z,
-          s1.x, s1.y + 0.08, s1.z,
-          s3.x, s3.y + 0.08, s3.z,
-          s4.x, s4.y + 0.08, s4.z,
+          s1.x, s1.y + 0.16, s1.z,
+          s2.x, s2.y + 0.16, s2.z,
+          s3.x, s3.y + 0.16, s3.z,
+          s1.x, s1.y + 0.16, s1.z,
+          s3.x, s3.y + 0.16, s3.z,
+          s4.x, s4.y + 0.16, s4.z,
         ];
         const swUvs = [
           0, 0, 1, 0, 1, av.len / 8,
@@ -352,33 +364,71 @@ export class Track {
   }
 
   _buildBarriers() {
-    // metal guard rail
-    const railMat = new THREE.MeshStandardMaterial({ color: 0x8d949e, roughness: 0.4, metalness: 0.85 });
-    this.group.add(this._ribbon(-WALL_LAT, -WALL_LAT, 0.42, 0.78, railMat, 4));
-    this.group.add(this._ribbon(WALL_LAT, WALL_LAT, 0.42, 0.78, railMat, 4));
-    // neon edge strip on top
-    const neonMat = new THREE.MeshStandardMaterial({ color: 0x00343a, emissive: 0x00e5ff, emissiveIntensity: 1.3, roughness: 0.4 });
-    this.group.add(this._ribbon(-WALL_LAT - 0.02, -WALL_LAT + 0.02, 0.78, 0.86, neonMat, 4));
-    this.group.add(this._ribbon(WALL_LAT - 0.02, WALL_LAT + 0.02, 0.78, 0.86, neonMat, 4));
-    // posts
-    const postGeo = new THREE.BoxGeometry(0.14, 0.85, 0.14);
-    const postMat = new THREE.MeshStandardMaterial({ color: 0x3c4148, roughness: 0.7, metalness: 0.6 });
-    const n = Math.floor(this.length / 8) * 2;
+    // 1. Armco W-Beam Corrugated Crash Barrier (Galvanized Steel with metallic sheen)
+    const railMat = new THREE.MeshStandardMaterial({
+      map: this.tex.galvanized,
+      color: 0xdce0e6,
+      roughness: 0.28,
+      metalness: 0.92,
+    });
+    // Corrugated 3D W-profile cross-section (upper wave and lower wave)
+    // Left Barrier:
+    this.group.add(this._ribbon(-WALL_LAT - 0.07, -WALL_LAT, 0.76, 0.52, railMat, 4));
+    this.group.add(this._ribbon(-WALL_LAT, -WALL_LAT - 0.07, 0.52, 0.28, railMat, 4));
+    // Right Barrier:
+    this.group.add(this._ribbon(WALL_LAT, WALL_LAT + 0.07, 0.52, 0.76, railMat, 4));
+    this.group.add(this._ribbon(WALL_LAT + 0.07, WALL_LAT, 0.28, 0.52, railMat, 4));
+
+    // 2. Heavy-duty galvanized steel support posts every 4 meters
+    const postGeo = new THREE.BoxGeometry(0.12, 0.92, 0.12);
+    const postMat = new THREE.MeshStandardMaterial({ color: 0x42474f, roughness: 0.55, metalness: 0.85 });
+    const n = Math.floor(this.length / 4) * 2;
     const posts = new THREE.InstancedMesh(postGeo, postMat, n);
     const m = new THREE.Matrix4(), q = new THREE.Quaternion(), sc = new THREE.Vector3(1, 1, 1);
     let k = 0;
-    for (let arc = 0; arc < this.length && k < n - 1; arc += 8) {
+    for (let arc = 0; arc < this.length && k < n - 1; arc += 4) {
       const s = this.sampleAtArc(arc);
       const right = new THREE.Vector3(Math.cos(s.a), 0, -Math.sin(s.a));
       for (const side of [-1, 1]) {
-        const p = s.p.clone().addScaledVector(right, side * WALL_LAT);
+        const p = s.p.clone().addScaledVector(right, side * (WALL_LAT + 0.05));
         q.setFromAxisAngle(new THREE.Vector3(0, 1, 0), s.a);
-        m.compose(new THREE.Vector3(p.x, p.y + 0.42, p.z), q, sc);
+        m.compose(new THREE.Vector3(p.x, p.y + 0.46, p.z), q, sc);
         posts.setMatrixAt(k++, m);
       }
     }
     posts.count = k;
     this.group.add(posts);
+
+    // 3. FIA Motorsport Safety Catch Fence (semi-transparent diamond chainlink debris mesh)
+    const fenceMat = new THREE.MeshStandardMaterial({
+      map: this.tex.chainlink,
+      transparent: true,
+      alphaTest: 0.20,
+      side: THREE.DoubleSide,
+      roughness: 0.42,
+      metalness: 0.82,
+    });
+    // Slanted debris mesh rising from top of guardrail (0.76m) to 2.15m height
+    this.group.add(this._ribbon(-WALL_LAT - 0.06, -WALL_LAT + 0.16, 0.76, 2.15, fenceMat, 2));
+    this.group.add(this._ribbon(WALL_LAT + 0.06, WALL_LAT - 0.16, 0.76, 2.15, fenceMat, 2));
+
+    // 4. Tubular steel vertical catch fence poles
+    const poleGeo = new THREE.CylinderGeometry(0.045, 0.045, 1.45, 8);
+    const poleMat = new THREE.MeshStandardMaterial({ color: 0x383d44, roughness: 0.5, metalness: 0.8 });
+    const fencePoles = new THREE.InstancedMesh(poleGeo, poleMat, n);
+    let kp = 0;
+    for (let arc = 0; arc < this.length && kp < n - 1; arc += 4) {
+      const s = this.sampleAtArc(arc);
+      const right = new THREE.Vector3(Math.cos(s.a), 0, -Math.sin(s.a));
+      for (const side of [-1, 1]) {
+        const p = s.p.clone().addScaledVector(right, side * (WALL_LAT + 0.02));
+        q.setFromAxisAngle(new THREE.Vector3(s.t.x, 0, s.t.z).normalize(), side * 0.10);
+        m.compose(new THREE.Vector3(p.x, p.y + 1.45, p.z), q, sc);
+        fencePoles.setMatrixAt(kp++, m);
+      }
+    }
+    fencePoles.count = kp;
+    this.group.add(fencePoles);
   }
 
   /* ---------- street lamps ---------- */
@@ -604,7 +654,7 @@ export class Track {
 
   /* ---------- ground ---------- */
   _buildGround() {
-    // Expansive lush grass meadow base
+    // Expansive lush grass meadow base situated safely under the entire road everywhere
     const g = new THREE.Mesh(
       new THREE.CircleGeometry(1600, 64),
       new THREE.MeshStandardMaterial({
@@ -619,19 +669,21 @@ export class Track {
     g.receiveShadow = true;
     this.group.add(g);
 
-    // Lush grass shoulders and outfield terraces following the track curve
+    // Localized trackside grass verge runoff shoulders (compact, strictly avoiding self-intersection)
     const vergeMat = new THREE.MeshStandardMaterial({
       map: this.tex.ground,
       color: 0x62a853,
       roughness: 0.82,
     });
-    // Inner broad shoulder (65m wide, keeps track elevation with gentle -0.05m slope)
-    this.group.add(this._ribbon(-WALL_LAT - 65, -WALL_LAT, -0.05, 0.0, vergeMat, 10));
-    this.group.add(this._ribbon(WALL_LAT, WALL_LAT + 65, 0.0, -0.05, vergeMat, 10));
+    // Inner verge immediately flanking the sidewalk / barrier (width 4.5m)
+    this.group.add(this._ribbon(-WALL_LAT - 4.5, -WALL_LAT, 0.08, 0.16, vergeMat, 8));
+    this.group.add(this._ribbon(WALL_LAT, WALL_LAT + 4.5, 0.16, 0.08, vergeMat, 8));
 
-    // Outer rolling meadow skirt transitioning smoothly from the track hills down to the level plain (-0.06m)
-    this.group.add(this._ribbon(-WALL_LAT - 65, -WALL_LAT - 180, -0.05, 0, vergeMat, 16, 0, -0.06));
-    this.group.add(this._ribbon(WALL_LAT + 65, WALL_LAT + 180, -0.05, 0, vergeMat, 16, 0, -0.06));
+    // Gentle embankment transition dropping cleanly from verge (+0.08m) down to flat terrain (-0.06m)
+    // Width is strictly 7.5m (max distance from centerline is WALL_LAT + 12m = 22.4m)
+    // Circuit interior gap is 80m - 240m, so ZERO self-intersection or road burial can occur!
+    this.group.add(this._ribbon(-WALL_LAT - 12.0, -WALL_LAT - 4.5, 0, 0.08, vergeMat, 10, 0, -0.06));
+    this.group.add(this._ribbon(WALL_LAT + 4.5, WALL_LAT + 12.0, 0.08, 0, vergeMat, 10, 0, -0.06));
   }
 
   /* ---------- 3D Physical Grass Tufts ---------- */

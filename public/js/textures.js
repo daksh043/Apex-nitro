@@ -28,34 +28,231 @@ function noise(ctx, w, h, amount, alpha) {
   }
 }
 
-/* Road: dark asphalt + lane markings. U spans road width, V along track. */
+/* Ultra-Realistic Road: 1024x1024 dark volcanic mineral aggregate, racing rubber grooves, thermoplastic paint, asphalt seams */
 function asphalt() {
-  const [c, x] = canvas(512, 512);
-  x.fillStyle = '#26282f'; x.fillRect(0, 0, 512, 512);
-  noise(x, 512, 512, 9000, 0.14);
-  // faint tire-worn darker bands in lane centers
-  x.fillStyle = 'rgba(0,0,0,0.12)';
-  x.fillRect(110, 0, 70, 512); x.fillRect(330, 0, 70, 512);
-  // edge white lines
-  x.fillStyle = 'rgba(235,235,235,0.85)';
-  x.fillRect(10, 0, 7, 512); x.fillRect(495, 0, 7, 512);
-  // dashed lane divider
-  x.fillStyle = 'rgba(240,240,240,0.75)';
-  for (let y = 0; y < 512; y += 128) x.fillRect(253, y, 6, 70);
-  // occasional crack
-  x.strokeStyle = 'rgba(0,0,0,0.25)'; x.lineWidth = 2;
-  x.beginPath(); x.moveTo(60, 20); x.lineTo(90, 160); x.lineTo(70, 300); x.stroke();
+  const W = 1024, H = 1024;
+  const [c, x] = canvas(W, H);
+  // Rich dark bituminous asphalt base
+  x.fillStyle = '#1a1c21';
+  x.fillRect(0, 0, W, H);
+
+  // Multi-frequency mineral aggregate noise (crushed granite, basalt, slate)
+  noise(x, W, H, 28000, 0.18);
+  for (let i = 0; i < 7000; i++) {
+    const v = (130 + Math.random() * 85) | 0;
+    x.fillStyle = `rgba(${v},${v + 4},${v + 8},0.13)`;
+    x.fillRect(Math.random() * W, Math.random() * H, 1 + Math.random() * 2, 1 + Math.random() * 2);
+  }
+
+  // Polished rubber racing groove in both driving lines
+  const groove = x.createLinearGradient(0, 0, W, 0);
+  groove.addColorStop(0, 'rgba(0,0,0,0)');
+  groove.addColorStop(0.12, 'rgba(8,9,12,0.48)');
+  groove.addColorStop(0.36, 'rgba(8,9,12,0.52)');
+  groove.addColorStop(0.46, 'rgba(0,0,0,0)');
+  groove.addColorStop(0.56, 'rgba(8,9,12,0.52)');
+  groove.addColorStop(0.82, 'rgba(8,9,12,0.48)');
+  groove.addColorStop(0.96, 'rgba(0,0,0,0)');
+  x.fillStyle = groove;
+  x.fillRect(0, 0, W, H);
+
+  // Dynamic curved braking/skid marks from high-speed racing
+  x.strokeStyle = 'rgba(10,12,15,0.35)';
+  x.lineWidth = 16;
+  x.beginPath();
+  x.moveTo(W * 0.24, 0);
+  x.bezierCurveTo(W * 0.27, H * 0.35, W * 0.23, H * 0.75, W * 0.26, H);
+  x.stroke();
+  x.beginPath();
+  x.moveTo(W * 0.72, 0);
+  x.bezierCurveTo(W * 0.70, H * 0.32, W * 0.75, H * 0.68, W * 0.73, H);
+  x.stroke();
+
+  // Solid white outer boundary lines (retroreflective thermoplastic with aggregate micro-bleed)
+  x.fillStyle = 'rgba(242,244,248,0.92)';
+  x.fillRect(22, 0, 18, H);
+  x.fillRect(W - 40, 0, 18, H);
+  noise(x, 48, H, 1200, 0.22);
+
+  // Dashed center lane divider with clean thermoplastic relief
+  x.fillStyle = 'rgba(246,248,252,0.90)';
+  const dashLen = 140, dashGap = 160;
+  for (let y = 0; y < H; y += dashLen + dashGap) {
+    x.fillRect((W / 2 - 8) | 0, y, 16, dashLen);
+  }
+
+  // Bitumen crack repair seams
+  x.strokeStyle = 'rgba(12,14,18,0.5)';
+  x.lineWidth = 2.5;
+  x.beginPath(); x.moveTo(80, 40); x.lineTo(160, 260); x.lineTo(110, 520); x.stroke();
+  x.beginPath(); x.moveTo(W - 90, 480); x.lineTo(W - 140, 720); x.lineTo(W - 100, 960); x.stroke();
+
   return c;
 }
 
-/* Red/white curb stripes, V along track */
-function curb() {
-  const [c, x] = canvas(64, 256);
-  for (let y = 0; y < 256; y += 64) {
-    x.fillStyle = '#d8d8d8'; x.fillRect(0, y, 64, 64);
-    x.fillStyle = '#c03030'; x.fillRect(0, y + 32, 64, 32);
+/* Tangent-space Normal Map for realistic asphalt stone bumpiness & raised line markings */
+function asphaltNormal() {
+  const W = 512, H = 512;
+  const [c, x] = canvas(W, H);
+  const img = x.createImageData(W, H);
+  const d = img.data;
+  const h = new Float32Array(W * H);
+
+  // Micro-stone height noise
+  for (let i = 0; i < W * H; i++) {
+    h[i] = Math.random() * 0.42;
   }
-  noise(x, 64, 256, 400, 0.1);
+  // Coarse aggregate pebbles
+  for (let i = 0; i < 4500; i++) {
+    const px = (Math.random() * W) | 0, py = (Math.random() * H) | 0;
+    const rad = 2 + (Math.random() * 3) | 0;
+    for (let dy = -rad; dy <= rad; dy++) {
+      for (let dx = -rad; dx <= rad; dx++) {
+        const d2 = dx * dx + dy * dy;
+        if (d2 <= rad * rad) {
+          const x0 = (px + dx + W) % W, y0 = (py + dy + H) % H;
+          h[y0 * W + x0] += (1 - Math.sqrt(d2) / rad) * 0.4;
+        }
+      }
+    }
+  }
+  // Thermoplastic paint markings sit slightly raised (+2mm)
+  for (let y = 0; y < H; y++) {
+    const row = y * W;
+    for (let x0 = 10; x0 <= 20; x0++) h[row + x0] += 0.28;
+    for (let x0 = W - 20; x0 <= W - 10; x0++) h[row + x0] += 0.28;
+    if (y % 150 < 70) {
+      for (let x0 = (W / 2 - 4) | 0; x0 <= (W / 2 + 4) | 0; x0++) h[row + x0] += 0.28;
+    }
+  }
+
+  // Sobel tangent-space normal computation
+  const str = 2.4;
+  for (let y = 0; y < H; y++) {
+    const ym = (y - 1 + H) % H * W, y0 = y * W, yp = (y + 1) % H * W;
+    for (let px = 0; px < W; px++) {
+      const xm = (px - 1 + W) % W, xp = (px + 1) % W;
+      const dzx = (h[y0 + xp] - h[y0 + xm]) * str;
+      const dzy = (h[yp + px] - h[ym + px]) * str;
+      const len = Math.sqrt(dzx * dzx + dzy * dzy + 1.0);
+      const nx = -dzx / len, ny = -dzy / len, nz = 1.0 / len;
+      const idx = (y0 + px) * 4;
+      d[idx] = ((nx * 0.5 + 0.5) * 255) | 0;
+      d[idx + 1] = ((ny * 0.5 + 0.5) * 255) | 0;
+      d[idx + 2] = ((nz * 0.5 + 0.5) * 255) | 0;
+      d[idx + 3] = 255;
+    }
+  }
+  x.putImageData(img, 0, 0);
+  return c;
+}
+
+/* Specular Roughness Map: rubber tracks are polished & semi-glossy, stone is rough */
+function asphaltRoughness() {
+  const W = 256, H = 256;
+  const [c, x] = canvas(W, H);
+  x.fillStyle = '#dedede'; // base rough stone (~0.87)
+  x.fillRect(0, 0, W, H);
+  // Polished rubber racing line grooves (~0.52 roughness)
+  x.fillStyle = 'rgba(75,75,75,0.58)';
+  x.fillRect(W * 0.16, 0, W * 0.24, H);
+  x.fillRect(W * 0.58, 0, W * 0.24, H);
+  // Paint lines (~0.60 roughness)
+  x.fillStyle = 'rgba(95,95,95,0.35)';
+  x.fillRect(5, 0, 6, H);
+  x.fillRect(W - 11, 0, 6, H);
+  return c;
+}
+
+/* FIA Red/white curb stripes with bevel shading, dirt accumulation and tire scuffs */
+function curb() {
+  const [c, x] = canvas(128, 256);
+  for (let y = 0; y < 256; y += 64) {
+    // White curb block
+    x.fillStyle = '#e8ecf2'; x.fillRect(0, y, 128, 32);
+    // Red curb block
+    x.fillStyle = '#c51624'; x.fillRect(0, y + 32, 128, 32);
+    // Block separation joint shadow
+    x.fillStyle = 'rgba(10,12,16,0.55)';
+    x.fillRect(0, y, 128, 3);
+    x.fillRect(0, y + 32, 128, 3);
+  }
+  // Black rubber tire scuffs from racing apex clips
+  for (let i = 0; i < 24; i++) {
+    const sy = Math.random() * 256;
+    x.fillStyle = 'rgba(12,14,18,0.45)';
+    x.fillRect(Math.random() * 80, sy, 20 + Math.random() * 40, 2 + Math.random() * 4);
+  }
+  noise(x, 128, 256, 1200, 0.14);
+  return c;
+}
+
+/* Galvanized steel for Armco W-beam crash barriers with zinc crystallization & reflectors */
+function galvanized() {
+  const [c, x] = canvas(512, 128);
+  x.fillStyle = '#949ba4';
+  x.fillRect(0, 0, 512, 128);
+  // Zinc spangle crystalline grain
+  for (let i = 0; i < 4000; i++) {
+    const v = (130 + Math.random() * 80) | 0;
+    x.fillStyle = `rgba(${v},${v + 2},${v + 4},0.24)`;
+    x.fillRect(Math.random() * 512, Math.random() * 128, 2 + Math.random() * 4, 2 + Math.random() * 4);
+  }
+  // Corrugated horizontal depth shading (W-beam waves)
+  const g = x.createLinearGradient(0, 0, 0, 128);
+  g.addColorStop(0, 'rgba(40,45,50,0.4)');
+  g.addColorStop(0.18, 'rgba(255,255,255,0.45)');
+  g.addColorStop(0.35, 'rgba(25,30,35,0.55)');
+  g.addColorStop(0.5, 'rgba(255,255,255,0.55)');
+  g.addColorStop(0.65, 'rgba(25,30,35,0.55)');
+  g.addColorStop(0.82, 'rgba(255,255,255,0.45)');
+  g.addColorStop(1, 'rgba(40,45,50,0.4)');
+  x.fillStyle = g;
+  x.fillRect(0, 0, 512, 128);
+
+  // Amber retroreflective safety markers spaced along the rail
+  for (let px = 64; px < 512; px += 128) {
+    x.fillStyle = '#ff7b00';
+    x.fillRect(px - 5, 56, 10, 16);
+    x.fillStyle = 'rgba(255,255,255,0.65)';
+    x.fillRect(px - 3, 58, 6, 3);
+  }
+  return c;
+}
+
+/* FIA Motorsport Diamond Chainlink Catch Fence with galvanized steel wire & tension cables */
+function chainlink() {
+  const [c, x] = canvas(128, 128);
+  x.clearRect(0, 0, 128, 128);
+  // Steel horizontal tension cables
+  x.strokeStyle = '#606772';
+  x.lineWidth = 3;
+  x.beginPath();
+  x.moveTo(0, 6); x.lineTo(128, 6);
+  x.moveTo(0, 64); x.lineTo(128, 64);
+  x.moveTo(0, 122); x.lineTo(128, 122);
+  x.stroke();
+  // Diamond wire mesh
+  x.strokeStyle = '#b0b7c2';
+  x.lineWidth = 1.6;
+  const step = 16;
+  for (let i = -128; i < 256; i += step) {
+    x.beginPath(); x.moveTo(i, 0); x.lineTo(i + 128, 128); x.stroke();
+    x.beginPath(); x.moveTo(i + 128, 0); x.lineTo(i, 128); x.stroke();
+  }
+  return c;
+}
+
+/* Soft feathered radial glow for car underglow and lights (zero box borders) */
+function softGlow() {
+  const [c, x] = canvas(128, 128);
+  const g = x.createRadialGradient(64, 64, 4, 64, 64, 60);
+  g.addColorStop(0, 'rgba(255,255,255,0.85)');
+  g.addColorStop(0.35, 'rgba(255,255,255,0.45)');
+  g.addColorStop(0.7, 'rgba(255,255,255,0.10)');
+  g.addColorStop(1, 'rgba(255,255,255,0)');
+  x.fillStyle = g;
+  x.fillRect(0, 0, 128, 128);
   return c;
 }
 
@@ -254,8 +451,13 @@ function nameTag(name, colorCss) {
 
 export function makeTextures() {
   return {
-    asphalt: toTex(asphalt(), { repeat: [1, 1] }),
-    curb: toTex(curb(), { repeat: [1, 1] }),
+    asphalt: toTex(asphalt(), { repeat: [1, 1], aniso: 16 }),
+    asphaltNormal: toTex(asphaltNormal(), { srgb: false, repeat: [1, 1], aniso: 16 }),
+    asphaltRoughness: toTex(asphaltRoughness(), { srgb: false, repeat: [1, 1], aniso: 16 }),
+    curb: toTex(curb(), { repeat: [1, 1], aniso: 8 }),
+    galvanized: toTex(galvanized(), { repeat: [1, 1], aniso: 8 }),
+    chainlink: toTex(chainlink(), { repeat: [4, 16], aniso: 8 }),
+    softGlow: toTex(softGlow(), { srgb: false }),
     checker: toTex(checker()),
     puff: toTex(puff()),
     streak: toTex(streak()),
