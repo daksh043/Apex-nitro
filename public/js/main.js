@@ -83,6 +83,7 @@ addEventListener('keydown', (e) => {
   if (isActionActive('cam', testObj, null)) state.camMode = (state.camMode + 1) % 2;
   if (isActionActive('reset', testObj, null)) { if (state.player && state.mode === 'race') state.player.resetToTrack(track); }
   if (e.key === 'm' || e.key === 'M') { audio.setMuted(!audio.muted); hud.toast(audio.muted ? 'Audio muted' : 'Audio on'); }
+  if (e.key === 'f' || e.key === 'F') toggleFullscreen();
   if (e.key === 'Escape') togglePause();
 });
 addEventListener('keyup', (e) => { keys[e.key.toLowerCase()] = false; });
@@ -200,6 +201,57 @@ function updateMenuCam(dt) {
   fillLight.position.set(s.p.x + 6, s.p.y + 7, s.p.z + 8);
   fillLight.target.position.set(s.p.x, s.p.y, s.p.z);
   fillLight.visible = true;
+}
+
+/* ---------- fullscreen mode ---------- */
+function isFullscreen() {
+  return !!(document.fullscreenElement || document.webkitFullscreenElement || document.mozFullScreenElement || document.msFullscreenElement);
+}
+
+function toggleFullscreen() {
+  const docEl = document.documentElement;
+  if (!isFullscreen()) {
+    const req = docEl.requestFullscreen || docEl.webkitRequestFullscreen || docEl.mozRequestFullScreen || docEl.msRequestFullscreen;
+    if (req) {
+      req.call(docEl).catch(() => {});
+    }
+  } else {
+    const exit = document.exitFullscreen || document.webkitExitFullscreen || document.mozCancelFullScreen || document.msExitFullscreen;
+    if (exit) {
+      exit.call(document).catch(() => {});
+    }
+  }
+}
+
+function updateFullscreenUI() {
+  const fs = isFullscreen();
+  const btnMenuFs = $('btnFullscreen');
+  if (btnMenuFs) {
+    btnMenuFs.textContent = fs ? '⛶ EXIT FULL' : '⛶ FULLSCREEN';
+    btnMenuFs.style.color = fs ? '#00ff88' : '#00e5ff';
+    btnMenuFs.style.borderColor = fs ? 'rgba(0, 255, 136, 0.45)' : 'rgba(0, 229, 255, 0.45)';
+  }
+  const btnPauseFs = $('btnPauseFullscreen');
+  if (btnPauseFs) {
+    btnPauseFs.textContent = fs ? '⛶ EXIT FULLSCREEN' : '⛶ FULLSCREEN';
+    btnPauseFs.style.color = fs ? '#00ff88' : '#00e5ff';
+    btnPauseFs.style.borderColor = fs ? 'rgba(0, 255, 136, 0.45)' : 'rgba(0, 229, 255, 0.45)';
+  }
+  const tFs = $('tFullscreen');
+  if (tFs) {
+    tFs.textContent = fs ? '⛶ EXIT' : '⛶ FULL';
+    tFs.style.color = fs ? '#00ff88' : '#ffffff';
+  }
+  if (hud && state.mode === 'race') {
+    hud.toast(fs ? 'Fullscreen mode ON' : 'Fullscreen mode OFF');
+  }
+  if (renderer && fx) {
+    setTimeout(() => {
+      camera.aspect = innerWidth / innerHeight;
+      camera.updateProjectionMatrix();
+      applyGraphics(renderer, fx);
+    }, 120);
+  }
 }
 
 /* ---------- UI wiring ---------- */
@@ -380,6 +432,9 @@ function wireUI() {
   bindTapAction('tReset', () => {
     if (state.player && state.mode === 'race') state.player.resetToTrack(track);
   });
+  bindTapAction('tFullscreen', () => toggleFullscreen());
+  bindTapAction('btnFullscreen', () => toggleFullscreen());
+  bindTapAction('btnPauseFullscreen', () => toggleFullscreen());
 
   // Audio unlock on initial mobile user gesture
   const unlockAudio = () => {
@@ -456,6 +511,12 @@ function wireUI() {
     };
   }
   updateTodUI();
+
+  // Fullscreen event listeners & initial sync
+  ['fullscreenchange', 'webkitfullscreenchange', 'mozfullscreenchange', 'MSFullscreenChange'].forEach(evt => {
+    document.addEventListener(evt, updateFullscreenUI);
+  });
+  updateFullscreenUI();
 }
 
 function connectMP(name, color, room, car) {
