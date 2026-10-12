@@ -10,12 +10,24 @@
   --border-focus: #00e5ff;
 }
 html, body { width: 100%; height: 100%; overflow: hidden; background: #05070d; }
+html.fullscreen-active, body.fullscreen-active {
+  width: 100vw !important;
+  height: 100dvh !important;
+  max-height: 100dvh !important;
+  position: fixed !important;
+  inset: 0 !important;
+  overflow: hidden !important;
+}
 body {
   font-family: 'Rajdhani', 'Segoe UI', sans-serif;
   color: var(--text-main);
   -webkit-user-select: none; user-select: none;
 }
 #gl, #gl canvas { position: fixed; inset: 0; width: 100%; height: 100%; }
+html.fullscreen-active #gl, html.fullscreen-active #gl canvas {
+  width: 100vw !important;
+  height: 100dvh !important;
+}
 
 button { font-family: inherit; cursor: pointer; }
 
@@ -155,8 +167,10 @@ button:focus-visible, input:focus-visible, select:focus-visible, a:focus-visible
   padding: 8px 16px; letter-spacing: 2px; font-size: 12px; font-weight: 700;
   backdrop-filter: blur(8px); border-radius: 20px; cursor: pointer;
   transition: all 0.2s ease;
+  touch-action: manipulation;
 }
 #btnFullscreen:hover { color: #fff; border-color: var(--cyan); box-shadow: 0 0 14px rgba(0, 229, 255, 0.35); }
+#btnFullscreen:active, #btnFullscreen.active { transform: scale(0.95); background: rgba(0, 229, 255, 0.25); }
 
 #quickPerfBtn {
   position: fixed; bottom: 22px; right: 175px; z-index: 30;
@@ -532,15 +546,16 @@ body.reduced-motion *, body.reduced-motion *:before, body.reduced-motion *:after
   gap: clamp(8px, 2vmin, 16px);
   pointer-events: auto;
   z-index: 55;
+  max-width: calc(100vw - 20px);
 }
 .t-btn-small {
   background: rgba(8, 14, 26, 0.88);
   border: 2px solid rgba(0, 229, 255, 0.5);
   color: #ffffff;
-  font-size: clamp(12.5px, 2.7vmin, 15.5px);
+  font-size: clamp(12px, 2.6vmin, 15.5px);
   font-weight: 900;
-  letter-spacing: clamp(1.2px, 0.3vmin, 2px);
-  padding: clamp(8px, 1.8vmin, 12px) clamp(16px, 3.2vmin, 24px);
+  letter-spacing: clamp(1px, 0.25vmin, 2px);
+  padding: clamp(8px, 1.8vmin, 12px) clamp(14px, 3vmin, 24px);
   min-height: clamp(42px, 8.5vmin, 52px);
   border-radius: 26px;
   backdrop-filter: blur(10px);
@@ -549,6 +564,8 @@ body.reduced-motion *, body.reduced-motion *:before, body.reduced-motion *:after
   display: inline-flex;
   align-items: center;
   justify-content: center;
+  touch-action: manipulation;
+  cursor: pointer;
 }
 .t-btn-small:active, .t-btn-small.active {
   background: rgba(0, 229, 255, 0.45);

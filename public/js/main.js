@@ -203,23 +203,107 @@ function updateMenuCam(dt) {
   fillLight.visible = true;
 }
 
-/* ---------- fullscreen mode ---------- */
+/* ---------- fullscreen & mobile immersion mode ---------- */
 function isFullscreen() {
-  return !!(document.fullscreenElement || document.webkitFullscreenElement || document.mozFullScreenElement || document.msFullscreenElement);
+  return !!(
+    document.fullscreenElement ||
+    document.webkitFullscreenElement ||
+    document.mozFullScreenElement ||
+    document.msFullscreenElement ||
+    document.documentElement.classList.contains('fullscreen-active')
+  );
+}
+
+function enterFullscreen() {
+  const docEl = document.documentElement;
+  const req = docEl.requestFullscreen ||
+              docEl.webkitRequestFullscreen ||
+              docEl.mozRequestFullScreen ||
+              docEl.msRequestFullscreen;
+
+  if (req) {
+    let promise;
+    try {
+      // navigationUI: 'hide' hides Android virtual navigation bar for edge-to-edge gaming
+      promise = req.call(docEl, { navigationUI: 'hide' });
+    } catch (_) {
+      try {
+        promise = req.call(docEl);
+      } catch (err) {
+        console.warn('Native requestFullscreen failed:', err);
+        enableImmersiveMode();
+        return;
+      }
+    }
+
+    if (promise && promise.then) {
+      promise.then(() => {
+        document.documentElement.classList.add('fullscreen-active');
+        if (screen.orientation && screen.orientation.lock) {
+          try { screen.orientation.lock('landscape').catch(() => {}); } catch (_) {}
+        }
+        updateFullscreenUI();
+        if (hud) hud.toast('Fullscreen mode ON');
+      }).catch((err) => {
+        console.warn('Native requestFullscreen rejected, activating immersive mode:', err);
+        enableImmersiveMode();
+      });
+      return;
+    } else {
+      document.documentElement.classList.add('fullscreen-active');
+      if (screen.orientation && screen.orientation.lock) {
+        try { screen.orientation.lock('landscape').catch(() => {}); } catch (_) {}
+      }
+      updateFullscreenUI();
+      if (hud) hud.toast('Fullscreen mode ON');
+      return;
+    }
+  }
+  // Native API not supported (e.g. iOS iPhone Safari)
+  enableImmersiveMode();
+}
+
+function exitFullscreen() {
+  document.documentElement.classList.remove('fullscreen-active');
+  if (screen.orientation && screen.orientation.unlock) {
+    try { screen.orientation.unlock(); } catch (_) {}
+  }
+  const exit = document.exitFullscreen ||
+               document.webkitExitFullscreen ||
+               document.mozCancelFullScreen ||
+               document.msExitFullscreen;
+
+  if (document.fullscreenElement || document.webkitFullscreenElement || document.mozFullScreenElement || document.msFullscreenElement) {
+    if (exit) {
+      try {
+        const promise = exit.call(document);
+        if (promise && promise.catch) promise.catch(() => {});
+      } catch (_) {}
+    }
+  }
+  updateFullscreenUI();
+  if (hud) hud.toast('Fullscreen mode OFF');
+}
+
+function enableImmersiveMode() {
+  document.documentElement.classList.add('fullscreen-active');
+  try { window.scrollTo(0, 1); } catch (_) {}
+  updateFullscreenUI();
+  if (hud) {
+    const isIos = /iPad|iPhone|iPod/.test(navigator.userAgent);
+    if (isIos) {
+      hud.toast('Fullscreen mode ON (Tip: Share → Add to Home Screen in Safari for borderless gaming)');
+    } else {
+      hud.toast('Fullscreen mode ON');
+    }
+  }
 }
 
 function toggleFullscreen() {
-  const docEl = document.documentElement;
   if (!isFullscreen()) {
-    const req = docEl.requestFullscreen || docEl.webkitRequestFullscreen || docEl.mozRequestFullScreen || docEl.msRequestFullscreen;
-    if (req) {
-      req.call(docEl).catch(() => {});
-    }
+    enterFullscreen();
   } else {
-    const exit = document.exitFullscreen || document.webkitExitFullscreen || document.mozCancelFullScreen || document.msExitFullscreen;
-    if (exit) {
-      exit.call(document).catch(() => {});
-    }
+    exitFullscreen();
   }
 }
 
@@ -241,16 +325,17 @@ function updateFullscreenUI() {
   if (tFs) {
     tFs.textContent = fs ? '⛶ EXIT' : '⛶ FULL';
     tFs.style.color = fs ? '#00ff88' : '#ffffff';
-  }
-  if (hud && state.mode === 'race') {
-    hud.toast(fs ? 'Fullscreen mode ON' : 'Fullscreen mode OFF');
+    tFs.style.borderColor = fs ? '#00ff88' : 'rgba(0, 229, 255, 0.5)';
   }
   if (renderer && fx) {
-    setTimeout(() => {
-      camera.aspect = innerWidth / innerHeight;
+    const syncView = () => {
+      camera.aspect = window.innerWidth / window.innerHeight;
       camera.updateProjectionMatrix();
       applyGraphics(renderer, fx);
-    }, 120);
+    };
+    syncView();
+    setTimeout(syncView, 120);
+    setTimeout(syncView, 320);
   }
 }
 
@@ -432,9 +517,32 @@ function wireUI() {
   bindTapAction('tReset', () => {
     if (state.player && state.mode === 'race') state.player.resetToTrack(track);
   });
-  bindTapAction('tFullscreen', () => toggleFullscreen());
-  bindTapAction('btnFullscreen', () => toggleFullscreen());
-  bindTapAction('btnPauseFullscreen', () => toggleFullscreen());
+  // Special binding for fullscreen buttons:
+  // MUST NOT call e.preventDefault(), which strips the transient user activation gesture required by
+  // the Fullscreen API on mobile Chromium (Android) and WebKit (iOS/iPadOS).
+  const setupFullscreenBtn = (id) => {
+    const el = $(id);
+    if (!el) return;
+    let lastFsTrigger = 0;
+    const trigger = (e) => {
+      if (e && e.stopPropagation) e.stopPropagation();
+      const now = performance.now();
+      if (now - lastFsTrigger < 350) return; // Prevent duplicate touchend + click fires
+      lastFsTrigger = now;
+      el.classList.add('active');
+      setTimeout(() => el.classList.remove('active'), 160);
+      if (controlsConfig.touch && controlsConfig.touch.haptics && navigator.vibrate) {
+        try { navigator.vibrate(25); } catch (_) {}
+      }
+      toggleFullscreen();
+    };
+    el.addEventListener('click', trigger);
+    el.addEventListener('touchend', trigger, { passive: true });
+  };
+
+  setupFullscreenBtn('tFullscreen');
+  setupFullscreenBtn('btnFullscreen');
+  setupFullscreenBtn('btnPauseFullscreen');
 
   // Audio unlock on initial mobile user gesture
   const unlockAudio = () => {
@@ -513,8 +621,25 @@ function wireUI() {
   updateTodUI();
 
   // Fullscreen event listeners & initial sync
+  const onFsChange = () => {
+    const isNativeFs = !!(
+      document.fullscreenElement ||
+      document.webkitFullscreenElement ||
+      document.mozFullScreenElement ||
+      document.msFullscreenElement
+    );
+    if (!isNativeFs) {
+      document.documentElement.classList.remove('fullscreen-active');
+      if (screen.orientation && screen.orientation.unlock) {
+        try { screen.orientation.unlock(); } catch (_) {}
+      }
+    } else {
+      document.documentElement.classList.add('fullscreen-active');
+    }
+    updateFullscreenUI();
+  };
   ['fullscreenchange', 'webkitfullscreenchange', 'mozfullscreenchange', 'MSFullscreenChange'].forEach(evt => {
-    document.addEventListener(evt, updateFullscreenUI);
+    document.addEventListener(evt, onFsChange);
   });
   updateFullscreenUI();
 }
