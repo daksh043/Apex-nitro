@@ -2,7 +2,7 @@
 import * as THREE from 'three';
 import { makeTextures } from './textures.js';
 import { Track, buildEnvironment } from './track.js';
-import { CARS, CarController, AIDriver, preloadModels } from './car.js';
+import { CARS, CarController, AIDriver, preloadModels, preloadCar, isCarLoaded } from './car.js';
 import { FX } from './fx.js';
 import { HUD } from './hud.js';
 import { GameAudio } from './audio.js';
@@ -134,7 +134,10 @@ async function boot() {
     throw e;
   }
   // when the GLB model finishes loading, swap the showroom preview to the real body
-  preloadModels().then(() => { if (state.mode === 'menu' && state.previewRig) buildPreview(); });
+  const activeCarSpec = selSpec();
+  preloadModels(activeCarSpec ? activeCarSpec.id : 'm3').then(() => {
+    if (state.mode === 'menu' && state.previewRig) buildPreview();
+  });
 
   addEventListener('resize', () => {
     camera.aspect = innerWidth / innerHeight;
@@ -153,6 +156,7 @@ const menuCam = { angle: 0.49 }; // nose toward the camera on load — front-3/4
 
 /* Showroom: rotating preview of the selected car, framed like a press photo */
 function buildPreview() {
+  const prevRotY = (state.previewRig && state.previewRig.group) ? state.previewRig.group.rotation.y : null;
   if (state.previewRig) { scene.remove(state.previewRig.group); state.previewRig = null; }
   if (state.mode === 'race' || !state._color) return;
   const spec = selSpec();
@@ -165,6 +169,9 @@ function buildPreview() {
   }
   const s = track.sampleAtArc(300); // midway between street lamps — no flare in frame
   rig.group.position.set(s.p.x, s.p.y + 0.08, s.p.z);
+  if (prevRotY !== null) {
+    rig.group.rotation.y = prevRotY;
+  }
   scene.add(rig.group);
   state.previewRig = rig;
   menuCam.init = false; // re-snap the showroom camera on return to menu
@@ -238,6 +245,11 @@ function wireUI() {
     t.setAttribute('role', 'tab');
     t.setAttribute('aria-selected', i === state.carSel ? 'true' : 'false');
     t.setAttribute('aria-label', `${c.name} - ${c.sub}`);
+
+    // Speculatively load car model as soon as cursor moves over the tab
+    t.onmouseenter = () => preloadCar(c.id);
+    t.onfocus = () => preloadCar(c.id);
+
     t.onclick = () => {
       state.carSel = i;
       localStorage.setItem('na_car', i);
@@ -249,23 +261,45 @@ function wireUI() {
       t.setAttribute('aria-selected', 'true');
       buildSwatches();
       buildPreview();
+
+      // If the 3D model is still loading, upgrade preview as soon as it resolves
+      preloadCar(c.id).then(() => {
+        if (state.mode === 'menu' && state.carSel === i && state.previewRig) {
+          buildPreview();
+        }
+      });
     };
     els.carTabs.appendChild(t);
   });
   buildSwatches();
   const getNameColor = () => ({ name: els.name.value.slice(0, 14) || 'Racer', color: state._color(), car: state.carSel });
 
-  els.btnSolo.onclick = () => { audio.ensure(); audio.resume(); audio.startMusic(); const { name, color } = getNameColor(); startSolo(name, color); };
+  els.btnSolo.onclick = async () => {
+    audio.ensure(); audio.resume(); audio.startMusic();
+    const { name, color } = getNameColor();
+    const spec = selSpec();
+    if (spec && !isCarLoaded(spec.id)) {
+      await preloadCar(spec.id).catch(() => {});
+    }
+    startSolo(name, color);
+  };
   els.btnMulti.onclick = () => {
     audio.ensure(); audio.resume();
     els.soloPanel.style.display = 'none';
     els.mpPanel.style.display = 'block';
   };
-  els.btnCreate.onclick = () => { const { name, color } = getNameColor(); connectMP(name, color, null); };
-  els.btnJoin.onclick = () => {
+  els.btnCreate.onclick = async () => {
+    const { name, color } = getNameColor();
+    const spec = selSpec();
+    if (spec && !isCarLoaded(spec.id)) await preloadCar(spec.id).catch(() => {});
+    connectMP(name, color, null);
+  };
+  els.btnJoin.onclick = async () => {
     const code = els.joinCode.value.trim().toUpperCase();
     if (code.length !== 4) return hud.toast('Enter a 4-letter room code');
     const { name, color } = getNameColor();
+    const spec = selSpec();
+    if (spec && !isCarLoaded(spec.id)) await preloadCar(spec.id).catch(() => {});
     connectMP(name, color, code);
   };
   els.btnStartRace.onclick = () => { if (net && net.host) net.sendStart(); };

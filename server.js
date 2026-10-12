@@ -28,9 +28,10 @@ function serveFile(req, res, filePath) {
   const ext = path.extname(filePath).toLowerCase();
   fs.readFile(filePath, (err, data) => {
     if (err) { res.writeHead(404); res.end('Not found'); return; }
+    const isStatic = ['.glb', '.gltf', '.obj', '.mtl', '.png', '.jpg', '.mp3', '.woff2'].includes(ext);
     res.writeHead(200, {
       'Content-Type': MIME[ext] || 'application/octet-stream',
-      'Cache-Control': 'no-cache',
+      'Cache-Control': isStatic ? 'public, max-age=31536000, immutable' : 'no-cache',
     });
     res.end(data);
   });

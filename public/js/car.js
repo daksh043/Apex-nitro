@@ -838,8 +838,42 @@ export const MODEL_CFGS = {
   },
 };
 
-export function preloadModels() {
-  return Promise.all(Object.values(MODEL_CFGS).map((cfg) => preloadModel(cfg.url, cfg)));
+export function isCarLoaded(carId) {
+  const cfg = MODEL_CFGS[carId];
+  return !!(cfg && modelTemplates.has(cfg.url));
+}
+
+export function preloadCar(carId) {
+  const cfg = MODEL_CFGS[carId];
+  if (!cfg) return Promise.resolve(null);
+  return preloadModel(cfg.url, cfg);
+}
+
+export function preloadModels(priorityCarId = 'm3') {
+  // 1. Immediately request the prioritized car
+  const primary = preloadCar(priorityCarId);
+
+  // 2. Queue remaining cars sequentially in the background during idle time
+  const remaining = Object.keys(MODEL_CFGS).filter((id) => id !== priorityCarId);
+  const loadNext = () => {
+    if (!remaining.length) return;
+    const nextId = remaining.shift();
+    preloadCar(nextId).then(() => {
+      if (typeof requestIdleCallback === 'function') {
+        requestIdleCallback(loadNext, { timeout: 1500 });
+      } else {
+        setTimeout(loadNext, 120);
+      }
+    });
+  };
+
+  if (typeof requestIdleCallback === 'function') {
+    requestIdleCallback(loadNext, { timeout: 1000 });
+  } else {
+    setTimeout(loadNext, 200);
+  }
+
+  return primary;
 }
 
 function buildModelWheels(group, body, cfg) {

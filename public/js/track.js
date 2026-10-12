@@ -566,115 +566,119 @@ export class Track {
       bldgPts.push({ x, y: -0.06, z, scaleXZ, scaleY, rotY });
     }
 
-    // 1. Instance Modern Atlanta Corporate High-Rise Buildings
-    new GLTFLoader().load(BUILDING_URL, (gltf) => {
-      const tpl = gltf.scene;
-      const box = new THREE.Box3().setFromObject(tpl);
-      const center = new THREE.Vector3();
-      box.getCenter(center);
-      const tCenter = new THREE.Matrix4().makeTranslation(-center.x, -box.min.y, -center.z);
-
-      const parts = [];
-      tpl.traverse((o) => {
-        if (o.isMesh) {
-          o.castShadow = true;
-          o.receiveShadow = true;
-          if (o.material) {
-            o.material.roughness = Math.min(o.material.roughness || 0.6, 0.7);
-            if (o.material.emissiveMap || (o.material.emissive && o.material.emissive.getHex() > 0)) {
-              o.material.emissiveIntensity = 2.0;
-            }
-          }
-          parts.push(o);
-        }
-      });
-
-      const n = bldgPts.length;
-      const m = new THREE.Matrix4(), q = new THREE.Quaternion(), e = new THREE.Euler(), sc = new THREE.Vector3();
-      const tPos = new THREE.Matrix4(), baseMat = new THREE.Matrix4();
-      const instanced = parts.map((part) => {
-        const im = new THREE.InstancedMesh(part.geometry, part.material, n);
-        im.castShadow = true;
-        im.receiveShadow = false;
-        im.frustumCulled = true;
-        const local = part.matrixWorld.clone().multiply(new THREE.Matrix4().copy(tpl.matrixWorld).invert());
-        this.group.add(im);
-        return { im, local };
-      });
-
-      bldgPts.forEach((p, i) => {
-        e.set(0, p.rotY, 0);
-        q.setFromEuler(e);
-        sc.set(p.scaleXZ, p.scaleY, p.scaleXZ);
-
-        // Grounding: base sits 0.5m into ground foundation
-        tPos.compose(new THREE.Vector3(p.x, p.y - 0.5, p.z), q, sc);
-        baseMat.multiplyMatrices(tPos, tCenter);
-
-        for (const { im, local } of instanced) {
-          m.copy(baseMat).multiply(local);
-          im.setMatrixAt(i, m);
-        }
-
-        // Rooftop aviation beacon on tall skyscrapers
-        const totalHeight = (box.max.y - box.min.y) * p.scaleY;
-        if (totalHeight > 50 && rnd() < 0.6) {
-          const bcn = new THREE.Mesh(
-            new THREE.SphereGeometry(0.65, 8, 8),
-            new THREE.MeshBasicMaterial({ color: 0xff2020, fog: false })
-          );
-          bcn.position.set(p.x, p.y + totalHeight - 0.5, p.z);
-          this.group.add(bcn);
-          this.beacons.push({ mesh: bcn, phase: rnd() * 6.28 });
-        }
-      });
-
-      for (const { im } of instanced) {
-        im.instanceMatrix.needsUpdate = true;
-        im.computeBoundingSphere();
-      }
-    });
-
-    // 2. Instance Historic Amsterdam Canal Townhouses
-    if (canalPts.length > 0) {
-      new GLTFLoader().load(CANAL_HOUSE_URL, (gltf) => {
+    // 1. Instance Modern Atlanta Corporate High-Rise Buildings (deferred slightly so car graphics load instantly)
+    setTimeout(() => {
+      new GLTFLoader().load(BUILDING_URL, (gltf) => {
         const tpl = gltf.scene;
         const box = new THREE.Box3().setFromObject(tpl);
-        let houseMesh = null;
+        const center = new THREE.Vector3();
+        box.getCenter(center);
+        const tCenter = new THREE.Matrix4().makeTranslation(-center.x, -box.min.y, -center.z);
+
+        const parts = [];
         tpl.traverse((o) => {
-          if (o.isMesh && !houseMesh) {
+          if (o.isMesh) {
             o.castShadow = true;
-            o.receiveShadow = false;
+            o.receiveShadow = true;
             if (o.material) {
-              o.material.roughness = 0.8;
+              o.material.roughness = Math.min(o.material.roughness || 0.6, 0.7);
+              if (o.material.emissiveMap || (o.material.emissive && o.material.emissive.getHex() > 0)) {
+                o.material.emissiveIntensity = 2.0;
+              }
             }
-            houseMesh = o;
+            parts.push(o);
           }
         });
-        if (!houseMesh) return;
 
-        const n = canalPts.length;
-        const im = new THREE.InstancedMesh(houseMesh.geometry, houseMesh.material, n);
-        im.castShadow = true;
-        im.receiveShadow = false;
-        im.frustumCulled = true;
-        this.group.add(im);
-
+        const n = bldgPts.length;
         const m = new THREE.Matrix4(), q = new THREE.Quaternion(), e = new THREE.Euler(), sc = new THREE.Vector3();
-        canalPts.forEach((p, i) => {
-          e.set(0, p.rotY, 0);
-          q.setFromEuler(e);
-          sc.set(p.scale, p.scale, p.scale);
-
-          // Grounding: base sits 0.2m below foundation level
-          const posY = (p.y - 0.2) - (box.min.y * p.scale);
-          m.compose(new THREE.Vector3(p.x, posY, p.z), q, sc);
-          im.setMatrixAt(i, m);
+        const tPos = new THREE.Matrix4(), baseMat = new THREE.Matrix4();
+        const instanced = parts.map((part) => {
+          const im = new THREE.InstancedMesh(part.geometry, part.material, n);
+          im.castShadow = true;
+          im.receiveShadow = false;
+          im.frustumCulled = true;
+          const local = part.matrixWorld.clone().multiply(new THREE.Matrix4().copy(tpl.matrixWorld).invert());
+          this.group.add(im);
+          return { im, local };
         });
 
-        im.instanceMatrix.needsUpdate = true;
-        im.computeBoundingSphere();
+        bldgPts.forEach((p, i) => {
+          e.set(0, p.rotY, 0);
+          q.setFromEuler(e);
+          sc.set(p.scaleXZ, p.scaleY, p.scaleXZ);
+
+          // Grounding: base sits 0.5m into ground foundation
+          tPos.compose(new THREE.Vector3(p.x, p.y - 0.5, p.z), q, sc);
+          baseMat.multiplyMatrices(tPos, tCenter);
+
+          for (const { im, local } of instanced) {
+            m.copy(baseMat).multiply(local);
+            im.setMatrixAt(i, m);
+          }
+
+          // Rooftop aviation beacon on tall skyscrapers
+          const totalHeight = (box.max.y - box.min.y) * p.scaleY;
+          if (totalHeight > 50 && rnd() < 0.6) {
+            const bcn = new THREE.Mesh(
+              new THREE.SphereGeometry(0.65, 8, 8),
+              new THREE.MeshBasicMaterial({ color: 0xff2020, fog: false })
+            );
+            bcn.position.set(p.x, p.y + totalHeight - 0.5, p.z);
+            this.group.add(bcn);
+            this.beacons.push({ mesh: bcn, phase: rnd() * 6.28 });
+          }
+        });
+
+        for (const { im } of instanced) {
+          im.instanceMatrix.needsUpdate = true;
+          im.computeBoundingSphere();
+        }
       });
+    }, 250);
+
+    // 2. Instance Historic Amsterdam Canal Townhouses (deferred slightly so car graphics load instantly)
+    if (canalPts.length > 0) {
+      setTimeout(() => {
+        new GLTFLoader().load(CANAL_HOUSE_URL, (gltf) => {
+          const tpl = gltf.scene;
+          const box = new THREE.Box3().setFromObject(tpl);
+          let houseMesh = null;
+          tpl.traverse((o) => {
+            if (o.isMesh && !houseMesh) {
+              o.castShadow = true;
+              o.receiveShadow = false;
+              if (o.material) {
+                o.material.roughness = 0.8;
+              }
+              houseMesh = o;
+            }
+          });
+          if (!houseMesh) return;
+
+          const n = canalPts.length;
+          const im = new THREE.InstancedMesh(houseMesh.geometry, houseMesh.material, n);
+          im.castShadow = true;
+          im.receiveShadow = false;
+          im.frustumCulled = true;
+          this.group.add(im);
+
+          const m = new THREE.Matrix4(), q = new THREE.Quaternion(), e = new THREE.Euler(), sc = new THREE.Vector3();
+          canalPts.forEach((p, i) => {
+            e.set(0, p.rotY, 0);
+            q.setFromEuler(e);
+            sc.set(p.scale, p.scale, p.scale);
+
+            // Grounding: base sits 0.2m below foundation level
+            const posY = (p.y - 0.2) - (box.min.y * p.scale);
+            m.compose(new THREE.Vector3(p.x, posY, p.z), q, sc);
+            im.setMatrixAt(i, m);
+          });
+
+          im.instanceMatrix.needsUpdate = true;
+          im.computeBoundingSphere();
+        });
+      }, 350);
     }
   }
 

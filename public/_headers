@@ -1,0 +1,15 @@
+/models/*
+  Cache-Control: public, max-age=31536000, immutable
+  Access-Control-Allow-Origin: *
+
+/vendor/*
+  Cache-Control: public, max-age=31536000, immutable
+
+/*.glb
+  Cache-Control: public, max-age=31536000, immutable
+
+/*.obj
+  Cache-Control: public, max-age=31536000, immutable
+
+/*.mtl
+  Cache-Control: public, max-age=31536000, immutable

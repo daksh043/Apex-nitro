@@ -17,7 +17,18 @@ export default {
         headers: { 'content-type': 'application/json' },
       });
     }
-    // static game files (assets binding serves ./public)
-    return env.ASSETS.fetch(request);
+    // static game files with aggressive caching for 3D models and textures
+    const response = await env.ASSETS.fetch(request);
+    const p = url.pathname.toLowerCase();
+    if (p.startsWith('/models/') || p.endsWith('.glb') || p.endsWith('.gltf') || p.endsWith('.obj') || p.endsWith('.mtl') || p.endsWith('.png') || p.endsWith('.jpg') || p.endsWith('.woff2')) {
+      const headers = new Headers(response.headers);
+      headers.set('cache-control', 'public, max-age=31536000, immutable');
+      return new Response(response.body, {
+        status: response.status,
+        statusText: response.statusText,
+        headers,
+      });
+    }
+    return response;
   },
 };
