@@ -200,10 +200,10 @@ export class Track {
     scene.add(hemi);
     const sun = new THREE.DirectionalLight(0xff7b33, 2.9);
     sun.castShadow = true;
-    sun.shadow.mapSize.set(2048, 2048);
-    sun.shadow.camera.near = 10; sun.shadow.camera.far = 700;
-    sun.shadow.camera.left = -150; sun.shadow.camera.right = 150;
-    sun.shadow.camera.top = 150; sun.shadow.camera.bottom = -150;
+    sun.shadow.mapSize.set(1024, 1024);
+    sun.shadow.camera.near = 10; sun.shadow.camera.far = 520;
+    sun.shadow.camera.left = -110; sun.shadow.camera.right = 110;
+    sun.shadow.camera.top = 110; sun.shadow.camera.bottom = -110;
     sun.shadow.bias = -0.0004;
     scene.add(sun); scene.add(sun.target);
     this.sun = sun;
@@ -384,6 +384,7 @@ export class Track {
     const postMat = new THREE.MeshStandardMaterial({ color: 0x42474f, roughness: 0.55, metalness: 0.85 });
     const n = Math.floor(this.length / 4) * 2;
     const posts = new THREE.InstancedMesh(postGeo, postMat, n);
+    posts.frustumCulled = true;
     const m = new THREE.Matrix4(), q = new THREE.Quaternion(), sc = new THREE.Vector3(1, 1, 1);
     let k = 0;
     for (let arc = 0; arc < this.length && k < n - 1; arc += 4) {
@@ -397,6 +398,8 @@ export class Track {
       }
     }
     posts.count = k;
+    posts.instanceMatrix.needsUpdate = true;
+    posts.computeBoundingSphere();
     this.group.add(posts);
 
     // 3. FIA Motorsport Safety Catch Fence (semi-transparent diamond chainlink debris mesh)
@@ -416,6 +419,7 @@ export class Track {
     const poleGeo = new THREE.CylinderGeometry(0.045, 0.045, 1.45, 8);
     const poleMat = new THREE.MeshStandardMaterial({ color: 0x383d44, roughness: 0.5, metalness: 0.8 });
     const fencePoles = new THREE.InstancedMesh(poleGeo, poleMat, n);
+    fencePoles.frustumCulled = true;
     let kp = 0;
     for (let arc = 0; arc < this.length && kp < n - 1; arc += 4) {
       const s = this.sampleAtArc(arc);
@@ -428,6 +432,8 @@ export class Track {
       }
     }
     fencePoles.count = kp;
+    fencePoles.instanceMatrix.needsUpdate = true;
+    fencePoles.computeBoundingSphere();
     this.group.add(fencePoles);
   }
 
@@ -571,8 +577,8 @@ export class Track {
       const instanced = parts.map((part) => {
         const im = new THREE.InstancedMesh(part.geometry, part.material, n);
         im.castShadow = true;
-        im.receiveShadow = true;
-        im.frustumCulled = false;
+        im.receiveShadow = false;
+        im.frustumCulled = true;
         const local = part.matrixWorld.clone().multiply(new THREE.Matrix4().copy(tpl.matrixWorld).invert());
         this.group.add(im);
         return { im, local };
@@ -607,6 +613,7 @@ export class Track {
 
       for (const { im } of instanced) {
         im.instanceMatrix.needsUpdate = true;
+        im.computeBoundingSphere();
       }
     });
 
@@ -619,7 +626,7 @@ export class Track {
         tpl.traverse((o) => {
           if (o.isMesh && !houseMesh) {
             o.castShadow = true;
-            o.receiveShadow = true;
+            o.receiveShadow = false;
             if (o.material) {
               o.material.roughness = 0.8;
             }
@@ -631,8 +638,8 @@ export class Track {
         const n = canalPts.length;
         const im = new THREE.InstancedMesh(houseMesh.geometry, houseMesh.material, n);
         im.castShadow = true;
-        im.receiveShadow = true;
-        im.frustumCulled = false;
+        im.receiveShadow = false;
+        im.frustumCulled = true;
         this.group.add(im);
 
         const m = new THREE.Matrix4(), q = new THREE.Quaternion(), e = new THREE.Euler(), sc = new THREE.Vector3();
@@ -648,6 +655,7 @@ export class Track {
         });
 
         im.instanceMatrix.needsUpdate = true;
+        im.computeBoundingSphere();
       });
     }
   }
@@ -689,12 +697,13 @@ export class Track {
   /* ---------- 3D Physical Grass Tufts ---------- */
   _buildGrassTufts() {
     const tuftGeo = new THREE.BufferGeometry();
-    const w = 1.8, h = 1.15;
+    const w = 1.9, h = 1.2;
     const quadVertices = [];
     const quadUVs = [];
     const quadIndices = [];
 
-    const angles = [0, Math.PI / 3, (2 * Math.PI) / 3];
+    // 2 crossed perpendicular quads (4 triangles total per tuft instead of 6)
+    const angles = [0, Math.PI * 0.5];
     angles.forEach((ang, qIdx) => {
       const cos = Math.cos(ang) * (w * 0.5);
       const sin = Math.sin(ang) * (w * 0.5);
@@ -705,7 +714,6 @@ export class Track {
          cos, h,  sin,
         -cos, h, -sin
       );
-      // Correct UV orientation: v = 0 is root (y = 0), v = 1 is tip (y = h)
       quadUVs.push(
         0, 0,
         1, 0,
@@ -723,21 +731,23 @@ export class Track {
     tuftGeo.setIndex(quadIndices);
     tuftGeo.computeVertexNormals();
 
+    // High-performance alpha-test material with early depth writes
     const tuftMat = new THREE.MeshStandardMaterial({
       map: this.tex.grassTuft,
-      alphaTest: 0.28,
-      transparent: true,
+      alphaTest: 0.35,
+      transparent: false,
       side: THREE.DoubleSide,
       color: 0x82cc68,
-      roughness: 0.82,
+      roughness: 0.85,
       metalness: 0.05,
-      shadowSide: THREE.DoubleSide,
     });
 
-    const grassCount = 9200;
+    // 1,800 concentrated tufts = 7,200 polygons vs previous 55,200 polygons (87% fill-rate reduction)
+    const grassCount = 1800;
     const grassMesh = new THREE.InstancedMesh(tuftGeo, tuftMat, grassCount);
-    grassMesh.receiveShadow = true;
-    grassMesh.frustumCulled = false;
+    grassMesh.castShadow = false;
+    grassMesh.receiveShadow = false;
+    grassMesh.frustumCulled = true;
 
     let seed = 47;
     const rnd = () => { seed = (seed * 48271) % 2147483647; return seed / 2147483647; };
@@ -745,22 +755,22 @@ export class Track {
     const m = new THREE.Matrix4(), q = new THREE.Quaternion(), e = new THREE.Euler(), sc = new THREE.Vector3();
     let idx = 0;
 
-    // Trackside grass belts hugging both sides of the racing circuit
-    for (let arc = 0; arc < this.length && idx < grassCount - 600; arc += 4.5) {
+    // Concentrated belts along the active trackside verges
+    for (let arc = 0; arc < this.length && idx < grassCount - 200; arc += 7.0) {
       const smp = this.sampleAtArc(arc);
       const right = new THREE.Vector3(Math.cos(smp.a), 0, -Math.sin(smp.a));
 
       for (const side of [-1, 1]) {
-        const clusterSize = 2 + ((rnd() * 3) | 0);
+        const clusterSize = 1 + ((rnd() * 3) | 0);
         for (let k = 0; k < clusterSize && idx < grassCount; k++) {
-          const latOffset = WALL_LAT + 1.2 + rnd() * 30;
-          const px = smp.p.x + right.x * side * latOffset + (rnd() - 0.5) * 2.5;
-          const pz = smp.p.z + right.z * side * latOffset + (rnd() - 0.5) * 2.5;
+          const latOffset = WALL_LAT + 1.2 + rnd() * 18;
+          const px = smp.p.x + right.x * side * latOffset + (rnd() - 0.5) * 2.0;
+          const pz = smp.p.z + right.z * side * latOffset + (rnd() - 0.5) * 2.0;
           const py = smp.p.y;
 
-          const scale = 0.75 + rnd() * 0.55;
-          sc.set(scale, scale * (0.85 + rnd() * 0.35), scale);
-          e.set(0, rnd() * Math.PI * 2, (rnd() - 0.5) * 0.12);
+          const scale = 0.85 + rnd() * 0.55;
+          sc.set(scale, scale * (0.9 + rnd() * 0.3), scale);
+          e.set(0, rnd() * Math.PI * 2, (rnd() - 0.5) * 0.1);
           q.setFromEuler(e);
 
           m.compose(new THREE.Vector3(px, py, pz), q, sc);
@@ -769,18 +779,18 @@ export class Track {
       }
     }
 
-    // Infield & outfield lush meadow fields
+    // Remaining tufts distributed along visible infield sweeps
     while (idx < grassCount) {
       const arc = rnd() * this.length;
       const smp = this.sampleAtArc(arc);
       const right = new THREE.Vector3(Math.cos(smp.a), 0, -Math.sin(smp.a));
       const side = rnd() < 0.5 ? -1 : 1;
-      const dist = WALL_LAT + 28 + rnd() * 110;
+      const dist = WALL_LAT + 15 + rnd() * 45;
       const px = smp.p.x + right.x * side * dist;
       const pz = smp.p.z + right.z * side * dist;
-      const py = dist <= 65 ? smp.p.y - 0.05 : THREE.MathUtils.lerp(smp.p.y - 0.05, -0.06, Math.min(1, (dist - 65) / 115));
+      const py = smp.p.y - 0.04;
 
-      const scale = 0.85 + rnd() * 0.65;
+      const scale = 0.9 + rnd() * 0.6;
       sc.set(scale, scale, scale);
       e.set(0, rnd() * Math.PI * 2, 0);
       q.setFromEuler(e);
@@ -790,6 +800,7 @@ export class Track {
     }
 
     grassMesh.instanceMatrix.needsUpdate = true;
+    grassMesh.computeBoundingSphere();
     this.group.add(grassMesh);
   }
 
@@ -869,7 +880,7 @@ export class Track {
       const instanced = parts.map((part) => {
         const im = new THREE.InstancedMesh(part.geometry, part.material, n);
         im.castShadow = true;
-        im.frustumCulled = false;
+        im.frustumCulled = true;
         const local = part.matrixWorld.clone().multiply(new THREE.Matrix4().copy(tpl.matrixWorld).invert());
         this.group.add(im);
         return { im, local };
@@ -885,7 +896,10 @@ export class Track {
           im.setMatrixAt(i, m);
         }
       });
-      for (const { im } of instanced) im.instanceMatrix.needsUpdate = true;
+      for (const { im } of instanced) {
+        im.instanceMatrix.needsUpdate = true;
+        im.computeBoundingSphere();
+      }
     }, undefined, () => this._buildConeTrees(pts));
   }
 

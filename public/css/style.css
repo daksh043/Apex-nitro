@@ -142,6 +142,27 @@ button:focus-visible, input:focus-visible, select:focus-visible, a:focus-visible
 }
 .music-btn:hover { color: #fff; border-color: var(--cyan); }
 
+#quickPerfBtn {
+  position: fixed; bottom: 22px; right: 180px; z-index: 30;
+  background: var(--panel); color: #00e5ff; border: 1px solid rgba(0, 229, 255, 0.45);
+  padding: 8px 16px; letter-spacing: 2px; font-size: 12px; font-weight: 700;
+  backdrop-filter: blur(8px); border-radius: 20px; cursor: pointer;
+  transition: all 0.2s ease;
+}
+#quickPerfBtn:hover { color: #fff; border-color: var(--cyan); box-shadow: 0 0 14px rgba(0, 229, 255, 0.35); }
+
+#fpsBadge {
+  position: fixed; top: 22px; right: 24px; z-index: 30;
+  background: rgba(8, 12, 22, 0.82); color: #00ff88; border: 1px solid rgba(0, 255, 136, 0.35);
+  padding: 6px 14px; font-family: 'Orbitron', monospace, sans-serif; font-size: 12.5px; font-weight: 900;
+  letter-spacing: 1.5px; backdrop-filter: blur(8px); border-radius: 20px;
+  pointer-events: none; box-shadow: 0 4px 16px rgba(0, 0, 0, 0.5);
+}
+
+@media (max-width: 680px) {
+  #quickPerfBtn { bottom: 68px; right: 24px; }
+}
+
 /* ---------- compliance navigation bar ---------- */
 .compliance-bar {
   display: flex; flex-wrap: wrap; align-items: center; gap: 6px 12px;

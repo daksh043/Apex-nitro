@@ -199,6 +199,9 @@ const SpeedShader = {
 export class FX {
   constructor(scene, camera, renderer, tex) {
     this.scene = scene;
+    this.camera = camera;
+    this.renderer = renderer;
+    this.enabled = true;
     this.tex = tex;
     this.add = new Pool(scene, 500, tex.puff, true);
     this.smokeP = new Pool(scene, 300, tex.puff, false);
@@ -310,5 +313,11 @@ export class FX {
     this.bloom.strength = 0.45 + this.nitroLevel * 0.3;
   }
 
-  render() { this.composer.render(); }
+  render() {
+    if (!this.enabled) {
+      this.renderer.render(this.scene, this.camera);
+      return;
+    }
+    this.composer.render();
+  }
 }

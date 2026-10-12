@@ -8,7 +8,7 @@ import { HUD } from './hud.js';
 import { GameAudio } from './audio.js';
 import { Net, RemoteCar } from './net.js';
 import { initCompliance } from './compliance.js';
-import { initGraphicsUI, shouldSkipFrame } from './graphics.js';
+import { initGraphicsUI, applyGraphics, shouldSkipFrame } from './graphics.js';
 
 const LAPS = 3;
 
@@ -97,10 +97,6 @@ function playerInput() {
 async function boot() {
   els.loadMsg.textContent = 'Building city…';
   renderer = new THREE.WebGLRenderer({ antialias: true, powerPreference: 'high-performance' });
-  renderer.setSize(innerWidth, innerHeight);
-  renderer.setPixelRatio(Math.min(devicePixelRatio, 2));
-  renderer.shadowMap.enabled = true;
-  renderer.shadowMap.type = THREE.PCFSoftShadowMap;
   renderer.toneMapping = THREE.ACESFilmicToneMapping;
   renderer.toneMappingExposure = 1.22;
   document.getElementById('gl').appendChild(renderer.domElement);
@@ -115,6 +111,9 @@ async function boot() {
   fx = new FX(scene, camera, renderer, textures);
   hud = new HUD();
   audio = new GameAudio();
+
+  // Initialize graphics quality and performance settings tailored to user GPU/hardware
+  initGraphicsUI(renderer, fx);
 
   // player headlights
   headL = new THREE.SpotLight(0xcfe4ff, 170, 95, 0.52, 0.55, 1.4);
@@ -140,8 +139,7 @@ async function boot() {
   addEventListener('resize', () => {
     camera.aspect = innerWidth / innerHeight;
     camera.updateProjectionMatrix();
-    renderer.setSize(innerWidth, innerHeight);
-    fx.resize(innerWidth, innerHeight);
+    applyGraphics(renderer, fx);
   });
 
   els.loading.classList.add('hidden');

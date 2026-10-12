@@ -85,6 +85,7 @@
       </label>
       <button id="btnSolo" class="btn primary big" aria-label="Start single player race">▶ START RACE</button>
       <button id="btnMulti" class="btn big" aria-label="Open multiplayer racing lobby">＋ MULTIPLAYER</button>
+      <button id="btnMenuGraphics" class="btn" style="margin-top:8px; border-color:rgba(0,229,255,0.35); color:#a5ecff;" aria-label="Open graphics quality and performance settings">⚙ GRAPHICS / 60 FPS</button>
     </div>
 
     <div id="mpPanel" class="panel" style="display:none" role="region" aria-label="Multiplayer Network Options">
@@ -116,6 +117,8 @@
       <span class="comp-badge" title="Verified against the 20-point web standards checklist">✔ Compliance Verified</span>
     </nav>
   </div>
+  <span id="fpsBadge" aria-live="off">60 FPS</span>
+  <button id="quickPerfBtn" class="music-btn" aria-label="Toggle 60 FPS Performance Mode">⚡ 60 FPS: ON</button>
   <button id="musicToggle" class="music-btn" aria-label="Toggle background synthesizer music">♪ MUSIC ON</button>
 </main>
 
@@ -180,7 +183,7 @@
       <span class="gfx-title">SHADOWS</span>
       <div class="gfx-group" id="gfxGroupShadows">
         <button class="gfx-btn" data-shadow="off">OFF</button>
-        <button class="gfx-btn" data-shadow="med">MED</button>
+        <button class="gfx-btn" data-shadow="basic">BASIC</button>
         <button class="gfx-btn" data-shadow="soft">SOFT</button>
       </div>
     </div>
