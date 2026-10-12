@@ -827,7 +827,6 @@ export const MODEL_CFGS = {
   terzo: {
     url: '/models/lambo_terzo/terzo.glb',
     autoOrient: true,
-    rotateY: Math.PI,
     targetLen: 4.85,
     wheelPivots: false,
     paintMat: /carosserie/i,
