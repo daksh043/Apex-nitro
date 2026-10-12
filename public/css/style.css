@@ -512,50 +512,50 @@ body.reduced-motion *, body.reduced-motion *:before, body.reduced-motion *:after
 /* Top mobile bar: Pause, Camera, Reset */
 .t-top-bar {
   position: absolute;
-  top: calc(14px + env(safe-area-inset-top));
+  top: calc(clamp(8px, 2vmin, 16px) + env(safe-area-inset-top));
   left: 50%;
   transform: translateX(-50%);
   display: flex;
-  gap: 10px;
+  gap: clamp(6px, 1.6vmin, 12px);
   pointer-events: auto;
   z-index: 45;
 }
 .t-btn-small {
-  background: rgba(8, 14, 26, 0.78);
-  border: 1px solid rgba(0, 229, 255, 0.35);
+  background: rgba(8, 14, 26, 0.82);
+  border: 1px solid rgba(0, 229, 255, 0.38);
   color: #cde7f6;
-  font-size: 11px;
+  font-size: clamp(9px, 2vmin, 12px);
   font-weight: 700;
-  letter-spacing: 1.5px;
-  padding: 8px 14px;
+  letter-spacing: clamp(1px, 0.25vmin, 1.5px);
+  padding: clamp(5px, 1.2vmin, 8px) clamp(10px, 2.2vmin, 16px);
   border-radius: 18px;
   backdrop-filter: blur(8px);
   -webkit-backdrop-filter: blur(8px);
   box-shadow: 0 4px 12px rgba(0,0,0,0.4);
 }
 .t-btn-small:active {
-  background: rgba(0, 229, 255, 0.3);
+  background: rgba(0, 229, 255, 0.35);
   color: #fff;
-  transform: scale(0.94);
+  transform: scale(0.93);
 }
 
-/* Left cluster: Steering */
+/* Left cluster: Steering (Dynamically sizes to screen) */
 .t-left {
   position: absolute;
-  left: calc(18px + env(safe-area-inset-left));
-  bottom: calc(18px + env(safe-area-inset-bottom));
+  left: calc(clamp(10px, 2.5vmin, 24px) + env(safe-area-inset-left));
+  bottom: calc(clamp(10px, 2.5vmin, 24px) + env(safe-area-inset-bottom));
   display: flex;
-  gap: 12px;
+  gap: clamp(8px, 1.8vmin, 14px);
   pointer-events: auto;
 }
 .t-btn.t-steer {
-  width: 74px;
-  height: 74px;
+  width: clamp(52px, 13vmin, 76px);
+  height: clamp(52px, 13vmin, 76px);
   border-radius: 50%;
-  background: rgba(8, 14, 26, 0.75);
+  background: rgba(8, 14, 26, 0.78);
   border: 2px solid rgba(0, 229, 255, 0.45);
   color: #00e5ff;
-  font-size: 26px;
+  font-size: clamp(20px, 4.5vmin, 28px);
   font-weight: 900;
   box-shadow: 0 6px 20px rgba(0, 0, 0, 0.6), inset 0 0 10px rgba(0, 229, 255, 0.1);
   backdrop-filter: blur(10px);
@@ -569,29 +569,29 @@ body.reduced-motion *, body.reduced-motion *:before, body.reduced-motion *:after
   box-shadow: 0 0 18px rgba(0, 229, 255, 0.65);
 }
 
-/* Right cluster: Gas, Brake, Nitro, Drift */
+/* Right cluster: Gas, Brake, Nitro, Drift (Dynamically sizes to screen) */
 .t-right {
   position: absolute;
-  right: calc(18px + env(safe-area-inset-right));
-  bottom: calc(18px + env(safe-area-inset-bottom));
+  right: calc(clamp(10px, 2.5vmin, 24px) + env(safe-area-inset-right));
+  bottom: calc(clamp(10px, 2.5vmin, 24px) + env(safe-area-inset-bottom));
   display: flex;
   flex-direction: column;
   align-items: flex-end;
-  gap: 10px;
+  gap: clamp(6px, 1.4vmin, 10px);
   pointer-events: auto;
 }
 .t-upper-row, .t-lower-row {
   display: flex;
-  gap: 10px;
+  gap: clamp(6px, 1.4vmin, 10px);
 }
 .t-btn.t-nitro {
-  width: 74px;
-  height: 52px;
-  border-radius: 26px;
+  width: clamp(52px, 12vmin, 74px);
+  height: clamp(36px, 8.4vmin, 50px);
+  border-radius: 25px;
   background: rgba(255, 94, 58, 0.28);
   border: 2px solid #ff5e3a;
   color: #fff;
-  font-size: 13px;
+  font-size: clamp(9.5px, 2.1vmin, 12.5px);
   font-weight: 900;
   letter-spacing: 1px;
   text-shadow: 0 0 12px rgba(255, 94, 58, 0.85);
@@ -606,13 +606,13 @@ body.reduced-motion *, body.reduced-motion *:before, body.reduced-motion *:after
 }
 
 .t-btn.t-drift {
-  width: 74px;
-  height: 52px;
-  border-radius: 26px;
+  width: clamp(52px, 12vmin, 74px);
+  height: clamp(36px, 8.4vmin, 50px);
+  border-radius: 25px;
   background: rgba(180, 80, 255, 0.25);
   border: 2px solid #b450ff;
   color: #f0caff;
-  font-size: 12px;
+  font-size: clamp(9px, 2vmin, 12px);
   font-weight: 900;
   letter-spacing: 1px;
   text-shadow: 0 0 10px rgba(180, 80, 255, 0.7);
@@ -628,13 +628,13 @@ body.reduced-motion *, body.reduced-motion *:before, body.reduced-motion *:after
 }
 
 .t-btn.t-brake {
-  width: 76px;
-  height: 72px;
-  border-radius: 22px;
+  width: clamp(56px, 13vmin, 78px);
+  height: clamp(48px, 11.2vmin, 70px);
+  border-radius: clamp(14px, 3vmin, 20px);
   background: rgba(235, 45, 45, 0.28);
   border: 2px solid rgba(255, 65, 65, 0.75);
   color: #ffb8b8;
-  font-size: 13px;
+  font-size: clamp(10px, 2.2vmin, 13px);
   font-weight: 900;
   letter-spacing: 1px;
   box-shadow: 0 6px 18px rgba(0, 0, 0, 0.5);
@@ -649,13 +649,13 @@ body.reduced-motion *, body.reduced-motion *:before, body.reduced-motion *:after
 }
 
 .t-btn.t-gas {
-  width: 88px;
-  height: 72px;
-  border-radius: 22px;
+  width: clamp(64px, 14.5vmin, 90px);
+  height: clamp(48px, 11.2vmin, 70px);
+  border-radius: clamp(14px, 3vmin, 20px);
   background: linear-gradient(135deg, rgba(0, 119, 255, 0.45), rgba(0, 229, 255, 0.5));
   border: 2px solid var(--cyan);
   color: #fff;
-  font-size: 16px;
+  font-size: clamp(11.5px, 2.6vmin, 15.5px);
   font-weight: 900;
   letter-spacing: 2px;
   text-shadow: 0 0 12px rgba(0, 229, 255, 0.85);
@@ -687,7 +687,7 @@ body.reduced-motion *, body.reduced-motion *:before, body.reduced-motion *:after
 }
 
 @media (orientation: portrait) {
-  .portrait-overlay {
+  .portrait-overlay:not(.portrait-dismissed) {
     display: flex;
   }
 }
@@ -745,42 +745,195 @@ body.reduced-motion *, body.reduced-motion *:before, body.reduced-motion *:after
 /* Mobile HUD adjustments when touch is active */
 @media (max-width: 1024px) {
   #speedo {
-    right: calc(180px + env(safe-area-inset-right));
-    bottom: calc(10px + env(safe-area-inset-bottom));
-    transform: scale(0.68);
+    right: calc(clamp(135px, 24vw, 190px) + env(safe-area-inset-right));
+    bottom: calc(clamp(4px, 1.5vmin, 14px) + env(safe-area-inset-bottom));
+    transform: scale(clamp(0.48, 11vmin, 0.66));
     transform-origin: bottom right;
   }
   #nitroWrap {
-    right: calc(320px + env(safe-area-inset-right));
-    bottom: calc(14px + env(safe-area-inset-bottom));
-    height: 120px;
-    width: 15px;
+    right: calc(clamp(245px, 42vw, 320px) + env(safe-area-inset-right));
+    bottom: calc(clamp(6px, 1.8vmin, 16px) + env(safe-area-inset-bottom));
+    height: clamp(80px, 20vmin, 115px);
+    width: clamp(11px, 2.2vmin, 15px);
   }
   #minimap {
-    top: calc(10px + env(safe-area-inset-top));
-    right: calc(12px + env(safe-area-inset-right));
-    transform: scale(0.72);
+    top: calc(clamp(6px, 1.5vmin, 12px) + env(safe-area-inset-top));
+    right: calc(clamp(8px, 1.8vmin, 14px) + env(safe-area-inset-right));
+    transform: scale(clamp(0.55, 12vmin, 0.72));
     transform-origin: top right;
   }
   #topLeft {
-    top: calc(10px + env(safe-area-inset-top));
-    left: calc(12px + env(safe-area-inset-left));
-    transform: scale(0.82);
+    top: calc(clamp(6px, 1.5vmin, 12px) + env(safe-area-inset-top));
+    left: calc(clamp(8px, 1.8vmin, 14px) + env(safe-area-inset-left));
+    transform: scale(clamp(0.65, 15vmin, 0.82));
     transform-origin: top left;
   }
   #menu {
-    padding: calc(16px + env(safe-area-inset-top)) calc(20px + env(safe-area-inset-right)) calc(16px + env(safe-area-inset-bottom)) calc(20px + env(safe-area-inset-left));
+    padding: calc(14px + env(safe-area-inset-top)) calc(18px + env(safe-area-inset-right)) calc(14px + env(safe-area-inset-bottom)) calc(18px + env(safe-area-inset-left));
   }
   .menu-left {
     max-width: 360px;
+    max-height: calc(100vh - 20px);
+    overflow-y: auto;
   }
   .logo h1 {
-    font-size: 42px;
+    font-size: clamp(32px, 8vmin, 44px);
   }
   .panel {
     width: 340px;
     padding: 18px 20px;
   }
+}
+
+/* Mobile landscape view (smartphones held sideways) */
+@media (max-height: 480px) {
+  #menu {
+    padding: calc(8px + env(safe-area-inset-top)) calc(14px + env(safe-area-inset-right)) calc(8px + env(safe-area-inset-bottom)) calc(14px + env(safe-area-inset-left));
+    align-items: flex-start;
+  }
+  .menu-left {
+    max-width: 340px;
+    max-height: calc(100vh - 16px);
+    overflow-y: auto;
+    padding-right: 4px;
+    scrollbar-width: thin;
+  }
+  .logo h1 {
+    font-size: 26px;
+  }
+  .tagline {
+    font-size: 9px;
+    margin: 3px 0 8px 2px;
+    letter-spacing: 3px;
+  }
+  .panel {
+    width: 100%;
+    padding: 10px 14px;
+    margin-bottom: 6px;
+  }
+  .panel h2 {
+    font-size: 13px;
+    margin-bottom: 10px;
+  }
+  .field-label, .panel label {
+    font-size: 10.5px;
+    margin-bottom: 3px;
+  }
+  .panel input, .panel select {
+    font-size: 13.5px;
+    padding: 5px 8px;
+    margin-top: 2px;
+  }
+  .btn {
+    font-size: 12.5px;
+    padding: 7px 12px;
+    margin-top: 5px;
+  }
+  .btn.big {
+    font-size: 14.5px;
+    padding: 9px 12px;
+  }
+  .car-tab {
+    font-size: 10px;
+    padding: 5px 3px;
+    letter-spacing: 1px;
+  }
+  .stat {
+    gap: 5px;
+    grid-template-columns: 80px 1fr;
+  }
+  .swatch {
+    width: 25px;
+    height: 25px;
+    margin: 2px 4px 0 0;
+  }
+  .music-btn {
+    bottom: calc(6px + env(safe-area-inset-bottom));
+    right: calc(10px + env(safe-area-inset-right));
+    padding: 5px 9px;
+    font-size: 9.5px;
+  }
+  .comp-modal-box {
+    max-height: 96vh;
+  }
+  .comp-modal-header {
+    padding: 9px 16px;
+  }
+  .comp-modal-body {
+    padding: 10px 16px;
+  }
+  .ctrl-row {
+    padding: 6px 10px;
+  }
+  .ctrl-label {
+    font-size: 11.5px;
+  }
+  .ctrl-key-btn {
+    min-width: 68px;
+    padding: 5px 8px;
+    font-size: 10.5px;
+  }
+}
+
+/* Ultra-compact landscape view (e.g. 320px–360px screen height) */
+@media (max-height: 380px) {
+  .t-btn.t-steer {
+    width: 48px;
+    height: 48px;
+    font-size: 18px;
+  }
+  .t-btn.t-gas {
+    width: 58px;
+    height: 44px;
+    font-size: 11px;
+  }
+  .t-btn.t-brake {
+    width: 50px;
+    height: 44px;
+    font-size: 9.5px;
+  }
+  .t-btn.t-nitro, .t-btn.t-drift {
+    width: 48px;
+    height: 32px;
+    font-size: 9px;
+  }
+  #speedo {
+    transform: scale(0.44);
+  }
+  #nitroWrap {
+    height: 75px;
+    width: 10px;
+  }
+}
+
+/* Portrait view responsiveness when continuing in vertical orientation */
+@media (orientation: portrait) {
+  #menu {
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+    padding: 24px 16px;
+  }
+  .menu-left {
+    max-width: 100%;
+    width: 100%;
+  }
+  .panel {
+    width: 100%;
+  }
+  #speedo {
+    right: 50%;
+    transform: translateX(50%) scale(0.58);
+    bottom: calc(110px + env(safe-area-inset-bottom));
+    transform-origin: center bottom;
+  }
+  #nitroWrap {
+    right: calc(50% + 78px);
+    bottom: calc(114px + env(safe-area-inset-bottom));
+    height: 86px;
+    width: 12px;
+  }
+}
 /* ---------- controls customization modal & key remapping ---------- */
 .controls-modal-box {
   max-width: 680px;
@@ -895,19 +1048,27 @@ body.reduced-motion *, body.reduced-motion *:before, body.reduced-motion *:after
 /* Touch screen layout overrides based on user customization */
 #touch.touch-inverted .t-left {
   left: auto;
-  right: calc(18px + env(safe-area-inset-right));
+  right: calc(clamp(10px, 2.5vmin, 24px) + env(safe-area-inset-right));
 }
 #touch.touch-inverted .t-right {
   right: auto;
-  left: calc(18px + env(safe-area-inset-left));
+  left: calc(clamp(10px, 2.5vmin, 24px) + env(safe-area-inset-left));
   align-items: flex-start;
 }
+#touch.touch-size-auto .t-btn {
+  transform: scale(1);
+  transform-origin: center;
+}
 #touch.touch-size-small .t-btn {
-  transform: scale(0.82);
+  transform: scale(0.8);
+  transform-origin: center;
+}
+#touch.touch-size-medium .t-btn {
+  transform: scale(1.0);
   transform-origin: center;
 }
 #touch.touch-size-large .t-btn {
-  transform: scale(1.18);
+  transform: scale(1.2);
   transform-origin: center;
 }
 #touch.force-visible {

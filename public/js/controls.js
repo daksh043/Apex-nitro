@@ -14,7 +14,7 @@ export const DEFAULT_BINDINGS = {
 };
 
 export const DEFAULT_TOUCH = {
-  size: 'medium',       // 'small', 'medium', 'large'
+  size: 'auto',         // 'auto' (screen-adaptive), 'small', 'medium', 'large'
   opacity: '0.75',      // '0.45', '0.75', '1.0'
   layout: 'standard',   // 'standard', 'inverted'
   alwaysShow: false,
@@ -82,9 +82,11 @@ export function applyTouchStyles() {
   if (!touchEl) return;
   const cfg = controlsConfig.touch;
 
-  // Layout mode
+  // Layout & Size mode
   touchEl.classList.toggle('touch-inverted', cfg.layout === 'inverted');
+  touchEl.classList.toggle('touch-size-auto', cfg.size === 'auto');
   touchEl.classList.toggle('touch-size-small', cfg.size === 'small');
+  touchEl.classList.toggle('touch-size-medium', cfg.size === 'medium');
   touchEl.classList.toggle('touch-size-large', cfg.size === 'large');
 
   // Opacity

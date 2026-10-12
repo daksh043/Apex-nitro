@@ -143,11 +143,13 @@ async function boot() {
     if (state.mode === 'menu' && state.previewRig) buildPreview();
   });
 
-  addEventListener('resize', () => {
+  const onResize = () => {
     camera.aspect = innerWidth / innerHeight;
     camera.updateProjectionMatrix();
     applyGraphics(renderer, fx);
-  });
+  };
+  addEventListener('resize', onResize);
+  if (window.visualViewport) window.visualViewport.addEventListener('resize', onResize);
 
   els.loading.classList.add('hidden');
   window.__dbg = { state, track, camera };
@@ -401,6 +403,15 @@ function wireUI() {
     }, 150);
   });
 
+  // Portrait mode bypass toggle
+  const btnDismissPortrait = $('btnDismissPortrait');
+  if (btnDismissPortrait) {
+    btnDismissPortrait.addEventListener('click', () => {
+      const po = $('portraitOverlay');
+      if (po) po.classList.add('portrait-dismissed');
+    });
+  }
+
   // Initialize compliance, cookie banner, legal center, controls, and graphics settings
   initCompliance();
   initGraphicsUI(renderer, fx);
@@ -606,7 +617,9 @@ function updateChaseCam(dt, snap) {
   camera.position.copy(camState.pos);
   camera.lookAt(camState.look);
   camera.rotation.z += -car.roll * 1.4 + (state.player.drifting ? Math.sin(performance.now() * 0.02) * 0.004 : 0);
-  const targetFov = (state.camMode === 0 ? 62 : state.camMode === 1 ? 64 : 72) + speedN * 16 + (car.nitroOn ? 9 : 0);
+  const aspect = innerWidth / innerHeight;
+  const fovAspectAdj = aspect > 2.05 ? -4 : (aspect < 1.55 ? 5 : 0);
+  const targetFov = (state.camMode === 0 ? 62 : state.camMode === 1 ? 64 : 72) + speedN * 16 + (car.nitroOn ? 9 : 0) + fovAspectAdj;
   camera.fov += (targetFov - camera.fov) * Math.min(1, dt * 5);
   camera.updateProjectionMatrix();
 }
