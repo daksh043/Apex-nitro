@@ -93,6 +93,7 @@
       <button id="btnMulti" class="btn big" aria-label="Open multiplayer racing lobby">＋ MULTIPLAYER</button>
       <button id="btnMenuTimeOfDay" class="btn" style="margin-top:8px; border-color:rgba(255,208,0,0.4); color:#ffd747;" aria-label="Toggle Day and Night Lighting">☀️ TIME: DAY / NIGHT</button>
       <button id="btnMenuGraphics" class="btn" style="margin-top:8px; border-color:rgba(0,229,255,0.35); color:#a5ecff;" aria-label="Open graphics quality and performance settings">⚙ GRAPHICS / 60 FPS</button>
+      <button id="btnMenuControls" class="btn" style="margin-top:8px; border-color:rgba(255,94,58,0.45); color:#ff9d7a;" aria-label="Customize Keyboard and Touch Controls">🎮 CONTROLS / CUSTOMIZE</button>
     </div>
 
     <div id="mpPanel" class="panel" style="display:none" role="region" aria-label="Multiplayer Network Options">
@@ -159,6 +160,7 @@
   <div class="panel" id="pauseMainPanel" style="min-width: 320px;">
     <h2>PAUSED</h2>
     <button id="btnResume" class="btn primary big" aria-label="Resume race">RESUME</button>
+    <button id="btnControls" class="btn big" style="border-color:rgba(255,94,58,0.45); color:#ff9d7a;" aria-label="Customize race controls">🎮 CONTROLS</button>
     <button id="btnGraphics" class="btn big" aria-label="Adjust graphics settings">⚙ GRAPHICS</button>
     <button id="btnQuit" class="btn big" aria-label="Quit race to main menu">QUIT TO MENU</button>
   </div>
@@ -252,6 +254,95 @@
     <h2>ROTATE DEVICE</h2>
     <p>NITRO APEX is built for high-speed street racing in landscape mode.</p>
     <span class="po-hint">Rotate your phone sideways to play</span>
+  </div>
+</div>
+
+<!-- ============ CONTROLS CUSTOMIZATION MODAL ============ -->
+<div id="controlsModal" class="comp-modal-overlay" role="dialog" aria-modal="true" aria-labelledby="controlsModalTitle" aria-hidden="true">
+  <div class="comp-modal-box controls-modal-box">
+    <header class="comp-modal-header">
+      <h2 id="controlsModalTitle">🎮 CUSTOMIZE CONTROLS</h2>
+      <button id="btnControlsClose" class="comp-modal-close" aria-label="Close controls modal">✕</button>
+    </header>
+
+    <nav class="comp-tabs" role="tablist" aria-label="Controls Categories">
+      <button id="tabControlsKb" class="comp-tab-btn active" role="tab" aria-selected="true">⌨️ Keyboard</button>
+      <button id="tabControlsTouch" class="comp-tab-btn" role="tab" aria-selected="false">📱 Touchscreen & Mobile</button>
+    </nav>
+
+    <div class="comp-modal-body">
+      <!-- 1. Keyboard Rebinding Section -->
+      <section id="secControlsKb" class="controls-sec">
+        <div class="ctrl-header-row">
+          <p class="comp-lead">Click any key slot to rebind. Supports Primary & Secondary keys.</p>
+          <div class="ctrl-presets">
+            <span>PRESETS:</span>
+            <button id="btnPresetWasd" class="ctrl-preset-btn">WASD</button>
+            <button id="btnPresetArrows" class="ctrl-preset-btn">ARROWS</button>
+          </div>
+        </div>
+
+        <div id="controlsKbGrid" class="ctrl-grid"></div>
+      </section>
+
+      <!-- 2. Touch & Mobile Settings Section -->
+      <section id="secControlsTouch" class="controls-sec" style="display:none;">
+        <p class="comp-lead">Customize on-screen controls for Android, iPhone, iPad, and touch laptops.</p>
+
+        <div class="gfx-row">
+          <span class="gfx-title">BUTTON SIZE</span>
+          <div class="gfx-group">
+            <button class="gfx-btn" data-touch-size="small">COMPACT (80%)</button>
+            <button class="gfx-btn" data-touch-size="medium">NORMAL (100%)</button>
+            <button class="gfx-btn" data-touch-size="large">LARGE (120%)</button>
+          </div>
+        </div>
+
+        <div class="gfx-row">
+          <span class="gfx-title">BUTTON OPACITY / VISIBILITY</span>
+          <div class="gfx-group">
+            <button class="gfx-btn" data-touch-opacity="0.45">SUBTLE (45%)</button>
+            <button class="gfx-btn" data-touch-opacity="0.75">BALANCED (75%)</button>
+            <button class="gfx-btn" data-touch-opacity="1.0">SOLID (100%)</button>
+          </div>
+        </div>
+
+        <div class="gfx-row">
+          <span class="gfx-title">THUMB LAYOUT ORIENTATION</span>
+          <div class="gfx-group">
+            <button class="gfx-btn" data-touch-layout="standard">STANDARD (Steer Left, Gas/Brake Right)</button>
+            <button class="gfx-btn" data-touch-layout="inverted">INVERTED / SOUTHPAW (Gas Left, Steer Right)</button>
+          </div>
+        </div>
+
+        <div class="a11y-setting-row" style="margin-top:16px;">
+          <div>
+            <strong>Force Show On-Screen Controls</strong>
+            <p>Always show touch controls on screen even when on desktop PC or laptop.</p>
+          </div>
+          <label class="switch">
+            <input type="checkbox" id="chkTouchAlwaysShow">
+            <span class="slider"></span>
+          </label>
+        </div>
+
+        <div class="a11y-setting-row">
+          <div>
+            <strong>Haptic Vibration Feedback</strong>
+            <p>Vibrate device on button presses, crashes, and speed booster strips (Android).</p>
+          </div>
+          <label class="switch">
+            <input type="checkbox" id="chkTouchHaptics" checked>
+            <span class="slider"></span>
+          </label>
+        </div>
+      </section>
+    </div>
+
+    <footer class="controls-modal-footer">
+      <button id="btnControlsReset" class="btn small" style="color:#ff7b7b; border-color:rgba(255,90,90,0.4);" aria-label="Reset all controls to factory defaults">↺ RESET TO DEFAULT</button>
+      <button class="btn primary small" onclick="document.getElementById('btnControlsClose').click();" aria-label="Save and apply controls">SAVE & CLOSE</button>
+    </footer>
   </div>
 </div>
 

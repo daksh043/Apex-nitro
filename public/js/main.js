@@ -9,6 +9,7 @@ import { GameAudio } from './audio.js';
 import { Net, RemoteCar } from './net.js';
 import { initCompliance } from './compliance.js';
 import { initGraphicsUI, applyGraphics, shouldSkipFrame } from './graphics.js';
+import { initControlsUI, isActionActive, controlsConfig, applyTouchStyles } from './controls.js';
 
 const LAPS = 3;
 
@@ -76,21 +77,23 @@ addEventListener('keydown', (e) => {
     return;
   }
   if (['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight', ' '].includes(e.key)) e.preventDefault();
-  keys[e.key.toLowerCase()] = true;
-  if (e.key === 'c' || e.key === 'C') state.camMode = (state.camMode + 1) % 2;
-  if (e.key === 'r' || e.key === 'R') { if (state.player && state.mode === 'race') state.player.resetToTrack(track); }
+  const kLow = e.key.toLowerCase();
+  keys[kLow] = true;
+  const testObj = { [kLow]: true };
+  if (isActionActive('cam', testObj, null)) state.camMode = (state.camMode + 1) % 2;
+  if (isActionActive('reset', testObj, null)) { if (state.player && state.mode === 'race') state.player.resetToTrack(track); }
   if (e.key === 'm' || e.key === 'M') { audio.setMuted(!audio.muted); hud.toast(audio.muted ? 'Audio muted' : 'Audio on'); }
   if (e.key === 'Escape') togglePause();
 });
 addEventListener('keyup', (e) => { keys[e.key.toLowerCase()] = false; });
 
 function playerInput() {
-  const steer = (keys['a'] || keys['arrowleft'] || touchState.left ? 1 : 0) +
-    (keys['d'] || keys['arrowright'] || touchState.right ? -1 : 0);
-  const throttle = (keys['w'] || keys['arrowup'] || touchState.gas) ? 1 : 0;
-  const brake = !!(keys['s'] || keys['arrowdown'] || touchState.brake);
-  const nitro = !!(keys['shift'] || touchState.nitro);
-  const hand = !!(keys[' '] || touchState.drift);
+  const steer = (isActionActive('left', keys, touchState) ? 1 : 0) +
+    (isActionActive('right', keys, touchState) ? -1 : 0);
+  const throttle = isActionActive('gas', keys, touchState) ? 1 : 0;
+  const brake = isActionActive('brake', keys, touchState);
+  const nitro = isActionActive('nitro', keys, touchState);
+  const hand = isActionActive('drift', keys, touchState);
   return { steer, throttle, brake, nitro, hand };
 }
 
@@ -398,9 +401,10 @@ function wireUI() {
     }, 150);
   });
 
-  // Initialize compliance, cookie banner, legal center, and accessibility controls
+  // Initialize compliance, cookie banner, legal center, controls, and graphics settings
   initCompliance();
   initGraphicsUI(renderer, fx);
+  initControlsUI();
 
   // Time of Day controls (Day / Night / Dusk)
   const btnTod = $('btnTimeOfDay');
