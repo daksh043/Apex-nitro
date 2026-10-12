@@ -352,28 +352,34 @@ function wireUI() {
   setupTouchBtn('tNitro', 'nitro');
   setupTouchBtn('tDrift', 'drift');
 
-  // Mobile top action bar (Pause, Cam, Respawn)
-  const btnPause = $('tPause');
-  if (btnPause) {
-    btnPause.addEventListener('pointerdown', (e) => { e.preventDefault(); togglePause(); });
-    btnPause.addEventListener('touchstart', (e) => { e.preventDefault(); togglePause(); }, { passive: false });
-  }
-  const btnCam = $('tCam');
-  if (btnCam) {
-    btnCam.addEventListener('pointerdown', (e) => { e.preventDefault(); state.camMode = (state.camMode + 1) % 2; });
-    btnCam.addEventListener('touchstart', (e) => { e.preventDefault(); state.camMode = (state.camMode + 1) % 2; }, { passive: false });
-  }
-  const btnReset = $('tReset');
-  if (btnReset) {
-    btnReset.addEventListener('pointerdown', (e) => {
-      e.preventDefault();
-      if (state.player && state.mode === 'race') state.player.resetToTrack(track);
-    });
-    btnReset.addEventListener('touchstart', (e) => {
-      e.preventDefault();
-      if (state.player && state.mode === 'race') state.player.resetToTrack(track);
-    }, { passive: false });
-  }
+  // Reliable mobile tap binding with debouncing to prevent duplicate touchstart + pointerdown fires
+  const bindTapAction = (id, actionFn) => {
+    const el = $(id);
+    if (!el) return;
+    let lastTime = 0;
+    const trigger = (e) => {
+      if (e.cancelable) e.preventDefault();
+      e.stopPropagation();
+      const now = performance.now();
+      if (now - lastTime < 300) return; // Prevent duplicate pointerdown + touchstart + click fires
+      lastTime = now;
+      el.classList.add('active');
+      setTimeout(() => el.classList.remove('active'), 160);
+      if (controlsConfig.touch && controlsConfig.touch.haptics && navigator.vibrate) {
+        try { navigator.vibrate(25); } catch (_) {}
+      }
+      actionFn();
+    };
+    el.addEventListener('pointerdown', trigger);
+    el.addEventListener('touchstart', trigger, { passive: false });
+    el.addEventListener('click', trigger);
+  };
+
+  bindTapAction('tPause', () => togglePause());
+  bindTapAction('tCam', () => { state.camMode = (state.camMode + 1) % 2; });
+  bindTapAction('tReset', () => {
+    if (state.player && state.mode === 'race') state.player.resetToTrack(track);
+  });
 
   // Audio unlock on initial mobile user gesture
   const unlockAudio = () => {
@@ -1105,9 +1111,16 @@ function togglePause() {
   if (state.mptype === 'mp') return; // no pausing in MP
   state.paused = !state.paused;
   els.pause.style.display = state.paused ? 'flex' : 'none';
-  if (els.touch && isTouchDevice) {
-    if (state.paused) els.touch.classList.remove('touch-active');
-    else els.touch.classList.add('touch-active');
+  if (els.touch) {
+    if (state.paused) {
+      els.touch.classList.remove('touch-active');
+      els.touch.style.pointerEvents = 'none';
+    } else {
+      if (isTouchDevice || (controlsConfig.touch && controlsConfig.touch.alwaysShow)) {
+        els.touch.classList.add('touch-active');
+      }
+      els.touch.style.pointerEvents = '';
+    }
   }
   if (state.paused) {
     if (els.pauseMainPanel) els.pauseMainPanel.style.display = 'block';

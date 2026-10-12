@@ -442,7 +442,7 @@ body.reduced-motion *, body.reduced-motion *:before, body.reduced-motion *:after
 /* ---------- pause ---------- */
 #pause {
   position: fixed; inset: 0; display: flex; align-items: center; justify-content: center;
-  background: rgba(2, 4, 9, 0.7); z-index: 26; backdrop-filter: blur(4px);
+  background: rgba(2, 4, 9, 0.85); z-index: 90; backdrop-filter: blur(8px);
 }
 .gfx-row {
   margin-bottom: 12px;
@@ -509,164 +509,170 @@ body.reduced-motion *, body.reduced-motion *:before, body.reduced-motion *:after
   transition: transform 0.08s ease, box-shadow 0.08s ease, background 0.08s ease;
 }
 
-/* Top mobile bar: Pause, Camera, Reset */
+/* Top mobile bar: Pause, Camera, Reset (Large, prominent touch targets) */
 .t-top-bar {
   position: absolute;
-  top: calc(clamp(8px, 2vmin, 16px) + env(safe-area-inset-top));
+  top: calc(clamp(10px, 2.4vmin, 20px) + env(safe-area-inset-top));
   left: 50%;
   transform: translateX(-50%);
   display: flex;
-  gap: clamp(6px, 1.6vmin, 12px);
+  gap: clamp(8px, 2vmin, 16px);
   pointer-events: auto;
-  z-index: 45;
+  z-index: 55;
 }
 .t-btn-small {
-  background: rgba(8, 14, 26, 0.82);
-  border: 1px solid rgba(0, 229, 255, 0.38);
-  color: #cde7f6;
-  font-size: clamp(9px, 2vmin, 12px);
-  font-weight: 700;
-  letter-spacing: clamp(1px, 0.25vmin, 1.5px);
-  padding: clamp(5px, 1.2vmin, 8px) clamp(10px, 2.2vmin, 16px);
-  border-radius: 18px;
-  backdrop-filter: blur(8px);
-  -webkit-backdrop-filter: blur(8px);
-  box-shadow: 0 4px 12px rgba(0,0,0,0.4);
-}
-.t-btn-small:active {
-  background: rgba(0, 229, 255, 0.35);
-  color: #fff;
-  transform: scale(0.93);
-}
-
-/* Left cluster: Steering (Dynamically sizes to screen) */
-.t-left {
-  position: absolute;
-  left: calc(clamp(10px, 2.5vmin, 24px) + env(safe-area-inset-left));
-  bottom: calc(clamp(10px, 2.5vmin, 24px) + env(safe-area-inset-bottom));
-  display: flex;
-  gap: clamp(8px, 1.8vmin, 14px);
-  pointer-events: auto;
-}
-.t-btn.t-steer {
-  width: clamp(52px, 13vmin, 76px);
-  height: clamp(52px, 13vmin, 76px);
-  border-radius: 50%;
-  background: rgba(8, 14, 26, 0.78);
-  border: 2px solid rgba(0, 229, 255, 0.45);
-  color: #00e5ff;
-  font-size: clamp(20px, 4.5vmin, 28px);
+  background: rgba(8, 14, 26, 0.88);
+  border: 2px solid rgba(0, 229, 255, 0.5);
+  color: #ffffff;
+  font-size: clamp(12.5px, 2.7vmin, 15.5px);
   font-weight: 900;
-  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.6), inset 0 0 10px rgba(0, 229, 255, 0.1);
+  letter-spacing: clamp(1.2px, 0.3vmin, 2px);
+  padding: clamp(8px, 1.8vmin, 12px) clamp(16px, 3.2vmin, 24px);
+  min-height: clamp(42px, 8.5vmin, 52px);
+  border-radius: 26px;
   backdrop-filter: blur(10px);
   -webkit-backdrop-filter: blur(10px);
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.55), 0 0 12px rgba(0, 229, 255, 0.25);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
 }
-.t-btn.t-steer:active, .t-btn.t-steer.active {
-  background: rgba(0, 229, 255, 0.35);
+.t-btn-small:active, .t-btn-small.active {
+  background: rgba(0, 229, 255, 0.45);
   border-color: #00e5ff;
   color: #fff;
   transform: scale(0.92);
-  box-shadow: 0 0 18px rgba(0, 229, 255, 0.65);
+  box-shadow: 0 0 20px rgba(0, 229, 255, 0.8);
 }
 
-/* Right cluster: Gas, Brake, Nitro, Drift (Dynamically sizes to screen) */
+/* Left cluster: Steering (Large thumb-friendly targets) */
+.t-left {
+  position: absolute;
+  left: calc(clamp(14px, 3vmin, 30px) + env(safe-area-inset-left));
+  bottom: calc(clamp(14px, 3vmin, 30px) + env(safe-area-inset-bottom));
+  display: flex;
+  gap: clamp(10px, 2.2vmin, 18px);
+  pointer-events: auto;
+}
+.t-btn.t-steer {
+  width: clamp(72px, 17vmin, 96px);
+  height: clamp(72px, 17vmin, 96px);
+  border-radius: 50%;
+  background: rgba(8, 14, 26, 0.85);
+  border: 2.5px solid rgba(0, 229, 255, 0.55);
+  color: #00e5ff;
+  font-size: clamp(28px, 6vmin, 38px);
+  font-weight: 900;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.7), inset 0 0 14px rgba(0, 229, 255, 0.15);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+}
+.t-btn.t-steer:active, .t-btn.t-steer.active {
+  background: rgba(0, 229, 255, 0.4);
+  border-color: #00e5ff;
+  color: #fff;
+  transform: scale(0.92);
+  box-shadow: 0 0 22px rgba(0, 229, 255, 0.8);
+}
+
+/* Right cluster: Gas, Brake, Nitro, Drift (Large pedals & boosts) */
 .t-right {
   position: absolute;
-  right: calc(clamp(10px, 2.5vmin, 24px) + env(safe-area-inset-right));
-  bottom: calc(clamp(10px, 2.5vmin, 24px) + env(safe-area-inset-bottom));
+  right: calc(clamp(14px, 3vmin, 30px) + env(safe-area-inset-right));
+  bottom: calc(clamp(14px, 3vmin, 30px) + env(safe-area-inset-bottom));
   display: flex;
   flex-direction: column;
   align-items: flex-end;
-  gap: clamp(6px, 1.4vmin, 10px);
+  gap: clamp(8px, 1.8vmin, 14px);
   pointer-events: auto;
 }
 .t-upper-row, .t-lower-row {
   display: flex;
-  gap: clamp(6px, 1.4vmin, 10px);
+  gap: clamp(8px, 1.8vmin, 14px);
 }
 .t-btn.t-nitro {
-  width: clamp(52px, 12vmin, 74px);
-  height: clamp(36px, 8.4vmin, 50px);
-  border-radius: 25px;
-  background: rgba(255, 94, 58, 0.28);
-  border: 2px solid #ff5e3a;
+  width: clamp(74px, 16.5vmin, 98px);
+  height: clamp(48px, 11vmin, 62px);
+  border-radius: 28px;
+  background: rgba(255, 94, 58, 0.35);
+  border: 2.5px solid #ff5e3a;
   color: #fff;
-  font-size: clamp(9.5px, 2.1vmin, 12.5px);
+  font-size: clamp(12.5px, 2.7vmin, 16px);
   font-weight: 900;
-  letter-spacing: 1px;
-  text-shadow: 0 0 12px rgba(255, 94, 58, 0.85);
-  box-shadow: 0 4px 14px rgba(255, 94, 58, 0.35);
-  backdrop-filter: blur(8px);
-  -webkit-backdrop-filter: blur(8px);
+  letter-spacing: 1.5px;
+  text-shadow: 0 0 14px rgba(255, 94, 58, 0.9);
+  box-shadow: 0 6px 18px rgba(255, 94, 58, 0.45);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
 }
 .t-btn.t-nitro:active, .t-btn.t-nitro.active {
-  background: rgba(255, 94, 58, 0.6);
+  background: rgba(255, 94, 58, 0.65);
   transform: scale(0.92);
-  box-shadow: 0 0 22px rgba(255, 94, 58, 0.9);
+  box-shadow: 0 0 26px rgba(255, 94, 58, 0.95);
 }
 
 .t-btn.t-drift {
-  width: clamp(52px, 12vmin, 74px);
-  height: clamp(36px, 8.4vmin, 50px);
-  border-radius: 25px;
-  background: rgba(180, 80, 255, 0.25);
-  border: 2px solid #b450ff;
+  width: clamp(74px, 16.5vmin, 98px);
+  height: clamp(48px, 11vmin, 62px);
+  border-radius: 28px;
+  background: rgba(180, 80, 255, 0.32);
+  border: 2.5px solid #b450ff;
   color: #f0caff;
-  font-size: clamp(9px, 2vmin, 12px);
+  font-size: clamp(12px, 2.6vmin, 15.5px);
   font-weight: 900;
-  letter-spacing: 1px;
-  text-shadow: 0 0 10px rgba(180, 80, 255, 0.7);
-  box-shadow: 0 4px 14px rgba(180, 80, 255, 0.3);
-  backdrop-filter: blur(8px);
-  -webkit-backdrop-filter: blur(8px);
+  letter-spacing: 1.5px;
+  text-shadow: 0 0 12px rgba(180, 80, 255, 0.8);
+  box-shadow: 0 6px 18px rgba(180, 80, 255, 0.4);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
 }
 .t-btn.t-drift:active, .t-btn.t-drift.active {
-  background: rgba(180, 80, 255, 0.55);
+  background: rgba(180, 80, 255, 0.6);
   color: #fff;
   transform: scale(0.92);
-  box-shadow: 0 0 20px rgba(180, 80, 255, 0.85);
+  box-shadow: 0 0 24px rgba(180, 80, 255, 0.9);
 }
 
 .t-btn.t-brake {
-  width: clamp(56px, 13vmin, 78px);
-  height: clamp(48px, 11.2vmin, 70px);
-  border-radius: clamp(14px, 3vmin, 20px);
-  background: rgba(235, 45, 45, 0.28);
-  border: 2px solid rgba(255, 65, 65, 0.75);
+  width: clamp(76px, 17vmin, 102px);
+  height: clamp(66px, 15vmin, 88px);
+  border-radius: clamp(18px, 3.6vmin, 24px);
+  background: rgba(235, 45, 45, 0.35);
+  border: 2.5px solid rgba(255, 65, 65, 0.85);
   color: #ffb8b8;
-  font-size: clamp(10px, 2.2vmin, 13px);
+  font-size: clamp(13px, 3vmin, 17px);
   font-weight: 900;
-  letter-spacing: 1px;
-  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.5);
-  backdrop-filter: blur(8px);
-  -webkit-backdrop-filter: blur(8px);
+  letter-spacing: 1.5px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.6);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
 }
 .t-btn.t-brake:active, .t-btn.t-brake.active {
-  background: rgba(255, 45, 45, 0.6);
+  background: rgba(255, 45, 45, 0.65);
   color: #fff;
   transform: scale(0.92);
-  box-shadow: 0 0 20px rgba(255, 45, 45, 0.85);
+  box-shadow: 0 0 24px rgba(255, 45, 45, 0.9);
 }
 
 .t-btn.t-gas {
-  width: clamp(64px, 14.5vmin, 90px);
-  height: clamp(48px, 11.2vmin, 70px);
-  border-radius: clamp(14px, 3vmin, 20px);
-  background: linear-gradient(135deg, rgba(0, 119, 255, 0.45), rgba(0, 229, 255, 0.5));
-  border: 2px solid var(--cyan);
+  width: clamp(86px, 19vmin, 116px);
+  height: clamp(66px, 15vmin, 88px);
+  border-radius: clamp(18px, 3.6vmin, 24px);
+  background: linear-gradient(135deg, rgba(0, 119, 255, 0.55), rgba(0, 229, 255, 0.6));
+  border: 2.5px solid var(--cyan);
   color: #fff;
-  font-size: clamp(11.5px, 2.6vmin, 15.5px);
+  font-size: clamp(15px, 3.4vmin, 20px);
   font-weight: 900;
-  letter-spacing: 2px;
-  text-shadow: 0 0 12px rgba(0, 229, 255, 0.85);
-  box-shadow: 0 6px 20px rgba(0, 229, 255, 0.35);
-  backdrop-filter: blur(8px);
-  -webkit-backdrop-filter: blur(8px);
+  letter-spacing: 2.5px;
+  text-shadow: 0 0 14px rgba(0, 229, 255, 0.9);
+  box-shadow: 0 8px 26px rgba(0, 229, 255, 0.45);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
 }
 .t-btn.t-gas:active, .t-btn.t-gas.active {
-  background: linear-gradient(135deg, rgba(0, 119, 255, 0.75), rgba(0, 229, 255, 0.85));
+  background: linear-gradient(135deg, rgba(0, 119, 255, 0.8), rgba(0, 229, 255, 0.9));
   transform: scale(0.92);
-  box-shadow: 0 0 24px rgba(0, 229, 255, 0.85);
+  box-shadow: 0 0 28px rgba(0, 229, 255, 0.9);
 }
 
 /* Portrait orientation overlay for mobile phones */
@@ -745,14 +751,14 @@ body.reduced-motion *, body.reduced-motion *:before, body.reduced-motion *:after
 /* Mobile HUD adjustments when touch is active */
 @media (max-width: 1024px) {
   #speedo {
-    right: calc(clamp(135px, 24vw, 190px) + env(safe-area-inset-right));
-    bottom: calc(clamp(4px, 1.5vmin, 14px) + env(safe-area-inset-bottom));
-    transform: scale(clamp(0.48, 11vmin, 0.66));
+    right: calc(clamp(185px, 32vw, 255px) + env(safe-area-inset-right));
+    bottom: calc(clamp(6px, 1.8vmin, 16px) + env(safe-area-inset-bottom));
+    transform: scale(clamp(0.48, 11vmin, 0.65));
     transform-origin: bottom right;
   }
   #nitroWrap {
-    right: calc(clamp(245px, 42vw, 320px) + env(safe-area-inset-right));
-    bottom: calc(clamp(6px, 1.8vmin, 16px) + env(safe-area-inset-bottom));
+    right: calc(clamp(300px, 50vw, 390px) + env(safe-area-inset-right));
+    bottom: calc(clamp(8px, 2vmin, 18px) + env(safe-area-inset-bottom));
     height: clamp(80px, 20vmin, 115px);
     width: clamp(11px, 2.2vmin, 15px);
   }
@@ -878,31 +884,38 @@ body.reduced-motion *, body.reduced-motion *:before, body.reduced-motion *:after
 /* Ultra-compact landscape view (e.g. 320px–360px screen height) */
 @media (max-height: 380px) {
   .t-btn.t-steer {
-    width: 48px;
-    height: 48px;
-    font-size: 18px;
+    width: 66px;
+    height: 66px;
+    font-size: 24px;
   }
   .t-btn.t-gas {
-    width: 58px;
-    height: 44px;
-    font-size: 11px;
+    width: 78px;
+    height: 56px;
+    font-size: 13.5px;
   }
   .t-btn.t-brake {
-    width: 50px;
-    height: 44px;
-    font-size: 9.5px;
+    width: 70px;
+    height: 56px;
+    font-size: 12px;
   }
   .t-btn.t-nitro, .t-btn.t-drift {
-    width: 48px;
-    height: 32px;
-    font-size: 9px;
+    width: 68px;
+    height: 42px;
+    font-size: 11px;
+  }
+  .t-btn-small {
+    min-height: 38px;
+    font-size: 11.5px;
+    padding: 6px 14px;
   }
   #speedo {
     transform: scale(0.44);
+    right: calc(clamp(160px, 28vw, 220px) + env(safe-area-inset-right));
   }
   #nitroWrap {
-    height: 75px;
+    height: 72px;
     width: 10px;
+    right: calc(clamp(260px, 46vw, 340px) + env(safe-area-inset-right));
   }
 }
 
@@ -1060,7 +1073,7 @@ body.reduced-motion *, body.reduced-motion *:before, body.reduced-motion *:after
   transform-origin: center;
 }
 #touch.touch-size-small .t-btn {
-  transform: scale(0.8);
+  transform: scale(0.85);
   transform-origin: center;
 }
 #touch.touch-size-medium .t-btn {
@@ -1068,7 +1081,11 @@ body.reduced-motion *, body.reduced-motion *:before, body.reduced-motion *:after
   transform-origin: center;
 }
 #touch.touch-size-large .t-btn {
-  transform: scale(1.2);
+  transform: scale(1.25);
+  transform-origin: center;
+}
+#touch.touch-size-large .t-btn-small {
+  transform: scale(1.15);
   transform-origin: center;
 }
 #touch.force-visible {
